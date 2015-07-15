@@ -2,4 +2,12 @@
     <string name="app_name">Popular Movies</string>
     <string name="action_settings">Settings</string>
     <string name="action_refresh">Refresh</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="pref_sort_key">sort</string>
+    <string name="pref_sort_label">Sort by</string>
+    <string name="pref_sort_popularity">popularity</string>
+    <string name="pref_sort_rating">rating</string>
+    <string name="pref_sort_popularity_label">Popularity</string>
+    <string name="pref_sort_rating_label">Rating</string>
 </resources>
+
