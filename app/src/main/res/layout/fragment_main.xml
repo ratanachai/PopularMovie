@@ -3,8 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivityFragment"
-    android:background="@android:color/darker_gray">
-
+    android:background="@android:color/darker_gray"
+    >
     <GridView
         android:id="@+id/gridview_movies"
         android:layout_width="match_parent"
