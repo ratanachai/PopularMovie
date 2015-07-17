@@ -13,7 +13,8 @@
     <string name="title_activity_detail">DetailActivity</string>
     <string name="movie_title">Movie Title</string>
     <string name="movie_overview">Movie Overview</string>
-    <string name="movie_rating">User Rating</string>
-    <string name="movie_release">Release Date</string>
+    <string name="movie_rating_label">User Rating: </string>
+    <string name="movie_release_label">Release Date: </string>
+
 </resources>
 
