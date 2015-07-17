@@ -14,7 +14,6 @@
         android:horizontalSpacing="0dp"
         android:stretchMode="columnWidth"
         android:gravity="center"
-        android:background="#ff00ff00"
         />
 
 </FrameLayout>
