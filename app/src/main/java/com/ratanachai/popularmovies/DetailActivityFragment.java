@@ -23,9 +23,12 @@ public class DetailActivityFragment extends Fragment {
         View rootview = inflater.inflate(R.layout.fragment_detail, container, false);
 
         Intent intent = getActivity().getIntent();
-        if (intent != null && intent.hasExtra(Intent.EXTRA_TEXT)){
-            String movieTitle = intent.getStringExtra(Intent.EXTRA_TEXT);
-            ((TextView) rootview.findViewById(R.id.movie_title)).setText(movieTitle);
+        if (intent != null && intent.hasExtra("strings")){
+            String[] movieInfo = intent.getStringArrayExtra("strings");
+            ((TextView) rootview.findViewById(R.id.movie_title)).setText(movieInfo[0]);
+            ((TextView) rootview.findViewById(R.id.movie_overview)).setText(movieInfo[2]);
+            ((TextView) rootview.findViewById(R.id.movie_rating)).setText(movieInfo[3]);
+            ((TextView) rootview.findViewById(R.id.movie_release)).setText(movieInfo[4]);
         }
 
         return rootview;
