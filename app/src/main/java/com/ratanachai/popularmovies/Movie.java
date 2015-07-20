@@ -21,6 +21,10 @@ public class Movie implements Parcelable{
     public String getPosterUrl(){
         return posterUrl;
     }
+    public String[] getAll(){
+        String[] all = {title, posterUrl, overview, userRating, releaseDate};
+        return all;
+    }
 
     /** Methods needed for implementing Parcelable
      * http://stackoverflow.com/questions/12503836/how-to-save-custom-arraylist-on-android-screen-rotate */
