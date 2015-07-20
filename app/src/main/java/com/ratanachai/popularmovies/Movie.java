@@ -1,9 +1,9 @@
 package com.ratanachai.popularmovies;
 
-/**
- * Created by keng on 15/07/20.
- */
-public class Movie {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Movie implements Parcelable{
     private String title;
     private String posterUrl;
     private String overview;
@@ -21,5 +21,34 @@ public class Movie {
     public String getPosterUrl(){
         return posterUrl;
     }
+
+    /** Methods needed for implementing Parcelable
+     * http://stackoverflow.com/questions/12503836/how-to-save-custom-arraylist-on-android-screen-rotate */
+
+    private Movie(Parcel in){
+        title = in.readString();
+        posterUrl = in.readString();
+        overview = in.readString();
+        userRating = in.readString();
+        releaseDate = in.readString();
+    }
+    public int describeContents() {
+        return 0;
+    }
+    public void writeToParcel(Parcel out, int flags){
+        out.writeString(title);
+        out.writeString(posterUrl);
+        out.writeString(overview);
+        out.writeString(userRating);
+        out.writeString(releaseDate);
+    }
+    public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>(){
+        public Movie createFromParcel(Parcel in){
+            return new Movie(in);
+        }
+        public Movie[] newArray(int size){
+            return new Movie[size];
+        }
+    };
 
 }
