@@ -63,6 +63,11 @@ public class DetailActivityFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        // Put all content above ListView into another layout (header) add it back later as
+        // a ListView header to virtually have  ListView inside Scroll view
+        // http://stackoverflow.com/questions/18367522/android-list-view-inside-a-scroll-view
+        View header = inflater.inflate(R.layout.detail_header, container, false);
         View rootview = inflater.inflate(R.layout.fragment_detail, container, false);
 
         Intent intent = getActivity().getIntent();
@@ -70,17 +75,18 @@ public class DetailActivityFragment extends Fragment {
             String[] movieInfo = intent.getStringArrayExtra("strings");
 
             // Set all TextView and Poster
-            ((TextView) rootview.findViewById(R.id.movie_title)).setText(movieInfo[1]);
-            ((TextView) rootview.findViewById(R.id.movie_overview)).setText(movieInfo[3]);
-            ((TextView) rootview.findViewById(R.id.movie_rating)).append(" "+movieInfo[4]+"/10");
-            ((TextView) rootview.findViewById(R.id.movie_release)).append(" " + movieInfo[5]);
+            ((TextView) header.findViewById(R.id.movie_title)).setText(movieInfo[1]);
+            ((TextView) header.findViewById(R.id.movie_overview)).setText(movieInfo[3]);
+            ((TextView) header.findViewById(R.id.movie_rating)).append(" "+movieInfo[4]+"/10");
+            ((TextView) header.findViewById(R.id.movie_release)).append(" " + movieInfo[5]);
             Picasso.with(getActivity())
                     .load("http://image.tmdb.org/t/p/w185" + movieInfo[2])
-                    .into((ImageView) rootview.findViewById(R.id.movie_poster));
+                    .into((ImageView) header.findViewById(R.id.movie_poster));
 
-            // Set Adapter for Video listview
+            // Set Adapter for Video ListView
             ListView videoListView = (ListView) rootview.findViewById(R.id.video_list_view);
             videoListView.setAdapter(mVideoNameAdapter);
+            videoListView.addHeaderView(header);
         }
 
         return rootview;
