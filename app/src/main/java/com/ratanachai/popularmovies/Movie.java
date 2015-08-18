@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Movie implements Parcelable{
+    private String id;
     private String title;
     private String posterUrl;
     private String overview;
@@ -11,7 +12,8 @@ public class Movie implements Parcelable{
     private String releaseDate;
 
     //Take Json string and create an instance
-    public Movie(String title, String poster, String overview, String userRating, String releaseDate){
+    public Movie(String id, String title, String poster, String overview, String userRating, String releaseDate){
+        this.id = id;
         this.title = title;
         this.posterUrl = poster;
         this.overview = overview;
@@ -22,7 +24,7 @@ public class Movie implements Parcelable{
         return posterUrl;
     }
     public String[] getAll(){
-        String[] all = {title, posterUrl, overview, userRating, releaseDate};
+        String[] all = {id, title, posterUrl, overview, userRating, releaseDate};
         return all;
     }
 
@@ -30,6 +32,7 @@ public class Movie implements Parcelable{
      * http://stackoverflow.com/questions/12503836/how-to-save-custom-arraylist-on-android-screen-rotate */
 
     private Movie(Parcel in){
+        id = in.readString();
         title = in.readString();
         posterUrl = in.readString();
         overview = in.readString();
@@ -40,6 +43,7 @@ public class Movie implements Parcelable{
         return 0;
     }
     public void writeToParcel(Parcel out, int flags){
+        out.writeString(id);
         out.writeString(title);
         out.writeString(posterUrl);
         out.writeString(overview);

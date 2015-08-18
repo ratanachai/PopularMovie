@@ -199,6 +199,7 @@ public class MainActivityFragment extends Fragment {
 
             // These are the names of the JSON objects that need to be extracted.
             final String TMDB_MOVIES = "results";
+            final String TMDB_MOVIE_ID = "id";
             final String TMDB_ORIGINAL_TITLE = "original_title";
             final String TMDB_POSTER_PATH = "poster_path";
             final String TMDB_OVERVIEW = "overview";
@@ -212,7 +213,8 @@ public class MainActivityFragment extends Fragment {
             mMovies.clear(); // Must clear the list before adding new
             for(int i = 0; i < moviesArray.length(); i++){
                 JSONObject aMovie = moviesArray.getJSONObject(i);
-                Movie movieObj = new Movie(aMovie.getString(TMDB_ORIGINAL_TITLE),
+                Movie movieObj = new Movie(aMovie.getString(TMDB_MOVIE_ID),
+                                            aMovie.getString(TMDB_ORIGINAL_TITLE),
                                             aMovie.getString(TMDB_POSTER_PATH),
                                             aMovie.getString(TMDB_OVERVIEW),
                                             aMovie.getString(TMDB_USER_RATING),
