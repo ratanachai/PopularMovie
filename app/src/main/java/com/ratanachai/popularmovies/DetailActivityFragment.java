@@ -50,14 +50,31 @@ public class DetailActivityFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         mVideoNameAdapter = new ArrayAdapter<String>(
-                getActivity(), // The current context (this activity)
-                android.R.layout.simple_list_item_1, // The name of the layout ID.
-                android.R.id.text1, // The ID of the textview to populate.
+                getActivity(),
+                android.R.layout.simple_list_item_1,
+                android.R.id.text1,
                 new ArrayList<String>());
 
-        String video_id = getActivity().getIntent().getStringArrayExtra("strings")[0];
-        fetchVideosInfo(video_id);
-        Toast.makeText(getActivity(), video_id, Toast.LENGTH_SHORT).show();
+        /** Fetch Videos from TMDB */
+        // http://stackoverflow.com/questions/12503836/how-to-save-custom-arraylist-on-android-screen-rotate
+        if (savedInstanceState == null || !savedInstanceState.containsKey("videos")) {
+
+            fetchVideosInfo(getActivity().getIntent().getStringArrayExtra("strings")[0]);
+
+        /** or Restore from savedInstanceState */
+        }else {
+            mVideos = savedInstanceState.getParcelableArrayList("videos");
+            mVideoNameAdapter.clear();
+            for (Video aVideo : mVideos) {
+                mVideoNameAdapter.add(aVideo.getName());
+            }
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState){
+        super.onSaveInstanceState(outState);
+        if(!mVideos.isEmpty()) outState.putParcelableArrayList("videos", mVideos);
     }
 
     @Override
@@ -238,7 +255,6 @@ public class DetailActivityFragment extends Fragment {
                 for(Video aVideo : videos) {
                     // Store movie poster URL into Adapter
                     mVideoNameAdapter.add(aVideo.getName());
-                    Toast.makeText(getActivity(), aVideo.getName(), Toast.LENGTH_SHORT).show();
                 }
             }
         }
