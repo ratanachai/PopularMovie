@@ -1,5 +1,6 @@
 package com.ratanachai.popularmovies;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -13,6 +14,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -100,10 +102,27 @@ public class DetailActivityFragment extends Fragment {
                     .load("http://image.tmdb.org/t/p/w185" + movieInfo[2])
                     .into((ImageView) header.findViewById(R.id.movie_poster));
 
-            // Set Adapter for Video ListView
+            // Setup Video ListView
             ListView videoListView = (ListView) rootview.findViewById(R.id.video_list_view);
             videoListView.setAdapter(mVideoNameAdapter);
             videoListView.addHeaderView(header);
+
+            // Setup Youtube App launch a video OnItemClick
+            videoListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    //String name = (String)parent.getItemAtPosition(position);
+                    String key = mVideos.get(position-1).getKey(); //ListView's header is position 0
+                    try {
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:"+key));
+                        startActivity(intent);
+                    }catch (ActivityNotFoundException e){
+                        Intent intent = new Intent(Intent.ACTION_VIEW,
+                                Uri.parse("http://www.youtube.com/watch?v="+key));
+                        startActivity(intent);
+                    }
+                }
+            });
         }
 
         return rootview;

@@ -22,6 +22,7 @@ public class Video implements Parcelable {
         return all;
     }
     public String getName(){return name;}
+    public String getKey(){return key;}
 
     /** Methods needed for implementing Parcelable
      * http://stackoverflow.com/questions/12503836/how-to-save-custom-arraylist-on-android-screen-rotate */
