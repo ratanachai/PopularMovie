@@ -1,6 +1,5 @@
 package com.ratanachai.popularmovies;
 
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -14,10 +13,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,41 +31,27 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
-
-/**
- * A placeholder fragment containing a simple view.
- */
 public class DetailActivityFragment extends Fragment {
 
-    private ArrayAdapter mVideoNameAdapter;
     private ArrayList<Video> mVideos = new ArrayList<>();
+    private View mRootview;
 
-    public DetailActivityFragment() {
-    }
+    public DetailActivityFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
 
-        mVideoNameAdapter = new ArrayAdapter<String>(
-                getActivity(),
-                android.R.layout.simple_list_item_1,
-                android.R.id.text1,
-                new ArrayList<String>());
-
         /** Fetch Videos from TMDB */
         // http://stackoverflow.com/questions/12503836/how-to-save-custom-arraylist-on-android-screen-rotate
         if (savedInstanceState == null || !savedInstanceState.containsKey("videos")) {
-
+            if(savedInstanceState == null) {Log.v("======", "savedInsta is NULL");}
             fetchVideosInfo(getActivity().getIntent().getStringArrayExtra("strings")[0]);
+            Log.v("======", "fetched");
 
         /** or Restore from savedInstanceState */
         }else {
             mVideos = savedInstanceState.getParcelableArrayList("videos");
-            mVideoNameAdapter.clear();
-            for (Video aVideo : mVideos) {
-                mVideoNameAdapter.add(aVideo.getName());
-            }
         }
     }
 
@@ -77,55 +59,65 @@ public class DetailActivityFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState){
         super.onSaveInstanceState(outState);
         if(!mVideos.isEmpty()) outState.putParcelableArrayList("videos", mVideos);
+        Log.v("======", "onSaveIn");
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        // Put all content above ListView into another layout (header) add it back later as
-        // a ListView header to virtually have  ListView inside Scroll view
-        // http://stackoverflow.com/questions/18367522/android-list-view-inside-a-scroll-view
-        View header = inflater.inflate(R.layout.detail_header, container, false);
-        View rootview = inflater.inflate(R.layout.fragment_detail, container, false);
+        mRootview = inflater.inflate(R.layout.fragment_detail, container, false);
 
         Intent intent = getActivity().getIntent();
         if (intent != null && intent.hasExtra("strings")){
             String[] movieInfo = intent.getStringArrayExtra("strings");
 
             // Set all TextView and Poster
-            ((TextView) header.findViewById(R.id.movie_title)).setText(movieInfo[1]);
-            ((TextView) header.findViewById(R.id.movie_overview)).setText(movieInfo[3]);
-            ((TextView) header.findViewById(R.id.movie_rating)).append(" "+movieInfo[4]+"/10");
-            ((TextView) header.findViewById(R.id.movie_release)).append(" " + movieInfo[5]);
+            ((TextView) mRootview.findViewById(R.id.movie_title)).setText(movieInfo[1]);
+            ((TextView) mRootview.findViewById(R.id.movie_overview)).setText(movieInfo[3]);
+            ((TextView) mRootview.findViewById(R.id.movie_rating)).append(" "+movieInfo[4]+"/10");
+            ((TextView) mRootview.findViewById(R.id.movie_release)).append(" " + movieInfo[5]);
             Picasso.with(getActivity())
                     .load("http://image.tmdb.org/t/p/w185" + movieInfo[2])
-                    .into((ImageView) header.findViewById(R.id.movie_poster));
+                    .into((ImageView) mRootview.findViewById(R.id.movie_poster));
 
-            // Setup Video ListView
-            ListView videoListView = (ListView) rootview.findViewById(R.id.video_list_view);
-            videoListView.setAdapter(mVideoNameAdapter);
-            videoListView.addHeaderView(header);
+            // Setup Trailer Videos TextView
+            if (!mVideos.isEmpty()) {
+                ViewGroup containerView = (ViewGroup) mRootview.findViewById(R.id.movie_trailers_container);
+                for (Video aVideo : mVideos) {
 
-            // Setup Youtube App launch a video OnItemClick
-            videoListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    //String name = (String)parent.getItemAtPosition(position);
-                    String key = mVideos.get(position-1).getKey(); //ListView's header is position 0
-                    try {
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:"+key));
-                        startActivity(intent);
-                    }catch (ActivityNotFoundException e){
-                        Intent intent = new Intent(Intent.ACTION_VIEW,
-                                Uri.parse("http://www.youtube.com/watch?v="+key));
-                        startActivity(intent);
-                    }
+                    LayoutInflater in = getLayoutInflater(null);
+                    View tmpView = in.inflate(R.layout.video_link_item, null);
+                    TextView textView = (TextView) tmpView.findViewById(R.id.tmp);
+
+                    textView.setText(aVideo.getName());
+                    containerView.addView(textView);
+                    
                 }
-            });
+            }
+            // Setup Youtube App launch a video OnItemClick
+
+//            videoListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//                @Override
+//                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                    //String name = (String)parent.getItemAtPosition(position);
+//                    String key = mVideos.get(position-1).getKey(); //ListView's header is position 0
+//                    try {
+//                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:"+key));
+//                        startActivity(intent);
+//                    }catch (ActivityNotFoundException e){
+//                        Intent intent = new Intent(Intent.ACTION_VIEW,
+//                                Uri.parse("http://www.youtube.com/watch?v="+key));
+//                        startActivity(intent);
+//                    }
+//                }
+//            });
+
+
         }
 
-        return rootview;
+        return mRootview;
     }
 
 
@@ -270,10 +262,16 @@ public class DetailActivityFragment extends Fragment {
         @Override
         protected void onPostExecute(ArrayList<Video> videos) {
             if (videos != null) {
-                mVideoNameAdapter.clear(); // Must clear adapter before adding new
+
+                ViewGroup containerView = (ViewGroup) mRootview.findViewById(R.id.movie_trailers_container);
+
                 for(Video aVideo : videos) {
-                    // Store movie poster URL into Adapter
-                    mVideoNameAdapter.add(aVideo.getName());
+
+                    LayoutInflater in = getLayoutInflater(null);
+                    View tmpView = in.inflate(R.layout.video_link_item, null);
+                    TextView textView = (TextView) tmpView.findViewById(R.id.tmp);
+                    textView.setText(aVideo.getName());
+                    containerView.addView(textView);
                 }
             }
         }
