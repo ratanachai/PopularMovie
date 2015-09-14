@@ -5,3 +5,5 @@
 .DS_Store
 /build
 /captures
+app/src/main/res/values/pivate.xml
+.idea/misc.xml
