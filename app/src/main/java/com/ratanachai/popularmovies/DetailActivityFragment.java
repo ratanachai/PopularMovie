@@ -35,6 +35,7 @@ public class DetailActivityFragment extends Fragment {
 
     private ArrayList<Video> mVideos = new ArrayList<>();
     private View mRootview;
+    private boolean mRestoreView = false;
 
     public DetailActivityFragment() {}
 
@@ -52,6 +53,7 @@ public class DetailActivityFragment extends Fragment {
         /** or Restore from savedInstanceState */
         }else {
             mVideos = savedInstanceState.getParcelableArrayList("videos");
+            mRestoreView = true;
         }
     }
 
@@ -82,8 +84,8 @@ public class DetailActivityFragment extends Fragment {
                     .load("http://image.tmdb.org/t/p/w185" + movieInfo[2])
                     .into((ImageView) mRootview.findViewById(R.id.movie_poster));
 
-            // Setup Trailer Videos TextView
-            if (!mVideos.isEmpty()) {
+            // Restore Trailer Videos TextView (First time added at OnPostExecute)
+            if (mRestoreView) {
                 ViewGroup containerView = (ViewGroup) mRootview.findViewById(R.id.movie_trailers_container);
                 for (Video aVideo : mVideos) {
 
