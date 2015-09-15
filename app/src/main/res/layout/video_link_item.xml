@@ -1,8 +1,8 @@
 <TextView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/tmp"
-    android:text="@string/movie_overview"
-    android:padding="@dimen/activity_vertical_margin"
+    android:id="@+id/movie_trailer_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:text="@string/movie_trailer_placeholder"
+    android:padding="@dimen/activity_vertical_margin"
     />

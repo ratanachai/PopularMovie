@@ -16,6 +16,6 @@
     <string name="movie_rating_label">User Rating: </string>
     <string name="movie_release_label">Release Date: </string>
     <string name="movie_trailers_label">Trailers: </string>
-
+    <string name="movie_trailer_placeholder">Trailer Video link</string>
 </resources>
 

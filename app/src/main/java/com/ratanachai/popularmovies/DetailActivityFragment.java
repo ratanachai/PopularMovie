@@ -1,5 +1,6 @@
 package com.ratanachai.popularmovies;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -87,35 +88,33 @@ public class DetailActivityFragment extends Fragment {
             // Restore Trailer Videos TextView (First time added at OnPostExecute)
             if (mRestoreView) {
                 ViewGroup containerView = (ViewGroup) mRootview.findViewById(R.id.movie_trailers_container);
-                for (Video aVideo : mVideos) {
+                for (int i=0; i < mVideos.size(); i++) {
 
-                    LayoutInflater in = getLayoutInflater(null);
-                    View tmpView = in.inflate(R.layout.video_link_item, null);
-                    TextView textView = (TextView) tmpView.findViewById(R.id.tmp);
+                    View v = getLayoutInflater(null).inflate(R.layout.video_link_item, null);
+                    TextView VideoTextView = (TextView) v.findViewById(R.id.movie_trailer_item);
 
-                    textView.setText(aVideo.getName());
-                    containerView.addView(textView);
-                    
+                    VideoTextView.setText(mVideos.get(i).getName());
+                    VideoTextView.setTag(mVideos.get(i).getKey());
+
+                    // Setup Youtube App launch a video OnItemClick
+                    VideoTextView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            try {
+                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(
+                                        "vnd.youtube:" + v.getTag()));
+                                startActivity(intent);
+                            } catch (ActivityNotFoundException e) {
+                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(
+                                        "http://www.youtube.com/watch?v=" + v.getTag()));
+                                startActivity(intent);
+                            }
+                        }
+                    });
+                    containerView.addView(VideoTextView);
                 }
             }
-            // Setup Youtube App launch a video OnItemClick
-
-//            videoListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//                @Override
-//                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                    //String name = (String)parent.getItemAtPosition(position);
-//                    String key = mVideos.get(position-1).getKey(); //ListView's header is position 0
-//                    try {
-//                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:"+key));
-//                        startActivity(intent);
-//                    }catch (ActivityNotFoundException e){
-//                        Intent intent = new Intent(Intent.ACTION_VIEW,
-//                                Uri.parse("http://www.youtube.com/watch?v="+key));
-//                        startActivity(intent);
-//                    }
-//                }
-//            });
-
 
         }
 
@@ -271,7 +270,7 @@ public class DetailActivityFragment extends Fragment {
 
                     LayoutInflater in = getLayoutInflater(null);
                     View tmpView = in.inflate(R.layout.video_link_item, null);
-                    TextView textView = (TextView) tmpView.findViewById(R.id.tmp);
+                    TextView textView = (TextView) tmpView.findViewById(R.id.movie_trailer_item);
                     textView.setText(aVideo.getName());
                     containerView.addView(textView);
                 }
