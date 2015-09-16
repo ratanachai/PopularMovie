@@ -32,6 +32,7 @@ import java.util.ArrayList;
 public class DetailActivityFragment extends Fragment {
 
     private ArrayList<Video> mVideos = new ArrayList<>();
+    private ArrayList<Review> mReviews = new ArrayList<>();
     private View mRootview;
     private boolean mRestoreView = false;
 
@@ -87,9 +88,7 @@ public class DetailActivityFragment extends Fragment {
             if (mRestoreView) {
                 addVideosTextView(mVideos);
             }
-
         }
-
         return mRootview;
     }
 
@@ -257,6 +256,160 @@ public class DetailActivityFragment extends Fragment {
         protected void onPostExecute(ArrayList<Video> videos) {
             if (videos != null) {
                 addVideosTextView(videos);
+            }
+        }
+    }
+
+    private void addReviewsTextView(ArrayList<Review> reviews) {
+
+        ViewGroup containerView = (ViewGroup) mRootview.findViewById(R.id.movie_trailers_container);
+        for (int i=0; i < reviews.size(); i++) {
+
+            View v = getLayoutInflater(null).inflate(R.layout.video_link_item, null);
+            TextView ReviewTextView = (TextView) v.findViewById(R.id.movie_trailer_item);
+
+            ReviewTextView.setText(reviews.get(i).getName());
+            ReviewTextView.setTag(reviews.get(i).getKey());
+
+            // Setup Youtube App launch a review OnItemClick
+            ReviewTextView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    try {
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(
+                                "vnd.youtube:" + v.getTag()));
+                        startActivity(intent);
+                    } catch (ActivityNotFoundException e) {
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(
+                                "http://www.youtube.com/watch?v=" + v.getTag()));
+                        startActivity(intent);
+                    }
+                }
+            });
+            containerView.addView(ReviewTextView);
+        }
+    }
+    public class FetchReviewsTask extends AsyncTask<String, Void, ArrayList<Review>> {
+
+        private final String LOG_TAG = FetchReviewsTask.class.getSimpleName();
+
+        /** Takes the JSON string and converts it into an Object hierarchy. */
+        private ArrayList<Review> getReviewsFromJson(String reviewsJsonStr)
+                throws JSONException {
+
+            // These are the names of the JSON objects that need to be extracted.
+            final String TMDB_VIDEOS = "results";
+            final String TMDB_VIDEO_KEY = "key";
+            final String TMDB_VIDEO_NAME = "name";
+            final String TMDB_VIDEO_SITE = "site";
+            final String TMDB_VIDEO_TYPE = "type";
+
+            JSONObject reviewsJson = new JSONObject(reviewsJsonStr);
+            JSONArray reviewsArray = reviewsJson.getJSONArray(TMDB_VIDEOS);
+
+            // Create Review objects and put them into ArrayList
+            mReviews.clear(); // Must clear the list before adding new
+            for(int i = 0; i < reviewsArray.length(); i++){
+                JSONObject aReview = reviewsArray.getJSONObject(i);
+                Review reviewObj = new Review(aReview.getString(TMDB_VIDEO_KEY),
+                        aReview.getString(TMDB_VIDEO_NAME),
+                        aReview.getString(TMDB_VIDEO_SITE),
+                        aReview.getString(TMDB_VIDEO_TYPE));
+                mReviews.add(reviewObj);
+            }
+
+            return mReviews;
+        }
+
+        @Override
+        protected ArrayList<Review> doInBackground(String... params) {
+
+            // These two need to be declared outside the try/catch
+            // so that they can be closed in the finally block.
+            HttpURLConnection urlConnection = null;
+            BufferedReader reader = null;
+
+            // Will contain the raw JSON response as a string.
+            String reviewsJsonStr = null;
+            String movie_id = params[0];
+            String api_key = getString(R.string.api_key);
+
+            try {
+                // Construct the URL for TMDB query
+                // http://api.themoviedb.org/3/movie/15121/reviews?api_key=<api_key>
+                final String BASE_URL = "http://api.themoviedb.org/3/movie/";
+                final String API_KEY_PARAM = "api_key";
+
+                Uri builtUri = Uri.parse(BASE_URL).buildUpon()
+                        .appendPath(movie_id)
+                        .appendPath("reviews")
+                        .appendQueryParameter(API_KEY_PARAM, api_key)
+                        .build();
+
+                URL url = new URL(builtUri.toString());
+
+                // Create the request to TMDB, and open the connection
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.connect();
+
+                // Read the input stream into a String
+                InputStream inputStream = urlConnection.getInputStream();
+                StringBuffer buffer = new StringBuffer();
+                if (inputStream == null) {
+                    // Nothing to do.
+                    return null;
+                }
+                reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
+                    // But it does make debugging a *lot* easier if you print out the completed
+                    // buffer for debugging.
+                    buffer.append(line + "\n");
+                }
+
+                if (buffer.length() == 0) {
+                    // Stream was empty.  No point in parsing.
+                    return null;
+                }
+                reviewsJsonStr = buffer.toString();
+
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "Error ", e);
+                // If the code didn't successfully get the weather data, there's no point in attemping
+                // to parse it.
+                return null;
+            } finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (final IOException e) {
+                        Log.e(LOG_TAG, "Error closing stream", e);
+                    }
+                }
+            }
+
+            try {
+                return getReviewsFromJson(reviewsJsonStr);
+            } catch (JSONException e) {
+                Log.e(LOG_TAG, e.getMessage(), e);
+                e.printStackTrace();
+            }
+
+            // This will only happen if there was an error getting or parsing the forecast.
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<Review> reviews) {
+            if (reviews != null) {
+                addReviewsTextView(reviews);
             }
         }
     }
