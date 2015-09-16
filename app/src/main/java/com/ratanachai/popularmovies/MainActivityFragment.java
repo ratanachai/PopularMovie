@@ -1,11 +1,8 @@
 package com.ratanachai.popularmovies;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -122,15 +119,6 @@ public class MainActivityFragment extends Fragment {
         return rootView;
     }
 
-    //Based on a http://stackoverflow.com/questions/4238921/detect-whether-there-is-an-internet-connection-available-on-android
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
-
-
     // How-to use Picasso with ArrayAdapter from Big Nerd Ranch
     // https://www.bignerdranch.com/blog/solving-the-android-image-loading-problem-volley-vs-picasso/
     private class CustomImageAdapter extends ArrayAdapter<String> {
@@ -165,7 +153,7 @@ public class MainActivityFragment extends Fragment {
         String sort_by = prefs.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_default));
 
         // Fetch movies information in background
-        if(isNetworkAvailable()) {
+        if(Utility.isNetworkAvailable(getActivity())) {
             //Toast.makeText(getActivity(),"Fetching", Toast.LENGTH_SHORT).show();
             FetchMoviesTask fetchMoviesTask = new FetchMoviesTask();
             fetchMoviesTask.execute(sort_by);

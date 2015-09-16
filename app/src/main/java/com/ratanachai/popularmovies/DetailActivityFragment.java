@@ -1,10 +1,7 @@
 package com.ratanachai.popularmovies;
 
 import android.content.ActivityNotFoundException;
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -96,19 +93,10 @@ public class DetailActivityFragment extends Fragment {
         return mRootview;
     }
 
-
-    //Based on a http://stackoverflow.com/questions/4238921/detect-whether-there-is-an-internet-connection-available-on-android
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
-
     private void fetchVideosInfo(String video_id){
 
         // Fetch movies information in background
-        if(isNetworkAvailable()) {
+        if(Utility.isNetworkAvailable(getActivity())) {
             //Toast.makeText(getActivity(),"Fetching", Toast.LENGTH_SHORT).show();
             FetchVideosTask fetchMoviesTask = new FetchVideosTask();
             fetchMoviesTask.execute(video_id);
