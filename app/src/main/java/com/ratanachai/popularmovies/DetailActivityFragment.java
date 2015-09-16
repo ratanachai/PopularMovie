@@ -83,6 +83,7 @@ public class DetailActivityFragment extends Fragment {
             ((TextView) mRootview.findViewById(R.id.movie_release)).append(" " + movieInfo[5]);
             Picasso.with(getActivity())
                     .load("http://image.tmdb.org/t/p/w185" + movieInfo[2])
+                    .fit().centerInside()
                     .into((ImageView) mRootview.findViewById(R.id.movie_poster));
 
             // Restore Trailer Videos TextView (First time added at OnPostExecute)
