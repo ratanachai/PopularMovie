@@ -51,7 +51,7 @@
         
         <TextView
             android:id="@+id/movie_overview"
-            android:text="@string/movie_overview"
+            android:text="@string/movie_overview_placeholder"
             android:textSize="@dimen/abc_text_size_small_material"
             android:padding="@dimen/activity_vertical_margin"
             android:layout_width="match_parent" android:layout_height="wrap_content" />

@@ -12,15 +12,23 @@
     <string name="pref_sort_rating_label">Rating</string>
     <string name="title_activity_detail">Movie Detail</string>
     <string name="movie_title">Movie Title</string>
-    <string name="movie_overview">Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+    <string name="movie_overview_placeholder">Lorem ipsum dolor sit amet, consectetur adipiscing elit,
         sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
         quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
         Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
         nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
         officia deserunt mollit anim id est laborum</string>
+    <string name="movie_trailer_placeholder">Official Trailer #N</string>
     <string name="movie_rating_label">User Rating: </string>
     <string name="movie_release_label">Release Date: </string>
     <string name="movie_trailers_label">Trailers: </string>
     <string name="movie_reviews_label">Reviews: </string>
+    <string name="movie_review_author">Author</string>
+    <string name="movie_review_content">Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+        sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
+        nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
+        officia deserunt mollit anim id est laborum</string>
 </resources>
 

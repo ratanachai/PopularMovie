@@ -44,14 +44,16 @@ public class DetailActivityFragment extends Fragment {
 
         /** Fetch Videos from TMDB */
         // http://stackoverflow.com/questions/12503836/how-to-save-custom-arraylist-on-android-screen-rotate
-        if (savedInstanceState == null || !savedInstanceState.containsKey("videos")) {
-            if(savedInstanceState == null) {Log.v("======", "savedInsta is NULL");}
-            fetchVideosInfo(getActivity().getIntent().getStringArrayExtra("strings")[0]);
-            Log.v("======", "fetched");
+        String movie_id = getActivity().getIntent().getStringArrayExtra("strings")[0];
+        if (savedInstanceState == null
+                || !savedInstanceState.containsKey("videos") || !savedInstanceState.containsKey("reviews")) {
+            fetchTrailers(movie_id);
+            fetchReviews(movie_id);
 
         /** or Restore from savedInstanceState */
         }else {
             mVideos = savedInstanceState.getParcelableArrayList("videos");
+            mReviews = savedInstanceState.getParcelableArrayList("reviews");
             mRestoreView = true;
         }
     }
@@ -60,8 +62,7 @@ public class DetailActivityFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState){
         super.onSaveInstanceState(outState);
         if(!mVideos.isEmpty()) outState.putParcelableArrayList("videos", mVideos);
-        Log.v("======", "onSaveIn");
-
+        if(!mReviews.isEmpty()) outState.putParcelableArrayList("reviews", mReviews);
     }
 
     @Override
@@ -84,15 +85,17 @@ public class DetailActivityFragment extends Fragment {
                     .fit().centerInside()
                     .into((ImageView) mRootview.findViewById(R.id.movie_poster));
 
-            // Restore Trailer Videos TextView (First time added at OnPostExecute)
+            // Restore Trailer Videos and Reviews (First time added via OnPostExecute)
             if (mRestoreView) {
                 addVideosTextView(mVideos);
+                addReviewsTextView(mReviews);
             }
         }
         return mRootview;
     }
 
-    private void fetchVideosInfo(String video_id){
+    /** Code for Movie Video (Trailer) ---------------------------------------------------------- */
+    private void fetchTrailers(String video_id){
 
         // Fetch movies information in background
         if(Utility.isNetworkAvailable(getActivity())) {
@@ -111,13 +114,13 @@ public class DetailActivityFragment extends Fragment {
         for (int i=0; i < videos.size(); i++) {
 
             View v = getLayoutInflater(null).inflate(R.layout.video_link_item, null);
-            TextView VideoTextView = (TextView) v.findViewById(R.id.movie_trailer_item);
+            TextView videoTextView = (TextView) v.findViewById(R.id.movie_trailer_item);
 
-            VideoTextView.setText(videos.get(i).getName());
-            VideoTextView.setTag(videos.get(i).getKey());
+            videoTextView.setText(videos.get(i).getName());
+            videoTextView.setTag(videos.get(i).getKey());
 
             // Setup Youtube App launch a video OnItemClick
-            VideoTextView.setOnClickListener(new View.OnClickListener() {
+            videoTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
@@ -132,7 +135,7 @@ public class DetailActivityFragment extends Fragment {
                     }
                 }
             });
-            containerView.addView(VideoTextView);
+            containerView.addView(videoTextView);
         }
     }
 
@@ -260,62 +263,58 @@ public class DetailActivityFragment extends Fragment {
         }
     }
 
+    /** Code for Movie Review ------------------------------------------------------------------- */
+    private void fetchReviews(String video_id){
+
+        if(Utility.isNetworkAvailable(getActivity())) {
+            FetchReviewsTask fetchReviewsTask = new FetchReviewsTask();
+            fetchReviewsTask.execute(video_id);
+        }else{
+            Toast toast = Toast.makeText(getActivity(), "Please check your network connection", Toast.LENGTH_LONG);
+            toast.setGravity(Gravity.CENTER, 0, 0);
+            toast.show();
+        }
+    }
+
     private void addReviewsTextView(ArrayList<Review> reviews) {
 
-        ViewGroup containerView = (ViewGroup) mRootview.findViewById(R.id.movie_trailers_container);
+        ViewGroup containerView = (ViewGroup) mRootview.findViewById(R.id.movie_reviews_container);
         for (int i=0; i < reviews.size(); i++) {
 
-            View v = getLayoutInflater(null).inflate(R.layout.video_link_item, null);
-            TextView ReviewTextView = (TextView) v.findViewById(R.id.movie_trailer_item);
+            View v = getLayoutInflater(null).inflate(R.layout.review_item, null);
+            View rootView = v.getRootView();
+            TextView reviewAuthor = (TextView) v.findViewById(R.id.movie_review_author);
+            TextView reviewContent = (TextView) v.findViewById(R.id.movie_review_content);
+            reviewAuthor.setText(reviews.get(i).getAuthor());
+            reviewContent.setText(reviews.get(i).getContent());
+            containerView.addView(rootView);
 
-            ReviewTextView.setText(reviews.get(i).getName());
-            ReviewTextView.setTag(reviews.get(i).getKey());
-
-            // Setup Youtube App launch a review OnItemClick
-            ReviewTextView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    try {
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(
-                                "vnd.youtube:" + v.getTag()));
-                        startActivity(intent);
-                    } catch (ActivityNotFoundException e) {
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(
-                                "http://www.youtube.com/watch?v=" + v.getTag()));
-                        startActivity(intent);
-                    }
-                }
-            });
-            containerView.addView(ReviewTextView);
         }
     }
     public class FetchReviewsTask extends AsyncTask<String, Void, ArrayList<Review>> {
 
         private final String LOG_TAG = FetchReviewsTask.class.getSimpleName();
 
-        /** Takes the JSON string and converts it into an Object hierarchy. */
-        private ArrayList<Review> getReviewsFromJson(String reviewsJsonStr)
-                throws JSONException {
+        private ArrayList<Review> getReviewsFromJson(String reviewsJsonStr) throws JSONException {
 
             // These are the names of the JSON objects that need to be extracted.
-            final String TMDB_VIDEOS = "results";
-            final String TMDB_VIDEO_KEY = "key";
-            final String TMDB_VIDEO_NAME = "name";
-            final String TMDB_VIDEO_SITE = "site";
-            final String TMDB_VIDEO_TYPE = "type";
+            final String TMDB_REVIEWS = "results";
+            final String TMDB_REVIEW_ID = "id";
+            final String TMDB_REVIEW_AUTHOR = "author";
+            final String TMDB_REVIEW_CONTENT = "content";
+            final String TMDB_REVIEW_URL = "url";
 
             JSONObject reviewsJson = new JSONObject(reviewsJsonStr);
-            JSONArray reviewsArray = reviewsJson.getJSONArray(TMDB_VIDEOS);
+            JSONArray reviewsArray = reviewsJson.getJSONArray(TMDB_REVIEWS);
 
             // Create Review objects and put them into ArrayList
             mReviews.clear(); // Must clear the list before adding new
             for(int i = 0; i < reviewsArray.length(); i++){
                 JSONObject aReview = reviewsArray.getJSONObject(i);
-                Review reviewObj = new Review(aReview.getString(TMDB_VIDEO_KEY),
-                        aReview.getString(TMDB_VIDEO_NAME),
-                        aReview.getString(TMDB_VIDEO_SITE),
-                        aReview.getString(TMDB_VIDEO_TYPE));
+                Review reviewObj = new Review(aReview.getString(TMDB_REVIEW_ID),
+                        aReview.getString(TMDB_REVIEW_AUTHOR),
+                        aReview.getString(TMDB_REVIEW_CONTENT),
+                        aReview.getString(TMDB_REVIEW_URL));
                 mReviews.add(reviewObj);
             }
 
@@ -342,8 +341,7 @@ public class DetailActivityFragment extends Fragment {
                 final String API_KEY_PARAM = "api_key";
 
                 Uri builtUri = Uri.parse(BASE_URL).buildUpon()
-                        .appendPath(movie_id)
-                        .appendPath("reviews")
+                        .appendPath(movie_id).appendPath("reviews")
                         .appendQueryParameter(API_KEY_PARAM, api_key)
                         .build();
 
@@ -366,8 +364,7 @@ public class DetailActivityFragment extends Fragment {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                    // But it does make debugging a *lot* easier if you print out the completed
-                    // buffer for debugging.
+                    // But it does make debugging a *lot* easier if you print out the completed buffer for debugging.
                     buffer.append(line + "\n");
                 }
 
@@ -379,8 +376,7 @@ public class DetailActivityFragment extends Fragment {
 
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
-                // If the code didn't successfully get the weather data, there's no point in attemping
-                // to parse it.
+                // If the code didn't successfully get the data, no point in attempting to parse it.
                 return null;
             } finally {
                 if (urlConnection != null) {
