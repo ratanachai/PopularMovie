@@ -1,17 +1,13 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent" >
 
-    <LinearLayout
-        android:layout_width="match_parent" android:layout_height="wrap_content"
+    <LinearLayout android:orientation="vertical"
         android:paddingLeft="0dp" android:paddingRight="0dp" android:paddingTop="0dp" android:paddingBottom="0dp"
         android:layout_margin="0dp"
-        android:orientation="vertical" >
+        android:layout_width="match_parent" android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/movie_title"
+        <TextView android:id="@+id/movie_title"
             android:text="@string/movie_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:textSize="@dimen/abc_text_size_headline_material"
             android:textStyle="bold"
             android:textColor="#ffffffff"
@@ -20,22 +16,16 @@
             android:paddingBottom="@dimen/activity_vertical_margin"
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"
-            />
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:orientation="horizontal"
+            android:layout_width="match_parent" android:layout_height="wrap_content" />
+
+        <LinearLayout android:orientation="horizontal"
             android:padding="@dimen/activity_vertical_margin"
-            >
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:id="@+id/movie_poster"
+            android:layout_width="match_parent" android:layout_height="300dp">
+            <ImageView android:id="@+id/movie_poster"
+                android:src="@drawable/poster"
                 android:layout_weight="4"
-                android:src="@mipmap/ic_launcher" />
+                android:layout_width="0dp" android:layout_height="match_parent"/>
             <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_weight="3"
                 android:gravity="top"
@@ -43,46 +33,37 @@
                 android:paddingTop="0dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                >
-                <TextView
-                    android:id="@+id/movie_rating"
+                android:layout_width="0dp" android:layout_height="wrap_content">
+                <TextView android:id="@+id/movie_rating"
                     android:text="@string/movie_rating_label"
                     android:textSize="@dimen/abc_text_size_medium_material"
                     android:textStyle="bold"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <TextView
-                    android:id="@+id/movie_release"
+                    android:layout_marginBottom="@dimen/activity_vertical_margin"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <TextView android:id="@+id/movie_release"
                     android:text="@string/movie_release_label"
                     android:textSize="@dimen/abc_text_size_medium_material"
                     android:textStyle="bold"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_marginBottom="@dimen/activity_vertical_margin"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"/>
             </LinearLayout>
         </LinearLayout>
+        
         <TextView
             android:id="@+id/movie_overview"
             android:text="@string/movie_overview"
             android:textSize="@dimen/abc_text_size_small_material"
             android:padding="@dimen/activity_vertical_margin"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            />
-        <LinearLayout
-            android:id="@+id/movie_trailers_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            >
+            android:layout_width="match_parent" android:layout_height="wrap_content" />
+        <LinearLayout android:orientation="vertical" android:id="@+id/movie_trailers_container"
+            android:layout_width="match_parent" android:layout_height="wrap_content">
             <TextView
                 android:id="@+id/movie_trailers_label"
                 android:text="@string/movie_trailers_label"
                 android:textSize="@dimen/abc_text_size_medium_material"
                 android:textStyle="bold"
                 android:padding="@dimen/activity_vertical_margin"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                />
+                android:layout_width="match_parent" android:layout_height="wrap_content" />
         </LinearLayout>
 
     </LinearLayout>
