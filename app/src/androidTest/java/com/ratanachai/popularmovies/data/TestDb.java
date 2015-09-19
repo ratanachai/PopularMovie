@@ -15,6 +15,7 @@ package com.ratanachai.popularmovies.data;
  * limitations under the License.
  */
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.test.AndroidTestCase;
@@ -30,9 +31,8 @@ public class TestDb extends AndroidTestCase {
     }
 
     /*
-        This function gets called before each test is executed to delete the database.  This makes
-        sure that we always have a clean test.
-     */
+        This function gets called before each test is executed to delete the database.
+        This makes sure that we always have a clean test. */
     public void setUp() {
         // Since we want each test to start with a clean slate
         deleteTheDatabase();
@@ -117,5 +117,47 @@ public class TestDb extends AndroidTestCase {
 
         db.close();
     }
+
+    /*
+        TEST: Each table (Create and Read)
+     */
+    public void testMovieTable(){
+        insertMovie();
+    }
+//    public void testVideoTable(){
+//
+//    }
+//    public void testReviewTable(){
+//
+//    }
+    public long insertMovie(){
+
+        // Create DB with Table via DbHealper's onCreate, then getWritableDatabase
+        MovieDbHelper dbHelper = new MovieDbHelper(mContext);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        // TEST: insert
+        ContentValues testValues = TestUtilities.createMadmaxMovieValues();
+        long movieRowId = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, testValues);
+        assertTrue("Error: Did not get a row back after insert", movieRowId != -1);
+
+        // TEST: read and validate data
+        Cursor cursor = db.query(MovieContract.MovieEntry.TABLE_NAME,
+                null, null, null, null, null, null);
+        assertTrue("Error: No Records returned from movie query", cursor.moveToFirst());
+
+        TestUtilities.validateCurrentRecord("Error: Movie record validation Failed", cursor, testValues);
+        // Check that there's only one record
+        assertFalse("Error: More than one record returned from Movie query",
+                cursor.moveToNext());
+
+        // Clean things up
+        cursor.close();
+        db.close();
+        return movieRowId;
+    }
+
+    /** ============== */
+
 
 }
