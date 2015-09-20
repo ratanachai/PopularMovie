@@ -33,7 +33,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                 MovieEntry.COLUMN_OVERVIEW + " TEXT," +
                 MovieEntry.COLUMN_USER_RATING + " REAL, " +
                 MovieEntry.COLUMN_RELEASE_DATE + " TEXT NOT NULL, " + // SQLite has no Date type
-                MovieEntry.COLUMN_POSTER_PATH + " TEXT " +
+                MovieEntry.COLUMN_POSTER_PATH + " TEXT NOT NULL" +
                 " );";
 
         final String SQL_CREATE_VIDEO_TABLE = "CREATE TABLE " + VideoEntry.TABLE_NAME + " (" +

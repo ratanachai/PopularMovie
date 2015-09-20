@@ -124,12 +124,51 @@ public class TestDb extends AndroidTestCase {
     public void testMovieTable(){
         insertMovie();
     }
-//    public void testVideoTable(){
-//
-//    }
-//    public void testReviewTable(){
-//
-//    }
+    public void testVideoTable(){
+        long movieRowId = insertMovie();
+        assertFalse("Error: Movie could not be inserted correctly", movieRowId == -1L);
+
+        // Create and get writable database
+        MovieDbHelper dbHelper = new MovieDbHelper(mContext);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        // TEST: insert
+        ContentValues testValues = TestUtilities.createVideoValuesForMadmax(movieRowId);
+        long videoRowId = db.insert(MovieContract.VideoEntry.TABLE_NAME, null, testValues);
+        assertTrue("Error: Video was not inserted successfully", videoRowId != -1);
+
+        // TEST: read and validate data
+        Cursor cursor = db.query(MovieContract.VideoEntry.TABLE_NAME, null, null, null, null, null, null);
+        assertTrue("Error: No Video returned from query", cursor.moveToFirst());
+        TestUtilities.validateCurrentRecord("Error: Video record validation Failed", cursor, testValues);
+        assertFalse("Error: More record than expected returned from Video query", cursor.moveToNext());
+
+        cursor.close();
+        db.close();
+    }
+    public void testReviewTable(){
+        long movieRowId = insertMovie();
+        assertFalse("Error: Movie could not be inserted correctly", movieRowId == -1L);
+
+        // Create and get DB
+        MovieDbHelper dbHelper = new MovieDbHelper(mContext);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        // TEST insert
+        ContentValues testValues = TestUtilities.createReviewValuesForMadmax(movieRowId);
+        long reviewRowId = db.insert(MovieContract.ReviewEntry.TABLE_NAME, null, testValues);
+        assertTrue("Error: Review was not inserted correctly", reviewRowId != -1);
+
+        // TEST read and validate data
+        Cursor cursor = db.query(MovieContract.ReviewEntry.TABLE_NAME, null, null, null, null, null, null);
+        assertTrue("Error: No Review returned from query", cursor.moveToFirst());
+        TestUtilities.validateCurrentRecord("Error: Review record validation failed", cursor, testValues);
+        assertFalse("Error: More Reviews returned than expect", cursor.moveToNext());
+
+        cursor.close();
+        db.close();
+
+    }
     public long insertMovie(){
 
         // Create DB with Table via DbHealper's onCreate, then getWritableDatabase
@@ -142,14 +181,12 @@ public class TestDb extends AndroidTestCase {
         assertTrue("Error: Did not get a row back after insert", movieRowId != -1);
 
         // TEST: read and validate data
-        Cursor cursor = db.query(MovieContract.MovieEntry.TABLE_NAME,
-                null, null, null, null, null, null);
+        Cursor cursor = db.query(MovieContract.MovieEntry.TABLE_NAME, null, null, null, null, null, null);
         assertTrue("Error: No Records returned from movie query", cursor.moveToFirst());
 
         TestUtilities.validateCurrentRecord("Error: Movie record validation Failed", cursor, testValues);
         // Check that there's only one record
-        assertFalse("Error: More than one record returned from Movie query",
-                cursor.moveToNext());
+        assertFalse("Error: More than one record returned from Movie query", cursor.moveToNext());
 
         // Clean things up
         cursor.close();
