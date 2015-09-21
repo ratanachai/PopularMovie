@@ -1,6 +1,7 @@
 package com.ratanachai.popularmovies.data;
 
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
@@ -15,6 +16,21 @@ public class MovieContract {
     public static final String PATH_MOVIE = "movie";
     public static final String PATH_VIDEO = "video";
     public static final String PATH_REVIEW = "review";
+
+    //TODO: Add these 3 Uris?
+    // content://com.ratanachai.popularmovies/movie?sort_by=popularity.desc
+    // content://com.ratanachai.popularmovies/movie?sort_by=vote_average.desc
+    // content://com.ratanachai.popularmovies/movie?sort_by=favorite
+    /**
+     * -- Movie URIs --
+     * [DIR] content://com.ratanachai.popularmovies/movie
+     * [ITEM] content://com.ratanachai.popularmovies/movie/[MOVIE_ID]
+     * -- Video URIs --
+     * [DIR] content://com.ratanachai.popularmovies/video?for_movie=[MOVIE_ID]
+     * -- Review URIs --
+     * [DIR] content://com.ratanachai.popularmovies/review?for_movie=[MOVIE_ID]
+     *
+     */
 
     /* Inner classes that defines the contents of each DB Table in Popular Movie app */
     public static final class MovieEntry implements BaseColumns {
@@ -31,6 +47,14 @@ public class MovieContract {
         public static final String COLUMN_USER_RATING = "user_rating";
         public static final String COLUMN_RELEASE_DATE = "release_date";
         public static final String COLUMN_POSTER_PATH = "poster";
+
+        // URI Builders
+        public static Uri buildMoviesUri(){
+            return CONTENT_URI;
+        }
+        public static Uri buildMovieUri(long id){
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
     }
 
     public static final class VideoEntry implements BaseColumns {
@@ -46,6 +70,18 @@ public class MovieContract {
         public static final String COLUMN_NAME = "name";
         public static final String COLUMN_TYPE = "type";
         public static final String COLUMN_SITE = "site";
+
+        public static Uri buildVideoUri(long id){
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+        public static Uri buildMovieVideosUri(long movieId){
+            return CONTENT_URI.buildUpon().appendQueryParameter(
+                    "for_movie", Long.toString(movieId)).build();
+        }
+        public static long getMovieIdFromUri(Uri uri){
+            return Long.parseLong(uri.getQueryParameter("for_movie"));
+        }
+
     }
 
     public static final class ReviewEntry implements BaseColumns {
@@ -61,6 +97,17 @@ public class MovieContract {
         public static final String COLUMN_AUTHOR = "author";
         public static final String COLUMN_CONTENT = "content";
         public static final String COLUMN_URL = "url";
+
+        public static Uri buildReviewUri(long id){
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+        public static Uri buildMovieReviewsUri(long movieId){
+            return CONTENT_URI.buildUpon().appendQueryParameter(
+                    "for_movie", Long.toString(movieId)).build();
+        }
+        public static long getMovieIdFromUri(Uri uri) {
+            return Long.parseLong(uri.getQueryParameter("for_movie"));
+        }
     }
 
 }
