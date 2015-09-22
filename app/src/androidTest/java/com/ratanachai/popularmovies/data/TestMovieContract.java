@@ -28,12 +28,12 @@ public class TestMovieContract extends AndroidTestCase {
     public void testBuildMovieReviewsUri(){
         Uri reviewsUri = MovieContract.ReviewEntry.buildMovieReviewsUri(TEST_MOVIE_ID);
         assertEquals("Error: Reviews Uri does not match",
-                reviewsUri.toString(), "content://com.ratanachai.popularmovies/review?for_movie=76341");
+                reviewsUri.toString(), "content://com.ratanachai.popularmovies/movie/76341/reviews");
     }
     public void testBuildMovieVideosUri(){
         Uri reviewsUri = MovieContract.VideoEntry.buildMovieVideosUri(TEST_MOVIE_ID);
         assertEquals("Error: Videos Uri does not match",
-                reviewsUri.toString(), "content://com.ratanachai.popularmovies/video?for_movie=76341");
+                reviewsUri.toString(), "content://com.ratanachai.popularmovies/movie/76341/videos");
     }
 
 }

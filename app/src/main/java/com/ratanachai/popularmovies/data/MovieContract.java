@@ -21,15 +21,18 @@ public class MovieContract {
     // content://com.ratanachai.popularmovies/movie?sort_by=popularity.desc
     // content://com.ratanachai.popularmovies/movie?sort_by=vote_average.desc
     // content://com.ratanachai.popularmovies/movie?sort_by=favorite
-    /**
+
+    /** CONTENT URIs will follow patterns below
+     *
      * -- Movie URIs --
      * [DIR] content://com.ratanachai.popularmovies/movie
      * [ITEM] content://com.ratanachai.popularmovies/movie/[MOVIE_ID]
      * -- Video URIs --
-     * [DIR] content://com.ratanachai.popularmovies/video?for_movie=[MOVIE_ID]
+     * [DIR] content://com.ratanachai.popularmovies/movie/[MOVIE_ID]/videos
      * -- Review URIs --
-     * [DIR] content://com.ratanachai.popularmovies/review?for_movie=[MOVIE_ID]
+     * [DIR] content://com.ratanachai.popularmovies/movie/[MOVIE_ID]/reviews
      *
+     * NOTE: This is API request URL http://api.themoviedb.org/3/movie/76341/reviews
      */
 
     /* Inner classes that defines the contents of each DB Table in Popular Movie app */
@@ -75,8 +78,11 @@ public class MovieContract {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
         public static Uri buildMovieVideosUri(int movieId){
-            return CONTENT_URI.buildUpon().appendQueryParameter(
-                    "for_movie", Integer.toString(movieId)).build();
+            return MovieEntry.CONTENT_URI.buildUpon()
+                    .appendPath(Integer.toString(movieId))
+                    .appendPath("videos").build();
+//            return CONTENT_URI.buildUpon().appendQueryParameter(
+//                    "for_movie", Integer.toString(movieId)).build();
         }
         public static int getMovieIdFromUri(Uri uri){
             return Integer.parseInt(uri.getQueryParameter("for_movie"));
@@ -102,8 +108,12 @@ public class MovieContract {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
         public static Uri buildMovieReviewsUri(int movieId){
-            return CONTENT_URI.buildUpon().appendQueryParameter(
-                    "for_movie", Integer.toString(movieId)).build();
+            return MovieEntry.CONTENT_URI.buildUpon()
+                    .appendPath(Integer.toString(movieId))
+                    .appendPath("reviews").build();
+
+//            return CONTENT_URI.buildUpon().appendQueryParameter(
+//                    "for_movie", Integer.toString(movieId)).build();
         }
         public static int getMovieIdFromUri(Uri uri) {
             return Integer.parseInt(uri.getQueryParameter("for_movie"));

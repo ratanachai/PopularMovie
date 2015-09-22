@@ -22,8 +22,8 @@ public class MovieProvider extends ContentProvider {
         final String authority = MovieContract.CONTENT_AUTHORITY;
         sURIMatcher.addURI(authority, MovieContract.PATH_MOVIE, MOVIES);
         sURIMatcher.addURI(authority, MovieContract.PATH_MOVIE + "/#", MOVIE);
-        sURIMatcher.addURI(authority, MovieContract.PATH_VIDEO + "?for_movie=#", VIDEOS_FOR_MOVIE);
-        sURIMatcher.addURI(authority, MovieContract.PATH_REVIEW + "?for_movie=#", REVIEWS_FOR_MOVIE);
+        sURIMatcher.addURI(authority, MovieContract.PATH_MOVIE + "/#/videos", VIDEOS_FOR_MOVIE);
+        sURIMatcher.addURI(authority, MovieContract.PATH_MOVIE + "/#/reviews", REVIEWS_FOR_MOVIE);
     }
 
     @Override
