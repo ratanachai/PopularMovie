@@ -11,6 +11,7 @@ import java.util.Set;
     Functions and some test data to make it easier to test your database and Content Provider.
  */
 public class TestUtilities extends AndroidTestCase {
+    static final Integer MAD_MAX_MOVIE_ID = 76341;
 
     static void validateCurrentRecord(String error, Cursor valueCursor, ContentValues expectedValues) {
         Set<Map.Entry<String, Object>> valueSet = expectedValues.valueSet();
@@ -25,12 +26,12 @@ public class TestUtilities extends AndroidTestCase {
         }
     }
 
-    /*
+    /**
         Use this to create some default values for your database tests.
      */
     static ContentValues createMadmaxMovieValues() {
         ContentValues movieValues = new ContentValues();
-        movieValues.put(MovieContract.MovieEntry.COLUMN_TMDB_MOVIE_ID, "76341");
+        movieValues.put(MovieContract.MovieEntry.COLUMN_TMDB_MOVIE_ID, MAD_MAX_MOVIE_ID);
         movieValues.put(MovieContract.MovieEntry.COLUMN_TITLE, "Mad Max: Fury Road (2015)");
         movieValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, "An apocalyptic story set in the " +
                 "furthest reaches of our planet, in a stark desert landscape where humanity is broken, " +

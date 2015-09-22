@@ -8,13 +8,13 @@ import android.test.AndroidTestCase;
  */
 public class TestMovieContract extends AndroidTestCase {
 
-    private static final long TEST_MOVIE_ID = 76341L;
+    private static final int TEST_MOVIE_ID = TestUtilities.MAD_MAX_MOVIE_ID;
 
     public void testBuildMovieUri(){
         Uri movieUri = MovieContract.MovieEntry.buildMovieUri(TEST_MOVIE_ID);
         assertNotNull("Error: Null Uri returned", movieUri);
         assertEquals("Error: Movie ID not appended to the end of Uri",
-                Long.toString(TEST_MOVIE_ID), movieUri.getLastPathSegment());
+                Integer.toString(TEST_MOVIE_ID), movieUri.getLastPathSegment());
         assertEquals("Error: Movie Uri does not match",
                 movieUri.toString(), "content://com.ratanachai.popularmovies/movie/76341");
     }

@@ -52,7 +52,7 @@ public class MovieContract {
         public static Uri buildMoviesUri(){
             return CONTENT_URI;
         }
-        public static Uri buildMovieUri(long id){
+        public static Uri buildMovieUri(int id){
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
     }
@@ -71,15 +71,15 @@ public class MovieContract {
         public static final String COLUMN_TYPE = "type";
         public static final String COLUMN_SITE = "site";
 
-        public static Uri buildVideoUri(long id){
+        public static Uri buildVideoUri(int id){
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
-        public static Uri buildMovieVideosUri(long movieId){
+        public static Uri buildMovieVideosUri(int movieId){
             return CONTENT_URI.buildUpon().appendQueryParameter(
-                    "for_movie", Long.toString(movieId)).build();
+                    "for_movie", Integer.toString(movieId)).build();
         }
-        public static long getMovieIdFromUri(Uri uri){
-            return Long.parseLong(uri.getQueryParameter("for_movie"));
+        public static int getMovieIdFromUri(Uri uri){
+            return Integer.parseInt(uri.getQueryParameter("for_movie"));
         }
 
     }
@@ -98,15 +98,15 @@ public class MovieContract {
         public static final String COLUMN_CONTENT = "content";
         public static final String COLUMN_URL = "url";
 
-        public static Uri buildReviewUri(long id){
+        public static Uri buildReviewUri(int id){
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
-        public static Uri buildMovieReviewsUri(long movieId){
+        public static Uri buildMovieReviewsUri(int movieId){
             return CONTENT_URI.buildUpon().appendQueryParameter(
-                    "for_movie", Long.toString(movieId)).build();
+                    "for_movie", Integer.toString(movieId)).build();
         }
-        public static long getMovieIdFromUri(Uri uri) {
-            return Long.parseLong(uri.getQueryParameter("for_movie"));
+        public static int getMovieIdFromUri(Uri uri) {
+            return Integer.parseInt(uri.getQueryParameter("for_movie"));
         }
     }
 
