@@ -4,7 +4,8 @@ import android.net.Uri;
 import android.test.AndroidTestCase;
 
 /**
- * Created by keng on 15/09/21.
+ *  Tests for MoviesContract
+ *  Created by Ratanachai on 15/09/21.
  */
 public class TestMovieContract extends AndroidTestCase {
 

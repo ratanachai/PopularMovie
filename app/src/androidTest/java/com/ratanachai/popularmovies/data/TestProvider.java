@@ -6,7 +6,8 @@ import android.content.pm.ProviderInfo;
 import android.test.AndroidTestCase;
 
 /**
- * Created by keng on 15/09/22.
+ * Tests for MovieProvider
+ * Created by Ratanachai on 15/09/22.
  */
 public class TestProvider extends AndroidTestCase {
 

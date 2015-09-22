@@ -7,7 +7,8 @@ import android.database.Cursor;
 import android.net.Uri;
 
 /**
- * Created by keng on 15/09/22.
+ *  The Content Provider class for this app
+ *  Created by Ratanachai on 15/09/22.
  */
 public class MovieProvider extends ContentProvider {
 

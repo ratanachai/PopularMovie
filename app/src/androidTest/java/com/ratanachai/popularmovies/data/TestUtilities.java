@@ -8,8 +8,11 @@ import java.util.Map;
 import java.util.Set;
 
 /**
-    Functions and some test data to make it easier to test your database and Content Provider.
+ *  Utilities class providing Functions and some test data to make it easier
+ *  to test database and Content Provider.
+ *  Created by Ratanachai on 2015/09.
  */
+
 public class TestUtilities extends AndroidTestCase {
     static final Integer MAD_MAX_MOVIE_ID = 76341;
 
