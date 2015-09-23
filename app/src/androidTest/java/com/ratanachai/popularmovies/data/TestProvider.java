@@ -23,6 +23,7 @@ public class TestProvider extends AndroidTestCase {
     public void setUp() throws Exception {
         super.setUp();
         mContext.deleteDatabase(MovieDbHelper.DATABASE_NAME);
+        //TODO: Change to delete each table via Provider?
     }
 
     public void testProviderRegistry() {
@@ -87,15 +88,37 @@ public class TestProvider extends AndroidTestCase {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         // Insert into DB directly
-        ContentValues testValues = TestUtilities.createMadmaxMovieValues();
-        long movieRowId = db.insert(MovieEntry.TABLE_NAME, null, testValues);
-        assertTrue("Unable to Insert a Movie into the Database", movieRowId != -1);
-        db.close();
+        ContentValues testValues1 = TestUtilities.createMadmaxMovieValues();
+        long movieRowId1 = db.insert(MovieEntry.TABLE_NAME, null, testValues1);
+        assertTrue("Unable to Insert a Movie into the Database", movieRowId1 != -1);
 
         // Then query out via Content Provider to compare
         ContentResolver cr = mContext.getContentResolver();
+
+        // Query for all rows should return only 1 row
         Cursor retCursor = cr.query(MovieEntry.CONTENT_URI, null, null, null, null);
-        TestUtilities.validateCursor("testBasicMovieQuery: ", retCursor, testValues);
+        assertEquals("Number of row returned should be 1", 1, retCursor.getCount());
+        TestUtilities.validateCursor("testBasicMovieQuery [DIR]: ", retCursor, testValues1);
+
+        // Insert another Movie into DB
+        ContentValues testValues2 = TestUtilities.createInterstellarValues();
+        long movieRowId2 = db.insert(MovieEntry.TABLE_NAME, null, testValues2);
+        assertTrue("Unable to Insert a Movie into the Database", movieRowId2 != -1);
+
+        // Query for all rows now should return only 2 rows
+        retCursor = cr.query(MovieEntry.CONTENT_URI, null, null, null, null);
+        assertEquals("Number of row returned should be 1", 2, retCursor.getCount());
+
+        // Query for specific row
+        retCursor = cr.query(
+                MovieEntry.CONTENT_URI,
+                null,
+                MovieEntry.COLUMN_TMDB_MOVIE_ID + " = ?",
+                new String[]{Integer.toString(TestUtilities.MAD_MAX_MOVIE_ID)},
+                null);
+        TestUtilities.validateCursor("testBasicMovieQuery [ITEM]: ", retCursor, testValues1);
+
+        db.close();
     }
 
 }

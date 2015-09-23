@@ -15,6 +15,7 @@ import java.util.Set;
 
 public class TestUtilities extends AndroidTestCase {
     static final Integer MAD_MAX_MOVIE_ID = 76341;
+    static final Integer INTERSTELLAR_MOVIE_ID = 157336;
 
 
     static void validateCursor(String error, Cursor valueCursor, ContentValues expectedValues) {
@@ -22,6 +23,8 @@ public class TestUtilities extends AndroidTestCase {
         validateCurrentRecord(error, valueCursor, expectedValues);
         valueCursor.close();
     }
+    //TODO: This method yeild not error when comparing cursor with more than one row
+    // with a single expectedValue because it compare only with first row.
     static void validateCurrentRecord(String error, Cursor valueCursor, ContentValues expectedValues) {
         Set<Map.Entry<String, Object>> valueSet = expectedValues.valueSet();
         for (Map.Entry<String, Object> entry : valueSet) {
@@ -32,6 +35,7 @@ public class TestUtilities extends AndroidTestCase {
             assertEquals("Value '" + entry.getValue().toString() +
                     "' did not match the expected value '" +
                     expectedValue + "'. " + error, expectedValue, valueCursor.getString(idx));
+            //TODO: Wrong error string, only take value from ContentValues on both end.
         }
     }
 
@@ -55,6 +59,20 @@ public class TestUtilities extends AndroidTestCase {
         movieValues.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH, "/kqjL17yufvn9OVLyXYpvtyrFfak.jpg");
         return movieValues;
     }
+    static ContentValues createInterstellarValues() {
+        ContentValues movieValues = new ContentValues();
+        movieValues.put(MovieContract.MovieEntry.COLUMN_TMDB_MOVIE_ID, INTERSTELLAR_MOVIE_ID);
+        movieValues.put(MovieContract.MovieEntry.COLUMN_TITLE, "Interstellar");
+        movieValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, "Interstellar chronicles the " +
+                "adventures of a group of explorers who make use of a newly discovered wormhole " +
+                "to surpass the limitations on human space travel and conquer the vast distances " +
+                "involved in an interstellar voyage.");
+        movieValues.put(MovieContract.MovieEntry.COLUMN_USER_RATING, 8.3);
+        movieValues.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, "2014-11-05");
+        movieValues.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH, "/nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg");
+        return movieValues;
+    }
+
     static ContentValues createVideoValuesForMadmax(long movieRowId) {
         ContentValues videoValues = new ContentValues();
         videoValues.put(MovieContract.VideoEntry.COLUMN_MOV_KEY, movieRowId);
