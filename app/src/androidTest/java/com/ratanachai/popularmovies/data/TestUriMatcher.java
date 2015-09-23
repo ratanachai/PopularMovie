@@ -24,7 +24,7 @@ public class TestUriMatcher extends AndroidTestCase {
 
 
     public void testUriMatcher(){
-        UriMatcher testMatcher = MovieProvider.sURIMatcher;
+        UriMatcher testMatcher = MovieProvider.sUriMatcher;
 
         assertEquals("Error: Movies URI does not matched",
                 testMatcher.match(TEST_MOVIE_DIR), MovieProvider.MOVIES);

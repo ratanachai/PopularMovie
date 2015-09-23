@@ -12,24 +12,27 @@ import android.net.Uri;
  */
 public class MovieProvider extends ContentProvider {
 
+    private MovieDbHelper mOpenHelper;
+
     // This UriMatcher will match each URI to integer constants defined above.
     // Test this by uncommenting the testUriMatcher test within TestUriMatcher.
     static final int MOVIES = 11;
     static final int MOVIE = 12;
     static final int VIDEOS_FOR_MOVIE = 21;
     static final int REVIEWS_FOR_MOVIE = 31;
-    static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+    static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     static {
         final String authority = MovieContract.CONTENT_AUTHORITY;
-        sURIMatcher.addURI(authority, MovieContract.PATH_MOVIE, MOVIES);
-        sURIMatcher.addURI(authority, MovieContract.PATH_MOVIE + "/#", MOVIE);
-        sURIMatcher.addURI(authority, MovieContract.PATH_MOVIE + "/#/videos", VIDEOS_FOR_MOVIE);
-        sURIMatcher.addURI(authority, MovieContract.PATH_MOVIE + "/#/reviews", REVIEWS_FOR_MOVIE);
+        sUriMatcher.addURI(authority, MovieContract.PATH_MOVIE, MOVIES);
+        sUriMatcher.addURI(authority, MovieContract.PATH_MOVIE + "/#", MOVIE);
+        sUriMatcher.addURI(authority, MovieContract.PATH_MOVIE + "/#/videos", VIDEOS_FOR_MOVIE);
+        sUriMatcher.addURI(authority, MovieContract.PATH_MOVIE + "/#/reviews", REVIEWS_FOR_MOVIE);
     }
 
     @Override
     public boolean onCreate() {
-        return false;
+        mOpenHelper = new MovieDbHelper(getContext());
+        return true;
     }
 
     @Override
@@ -39,7 +42,23 @@ public class MovieProvider extends ContentProvider {
 
     @Override
     public String getType(Uri uri) {
-        return null;
+
+        // Use the Uri Matcher to determine what kind of URI this is.
+        final int match = sUriMatcher.match(uri);
+
+        switch (match) {
+            // Student: Uncomment and fill out these two cases
+//            case WEATHER_WITH_LOCATION_AND_DATE:
+//            case WEATHER_WITH_LOCATION:
+            case MOVIES:
+                return MovieContract.MovieEntry.CONTENT_TYPE;
+            case MOVIE:
+                return MovieContract.MovieEntry.CONTENT_ITEM_TYPE;
+//            case LOCATION:
+//                return WeatherContract.LocationEntry.CONTENT_TYPE;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
     }
 
     @Override
