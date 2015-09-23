@@ -47,15 +47,14 @@ public class MovieProvider extends ContentProvider {
         final int match = sUriMatcher.match(uri);
 
         switch (match) {
-            // Student: Uncomment and fill out these two cases
-//            case WEATHER_WITH_LOCATION_AND_DATE:
-//            case WEATHER_WITH_LOCATION:
             case MOVIES:
                 return MovieContract.MovieEntry.CONTENT_TYPE;
             case MOVIE:
                 return MovieContract.MovieEntry.CONTENT_ITEM_TYPE;
-//            case LOCATION:
-//                return WeatherContract.LocationEntry.CONTENT_TYPE;
+            case VIDEOS_FOR_MOVIE:
+                return MovieContract.VideoEntry.CONTENT_TYPE;
+            case REVIEWS_FOR_MOVIE:
+                return MovieContract.ReviewEntry.CONTENT_TYPE;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
