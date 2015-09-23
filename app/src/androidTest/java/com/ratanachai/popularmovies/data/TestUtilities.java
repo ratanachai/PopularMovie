@@ -16,6 +16,12 @@ import java.util.Set;
 public class TestUtilities extends AndroidTestCase {
     static final Integer MAD_MAX_MOVIE_ID = 76341;
 
+
+    static void validateCursor(String error, Cursor valueCursor, ContentValues expectedValues) {
+        assertTrue(error + "Empty cursor returned", valueCursor.moveToFirst());
+        validateCurrentRecord(error, valueCursor, expectedValues);
+        valueCursor.close();
+    }
     static void validateCurrentRecord(String error, Cursor valueCursor, ContentValues expectedValues) {
         Set<Map.Entry<String, Object>> valueSet = expectedValues.valueSet();
         for (Map.Entry<String, Object> entry : valueSet) {
@@ -70,5 +76,4 @@ public class TestUtilities extends AndroidTestCase {
         reviewValues.put(MovieContract.ReviewEntry.COLUMN_URL, "http://j.mp/1HLTNzT");
         return reviewValues;
     }
-
 }

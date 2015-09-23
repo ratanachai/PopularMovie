@@ -2,20 +2,28 @@ package com.ratanachai.popularmovies.data;
 
 import android.content.ComponentName;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.pm.PackageManager;
 import android.content.pm.ProviderInfo;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.test.AndroidTestCase;
 import android.util.Log;
 
 import com.ratanachai.popularmovies.data.MovieContract.MovieEntry;
-import com.ratanachai.popularmovies.data.MovieContract.VideoEntry;
 import com.ratanachai.popularmovies.data.MovieContract.ReviewEntry;
+import com.ratanachai.popularmovies.data.MovieContract.VideoEntry;
 
 /**
  * Tests for MovieProvider
  * Created by Ratanachai on 15/09/22.
  */
 public class TestProvider extends AndroidTestCase {
+
+    public void setUp() throws Exception {
+        super.setUp();
+        mContext.deleteDatabase(MovieDbHelper.DATABASE_NAME);
+    }
 
     public void testProviderRegistry() {
         PackageManager pm = mContext.getPackageManager();
@@ -70,6 +78,24 @@ public class TestProvider extends AndroidTestCase {
                 ReviewEntry.CONTENT_TYPE, type);
         Log.v("===", type);
 
+    }
+
+
+    // Insert directly to DB, then uses the ContentProvider to read out the data.
+    public void testBasicMovieQuery(){
+        MovieDbHelper dbHelper = new MovieDbHelper(mContext);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        // Insert into DB directly
+        ContentValues testValues = TestUtilities.createMadmaxMovieValues();
+        long movieRowId = db.insert(MovieEntry.TABLE_NAME, null, testValues);
+        assertTrue("Unable to Insert a Movie into the Database", movieRowId != -1);
+        db.close();
+
+        // Then query out via Content Provider to compare
+        ContentResolver cr = mContext.getContentResolver();
+        Cursor retCursor = cr.query(MovieEntry.CONTENT_URI, null, null, null, null);
+        TestUtilities.validateCursor("testBasicMovieQuery: ", retCursor, testValues);
     }
 
 }
