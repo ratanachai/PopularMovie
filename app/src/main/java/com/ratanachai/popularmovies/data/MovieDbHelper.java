@@ -8,8 +8,10 @@ import com.ratanachai.popularmovies.data.MovieContract.VideoEntry;
 import com.ratanachai.popularmovies.data.MovieContract.ReviewEntry;
 
 /**
- * Manages a local database for Movie Data
+ *  Inherited class from SQLiteOpenHelper with Tables SQL CREATE String
+ *  Manages a local database for Movie Data
  */
+
 public class MovieDbHelper extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
@@ -25,7 +27,6 @@ public class MovieDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
 
         final String SQL_CREATE_MOVIE_TABLE = "CREATE TABLE " + MovieEntry.TABLE_NAME + " (" +
-
                 MovieEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
 
                 MovieEntry.COLUMN_TMDB_MOVIE_ID + " INTEGER UNIQUE NOT NULL, " +
