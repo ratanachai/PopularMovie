@@ -6,6 +6,10 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.net.Uri;
 
+import com.ratanachai.popularmovies.data.MovieContract.MovieEntry;
+import com.ratanachai.popularmovies.data.MovieContract.ReviewEntry;
+import com.ratanachai.popularmovies.data.MovieContract.VideoEntry;
+
 /**
  *  The Content Provider class for this app
  *  Created by Ratanachai on 15/09/22.
@@ -62,13 +66,13 @@ public class MovieProvider extends ContentProvider {
 
         switch (match) {
             case MOVIES:
-                return MovieContract.MovieEntry.CONTENT_TYPE;
+                return MovieEntry.CONTENT_TYPE;
             case MOVIE:
-                return MovieContract.MovieEntry.CONTENT_ITEM_TYPE;
+                return MovieEntry.CONTENT_ITEM_TYPE;
             case VIDEOS_FOR_MOVIE:
-                return MovieContract.VideoEntry.CONTENT_TYPE;
+                return VideoEntry.CONTENT_TYPE;
             case REVIEWS_FOR_MOVIE:
-                return MovieContract.ReviewEntry.CONTENT_TYPE;
+                return ReviewEntry.CONTENT_TYPE;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
