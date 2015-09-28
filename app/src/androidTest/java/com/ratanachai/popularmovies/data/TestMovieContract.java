@@ -9,13 +9,13 @@ import android.test.AndroidTestCase;
  */
 public class TestMovieContract extends AndroidTestCase {
 
-    private static final int TEST_MOVIE_ID = TestUtilities.MAD_MAX_MOVIE_ID;
+    private static final int MAD_MAX_TMDB_ID = TestUtilities.MAD_MAX_TMDB_ID;
 
     public void testBuildMovieUri(){
-        Uri movieUri = MovieContract.MovieEntry.buildMovieUri(TEST_MOVIE_ID);
+        Uri movieUri = MovieContract.MovieEntry.buildMovieUri(MAD_MAX_TMDB_ID);
         assertNotNull("Error: Null Uri returned", movieUri);
         assertEquals("Error: Movie ID not appended to the end of Uri",
-                Integer.toString(TEST_MOVIE_ID), movieUri.getLastPathSegment());
+                Integer.toString(MAD_MAX_TMDB_ID), movieUri.getLastPathSegment());
         assertEquals("Error: Movie Uri does not match",
                 movieUri.toString(), "content://com.ratanachai.popularmovies/movie/76341");
     }
@@ -27,12 +27,12 @@ public class TestMovieContract extends AndroidTestCase {
     }
 
     public void testBuildMovieReviewsUri(){
-        Uri reviewsUri = MovieContract.ReviewEntry.buildMovieReviewsUri(TEST_MOVIE_ID);
+        Uri reviewsUri = MovieContract.ReviewEntry.buildMovieReviewsUri(MAD_MAX_TMDB_ID);
         assertEquals("Error: Reviews Uri does not match",
                 reviewsUri.toString(), "content://com.ratanachai.popularmovies/movie/76341/reviews");
     }
     public void testBuildMovieVideosUri(){
-        Uri reviewsUri = MovieContract.VideoEntry.buildMovieVideosUri(TEST_MOVIE_ID);
+        Uri reviewsUri = MovieContract.VideoEntry.buildMovieVideosUri(MAD_MAX_TMDB_ID);
         assertEquals("Error: Videos Uri does not match",
                 reviewsUri.toString(), "content://com.ratanachai.popularmovies/movie/76341/videos");
     }

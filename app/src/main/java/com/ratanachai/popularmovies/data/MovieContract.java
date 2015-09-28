@@ -13,11 +13,11 @@ import java.util.List;
  *  ** Content URIs will follow patterns below **
  *  -- Movie URIs --
  *  [DIR] content://com.ratanachai.popularmovies/movie
- *  [ITEM] content://com.ratanachai.popularmovies/movie/[MOVIE_ID]
+ *  [ITEM] content://com.ratanachai.popularmovies/movie/[TMDB_MOV_ID]
  *  -- Video URIs --
- *  [DIR] content://com.ratanachai.popularmovies/movie/[MOVIE_ID]/videos
+ *  [DIR] content://com.ratanachai.popularmovies/movie/[TMDB_MOV_ID]/videos
  *  -- Review URIs --
- *  [DIR] content://com.ratanachai.popularmovies/movie/[MOVIE_ID]/reviews
+ *  [DIR] content://com.ratanachai.popularmovies/movie/[TMDB_MOV_ID]/reviews
  *
  *  NOTE: This is API request URL http://api.themoviedb.org/3/movie/76341/reviews
  *
@@ -99,7 +99,7 @@ public class MovieContract {
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_REVIEW;
 
         public static final String TABLE_NAME = "review";
-        public static final String COLUMN_MOV_KEY = "movie_id";
+        public static final String COLUMN_MOV_KEY = "movie_id"; //TODO: Be careful movie_id is the ID from URI
         public static final String COLUMN_TMDB_REVIEW_ID = "id";
         public static final String COLUMN_AUTHOR = "author";
         public static final String COLUMN_CONTENT = "content";

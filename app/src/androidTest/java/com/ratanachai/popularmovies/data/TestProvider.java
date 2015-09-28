@@ -21,7 +21,7 @@ import com.ratanachai.popularmovies.data.MovieContract.VideoEntry;
  */
 public class TestProvider extends AndroidTestCase {
 
-    private static final int MAD_MAX_TMDB_ID = TestUtilities.MAD_MAX_MOVIE_ID;
+    private static final int MAD_MAX_TMDB_ID = TestUtilities.MAD_MAX_TMDB_ID;
 
     /*
        This helper function deletes all records from both database tables using the database
@@ -164,7 +164,7 @@ public class TestProvider extends AndroidTestCase {
         // Query out Videos via Provider
         retCursor = cr.query(VideoEntry.CONTENT_URI, null, null, null, null);
         assertEquals("Number of row returned should be 2", 2, retCursor.getCount());
-        
+
         db.close();
     }
 

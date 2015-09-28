@@ -17,8 +17,8 @@ import java.util.Set;
  */
 
 public class TestUtilities extends AndroidTestCase {
-    static final Integer MAD_MAX_MOVIE_ID = 76341;
-    static final Integer INTERSTELLAR_MOVIE_ID = 157336;
+    static final Integer MAD_MAX_TMDB_ID = 76341;
+    static final Integer INTERSTELLAR_TMDB_ID = 157336;
 
     /**
      *  Helper functions to validate cursor
@@ -49,7 +49,7 @@ public class TestUtilities extends AndroidTestCase {
      */
     static ContentValues createMadmaxMovieValues() {
         ContentValues movieValues = new ContentValues();
-        movieValues.put(MovieContract.MovieEntry.COLUMN_TMDB_MOVIE_ID, MAD_MAX_MOVIE_ID);
+        movieValues.put(MovieContract.MovieEntry.COLUMN_TMDB_MOVIE_ID, MAD_MAX_TMDB_ID);
         movieValues.put(MovieContract.MovieEntry.COLUMN_TITLE, "Mad Max: Fury Road (2015)");
         movieValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, "An apocalyptic story set in the " +
                 "furthest reaches of our planet, in a stark desert landscape where humanity is broken, " +
@@ -66,7 +66,7 @@ public class TestUtilities extends AndroidTestCase {
     }
     static ContentValues createInterstellarValues() {
         ContentValues movieValues = new ContentValues();
-        movieValues.put(MovieContract.MovieEntry.COLUMN_TMDB_MOVIE_ID, INTERSTELLAR_MOVIE_ID);
+        movieValues.put(MovieContract.MovieEntry.COLUMN_TMDB_MOVIE_ID, INTERSTELLAR_TMDB_ID);
         movieValues.put(MovieContract.MovieEntry.COLUMN_TITLE, "Interstellar");
         movieValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, "Interstellar chronicles the " +
                 "adventures of a group of explorers who make use of a newly discovered wormhole " +
