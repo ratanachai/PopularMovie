@@ -111,10 +111,10 @@ public class TestUtilities extends AndroidTestCase {
         return reviewValues;
     }
 
-    static long insertMadMaxMovie(Context context){
+    static long insertMovie(Context context, ContentValues contentValues){
         MovieDbHelper dbHelper = new MovieDbHelper(context);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        long rowId = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, createMadmaxMovieValues());
+        long rowId = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, contentValues);
         assertTrue("Error: cannot insert a movie", rowId != -1);
 
         db.close();

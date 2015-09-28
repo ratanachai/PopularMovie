@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.content.pm.PackageManager;
 import android.content.pm.ProviderInfo;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.test.AndroidTestCase;
 import android.util.Log;
@@ -39,8 +40,6 @@ public class TestProvider extends AndroidTestCase {
     protected void setUp() throws Exception {
         super.setUp();
         deleteAllRecordsFromDB();
-//        boolean bl = mContext.deleteDatabase(MovieDbHelper.DATABASE_NAME);
-//        Log.d("====", Boolean.toString(bl));
         //TODO: Change to delete each table via Provider?
     }
 
@@ -125,7 +124,7 @@ public class TestProvider extends AndroidTestCase {
 
         // Query for all rows now should return only 2 rows
         retCursor = cr.query(MovieEntry.CONTENT_URI, null, null, null, null);
-        assertEquals("Number of row returned should be 1", 2, retCursor.getCount());
+        assertEquals("Number of row returned incorrect", 2, retCursor.getCount());
 
         // Query for specific row
         retCursor = cr.query(
@@ -135,6 +134,40 @@ public class TestProvider extends AndroidTestCase {
                 new String[]{Integer.toString(TestUtilities.MAD_MAX_MOVIE_ID)},
                 null);
         TestUtilities.validateCursor("testBasicMovieQuery [ITEM]: ", retCursor, testValues1);
+
+        db.close();
+    }
+
+    public void testBasicVideoQuery() {
+
+        MovieDbHelper dbHelper = new MovieDbHelper(mContext);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        // Insert into DB directly
+        long madMaxRowId = TestUtilities.insertMovie(mContext, TestUtilities.createMadmaxMovieValues());
+        Cursor retCursor = db.query(MovieEntry.TABLE_NAME, null, null, null, null, null, null);
+        assertEquals("Number of row returned incorrect", 1, retCursor.getCount());
+
+        // Query out via Provider
+        ContentResolver cr = mContext.getContentResolver();
+        retCursor = cr.query(MovieEntry.CONTENT_URI, null, null, null, null);
+        Log.v("===", DatabaseUtils.dumpCursorToString(retCursor));
+        assertEquals("Number of row returned incorrect", 1, retCursor.getCount());
+
+        ContentValues videoValue1 = TestUtilities.createVideo1ValuesForMovie(madMaxRowId);
+        long rowId1 = db.insert(VideoEntry.TABLE_NAME, null, videoValue1);
+        assertTrue("Unable to Insert a video into DB", rowId1 != -1);
+
+        ContentValues videoValue2 = TestUtilities.createVideo2ValuesForMovie(madMaxRowId);
+        long rowId2 = db.insert(VideoEntry.TABLE_NAME, null, videoValue2);
+        assertTrue("Unable to Insert a video into DB", rowId2 != -1);
+
+        retCursor = db.query(VideoEntry.TABLE_NAME, null, null, null, null, null, null);
+        assertEquals("Number of row returned should be 2", 2, retCursor.getCount());
+
+        // Query out Videos via Provider
+        retCursor = cr.query(VideoEntry.CONTENT_URI, null, null, null, null);
+        assertEquals("Number of row returned should be 2", 2, retCursor.getCount());
 
         db.close();
     }

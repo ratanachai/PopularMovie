@@ -5,6 +5,8 @@ import android.content.ContentUris;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
+import java.util.List;
+
 /**
  *  Defines Tables and column names for the app database.
  *
@@ -80,11 +82,11 @@ public class MovieContract {
             return MovieEntry.CONTENT_URI.buildUpon()
                     .appendPath(Integer.toString(movieId))
                     .appendPath("videos").build();
-//            return CONTENT_URI.buildUpon().appendQueryParameter(
-//                    "for_movie", Integer.toString(movieId)).build();
         }
         public static int getMovieIdFromUri(Uri uri){
-            return Integer.parseInt(uri.getQueryParameter("for_movie"));
+            List<String> segment = uri.getPathSegments();
+            int movieId = Integer.parseInt(segment.get(1));
+            return movieId;
         }
 
     }
@@ -110,12 +112,11 @@ public class MovieContract {
             return MovieEntry.CONTENT_URI.buildUpon()
                     .appendPath(Integer.toString(movieId))
                     .appendPath("reviews").build();
-
-//            return CONTENT_URI.buildUpon().appendQueryParameter(
-//                    "for_movie", Integer.toString(movieId)).build();
         }
         public static int getMovieIdFromUri(Uri uri) {
-            return Integer.parseInt(uri.getQueryParameter("for_movie"));
+            List<String> segment = uri.getPathSegments();
+            int movieId = Integer.parseInt(segment.get(1));
+            return movieId;
         }
     }
 

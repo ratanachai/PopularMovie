@@ -4,6 +4,7 @@ import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 
 import com.ratanachai.popularmovies.data.MovieContract.MovieEntry;
@@ -22,14 +23,22 @@ public class MovieProvider extends ContentProvider {
     // Test this by uncommenting the testUriMatcher test within TestUriMatcher.
     static final int MOVIES = 11;
     static final int MOVIE = 12;
-    static final int VIDEOS_FOR_MOVIE = 21;
-    static final int REVIEWS_FOR_MOVIE = 31;
+    static final int VIDEOS = 21;
+    static final int VIDEO = 22;
+    static final int VIDEOS_FOR_MOVIE = 31;
+    static final int REVIEWS = 31;
+    static final int REVIEW = 32;
+    static final int REVIEWS_FOR_MOVIE = 33;
     static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     static {
         final String authority = MovieContract.CONTENT_AUTHORITY;
         sUriMatcher.addURI(authority, MovieContract.PATH_MOVIE, MOVIES);
         sUriMatcher.addURI(authority, MovieContract.PATH_MOVIE + "/#", MOVIE);
+        sUriMatcher.addURI(authority, MovieContract.PATH_VIDEO, VIDEOS);
+        sUriMatcher.addURI(authority, MovieContract.PATH_VIDEO + "/#", VIDEO);
         sUriMatcher.addURI(authority, MovieContract.PATH_MOVIE + "/#/videos", VIDEOS_FOR_MOVIE);
+        sUriMatcher.addURI(authority, MovieContract.PATH_REVIEW, REVIEWS);
+        sUriMatcher.addURI(authority, MovieContract.PATH_REVIEW + "/#", REVIEW);
         sUriMatcher.addURI(authority, MovieContract.PATH_MOVIE + "/#/reviews", REVIEWS_FOR_MOVIE);
     }
 
@@ -45,12 +54,31 @@ public class MovieProvider extends ContentProvider {
         switch (sUriMatcher.match(uri)){
             // "movie"
             case MOVIES: {
-                retCursor = mOpenHelper.getReadableDatabase().query(
+                SQLiteDatabase db = mOpenHelper.getReadableDatabase();
+                retCursor = db.query(
                         MovieContract.MovieEntry.TABLE_NAME, proj, select, selectArgs, null, null, sortOrder);
                 break;
+            // "video"
+            }case VIDEOS: {
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        VideoEntry.TABLE_NAME, proj, select, selectArgs, null, null, sortOrder);
+                break;
+
+//            }case VIDEOS_FOR_MOVIE: {
+//                retCursor = mOpenHelper.getReadableDatabase().query(VideoEntry.TABLE_NAME, null,null,null,null,null,null);
+//
+//                retCursor = mOpenHelper.getReadableDatabase().query(
+//                        VideoEntry.TABLE_NAME, proj, select, selectArgs, null, null, sortOrder);
+//                        VideoEntry.COLUMN_MOV_KEY + "= ?",
+//                        new String[]{Integer.toString(VideoEntry.getMovieIdFromUri(uri))},
+//                        new String[]{VideoEntry.getMovieIdFromUri(uri)},
+//                        null,
+//                        null,
+//                        sortOrder);
+//                break;
             }
             default:
-                throw new UnsupportedOperationException("Unknow uri: " + uri);
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
 
         retCursor.setNotificationUri(getContext().getContentResolver(), uri);
