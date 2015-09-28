@@ -12,7 +12,8 @@ public class TestDb extends AndroidTestCase {
     public static final String LOG_TAG = TestDb.class.getSimpleName();
 
     void deleteTheDatabase() {
-        mContext.deleteDatabase(MovieDbHelper.DATABASE_NAME);
+        boolean bl = mContext.deleteDatabase(MovieDbHelper.DATABASE_NAME);
+//        Log.v("====", Boolean.toString(bl));
     }
 
     /*
@@ -118,7 +119,7 @@ public class TestDb extends AndroidTestCase {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         // TEST: insert
-        ContentValues testValues = TestUtilities.createVideoValuesForMadmax(movieRowId);
+        ContentValues testValues = TestUtilities.createVideo1ValuesForMovie(movieRowId);
         long videoRowId = db.insert(MovieContract.VideoEntry.TABLE_NAME, null, testValues);
         assertTrue("Error: Video was not inserted successfully", videoRowId != -1);
 
@@ -140,7 +141,7 @@ public class TestDb extends AndroidTestCase {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         // TEST insert
-        ContentValues testValues = TestUtilities.createReviewValuesForMadmax(movieRowId);
+        ContentValues testValues = TestUtilities.createReview1ValuesForMovie(movieRowId);
         long reviewRowId = db.insert(MovieContract.ReviewEntry.TABLE_NAME, null, testValues);
         assertTrue("Error: Review was not inserted correctly", reviewRowId != -1);
 

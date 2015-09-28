@@ -1,11 +1,14 @@
 package com.ratanachai.popularmovies.data;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.test.AndroidTestCase;
 
 import java.util.Map;
 import java.util.Set;
+
 
 /**
  *  Utilities class providing Functions and some test data to make it easier
@@ -17,7 +20,9 @@ public class TestUtilities extends AndroidTestCase {
     static final Integer MAD_MAX_MOVIE_ID = 76341;
     static final Integer INTERSTELLAR_MOVIE_ID = 157336;
 
-
+    /**
+     *  Helper functions to validate cursor
+     */
     static void validateCursor(String error, Cursor valueCursor, ContentValues expectedValues) {
         assertTrue(error + "Empty cursor returned", valueCursor.moveToFirst());
         validateCurrentRecord(error, valueCursor, expectedValues);
@@ -73,7 +78,7 @@ public class TestUtilities extends AndroidTestCase {
         return movieValues;
     }
 
-    static ContentValues createVideoValuesForMadmax(long movieRowId) {
+    static ContentValues createVideo1ValuesForMovie(long movieRowId) {
         ContentValues videoValues = new ContentValues();
         videoValues.put(MovieContract.VideoEntry.COLUMN_MOV_KEY, movieRowId);
         videoValues.put(MovieContract.VideoEntry.COLUMN_KEY, "FRDdRto_3SA");
@@ -82,7 +87,18 @@ public class TestUtilities extends AndroidTestCase {
         videoValues.put(MovieContract.VideoEntry.COLUMN_SITE, "YouTube");
         return videoValues;
     }
-    static ContentValues createReviewValuesForMadmax(long movieRowId) {
+
+    static ContentValues createVideo2ValuesForMovie(long movieRowId) {
+        ContentValues videoValues = new ContentValues();
+        videoValues.put(MovieContract.VideoEntry.COLUMN_MOV_KEY, movieRowId);
+        videoValues.put(MovieContract.VideoEntry.COLUMN_KEY, "jnsgdqppAYA");
+        videoValues.put(MovieContract.VideoEntry.COLUMN_NAME, "Trailer 2");
+        videoValues.put(MovieContract.VideoEntry.COLUMN_TYPE, "Trailer");
+        videoValues.put(MovieContract.VideoEntry.COLUMN_SITE, "YouTube");
+        return videoValues;
+    }
+
+    static ContentValues createReview1ValuesForMovie(long movieRowId) {
         ContentValues reviewValues = new ContentValues();
         reviewValues.put(MovieContract.ReviewEntry.COLUMN_MOV_KEY, movieRowId);
         reviewValues.put(MovieContract.ReviewEntry.COLUMN_TMDB_REVIEW_ID, "55660928c3a3687ad7001db1");
@@ -93,5 +109,15 @@ public class TestUtilities extends AndroidTestCase {
                 "recommend seeing it.");
         reviewValues.put(MovieContract.ReviewEntry.COLUMN_URL, "http://j.mp/1HLTNzT");
         return reviewValues;
+    }
+
+    static long insertMadMaxMovie(Context context){
+        MovieDbHelper dbHelper = new MovieDbHelper(context);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        long rowId = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, createMadmaxMovieValues());
+        assertTrue("Error: cannot insert a movie", rowId != -1);
+
+        db.close();
+        return rowId;
     }
 }

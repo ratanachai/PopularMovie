@@ -20,9 +20,27 @@ import com.ratanachai.popularmovies.data.MovieContract.VideoEntry;
  */
 public class TestProvider extends AndroidTestCase {
 
-    public void setUp() throws Exception {
+    /*
+       This helper function deletes all records from both database tables using the database
+       functions only.  This is designed to be used to reset the state of the database until the
+       delete functionality is available in the ContentProvider.
+     */
+    public void deleteAllRecordsFromDB() {
+        MovieDbHelper dbHelper = new MovieDbHelper(mContext);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        db.delete(MovieEntry.TABLE_NAME, null, null);
+        db.delete(VideoEntry.TABLE_NAME, null, null);
+        db.delete(ReviewEntry.TABLE_NAME, null, null);
+        db.close();
+    }
+
+    @Override
+    protected void setUp() throws Exception {
         super.setUp();
-        mContext.deleteDatabase(MovieDbHelper.DATABASE_NAME);
+        deleteAllRecordsFromDB();
+//        boolean bl = mContext.deleteDatabase(MovieDbHelper.DATABASE_NAME);
+//        Log.d("====", Boolean.toString(bl));
         //TODO: Change to delete each table via Provider?
     }
 
