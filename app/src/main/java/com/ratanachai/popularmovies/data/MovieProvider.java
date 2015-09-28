@@ -4,7 +4,6 @@ import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 
 import com.ratanachai.popularmovies.data.MovieContract.MovieEntry;
@@ -54,10 +53,21 @@ public class MovieProvider extends ContentProvider {
         switch (sUriMatcher.match(uri)){
             // "movie"
             case MOVIES: {
-                SQLiteDatabase db = mOpenHelper.getReadableDatabase();
-                retCursor = db.query(
+                retCursor = mOpenHelper.getReadableDatabase().query(
                         MovieContract.MovieEntry.TABLE_NAME, proj, select, selectArgs, null, null, sortOrder);
                 break;
+
+            // "movie/[MOV_ID]
+            }case MOVIE: {
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        MovieContract.MovieEntry.TABLE_NAME, proj,
+                        MovieEntry.COLUMN_TMDB_MOVIE_ID + " = ?",
+                        new String[]{Integer.toString(MovieContract.getMovieIdFromUri(uri))},
+                        null,
+                        null,
+                        sortOrder);
+                break;
+
             // "video"
             }case VIDEOS: {
                 retCursor = mOpenHelper.getReadableDatabase().query(

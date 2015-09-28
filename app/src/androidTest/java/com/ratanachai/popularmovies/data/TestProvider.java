@@ -21,6 +21,8 @@ import com.ratanachai.popularmovies.data.MovieContract.VideoEntry;
  */
 public class TestProvider extends AndroidTestCase {
 
+    private static final int MAD_MAX_TMDB_ID = TestUtilities.MAD_MAX_MOVIE_ID;
+
     /*
        This helper function deletes all records from both database tables using the database
        functions only.  This is designed to be used to reset the state of the database until the
@@ -64,7 +66,6 @@ public class TestProvider extends AndroidTestCase {
     }
 
     public void testGetType() {
-        int TEST_MOVIE_ID = TestUtilities.MAD_MAX_MOVIE_ID;
 
         // URI and expected Return Type
         // content://com.ratanachai.popularmovies/movie
@@ -77,21 +78,21 @@ public class TestProvider extends AndroidTestCase {
 
         // content://com.ratanachai.popularmovies/movie/76341
         // vnd.android.cursor.item/com.ratanachai.popularmovies/movie
-        type = contentResolver.getType(MovieEntry.buildMovieUri(TEST_MOVIE_ID));
+        type = contentResolver.getType(MovieEntry.buildMovieUri(MAD_MAX_TMDB_ID));
         assertEquals("Error: MovieEntry CONTENT_URI with ID should return MovieEntry.CONTENT_ITEM_TYPE",
                 MovieEntry.CONTENT_ITEM_TYPE, type);
         Log.v("===", type);
 
         // content://com.ratanachai.popularmovies/movie/76341/videos
         // vnd.android.cursor.dir/com.ratanachai.popularmovies/videos
-        type = contentResolver.getType(VideoEntry.buildMovieVideosUri(TEST_MOVIE_ID));
+        type = contentResolver.getType(VideoEntry.buildMovieVideosUri(MAD_MAX_TMDB_ID));
         assertEquals("Error: VideoEntry CONTENT_URI should return VideoEntry.CONTENT_TYPE",
                 VideoEntry.CONTENT_TYPE, type);
         Log.v("===", type);
 
         // content://com.ratanachai.popularmovies/movie/76341/reviews
         // vnd.android.cursor.dir/com.ratanachai.popularmovies/reviews
-        type = contentResolver.getType(ReviewEntry.buildMovieReviewsUri(TEST_MOVIE_ID));
+        type = contentResolver.getType(ReviewEntry.buildMovieReviewsUri(MAD_MAX_TMDB_ID));
         assertEquals("Error: ReviewEntry CONTENT_URI should return ReviewEntry.CONTENT_TYPE",
                 ReviewEntry.CONTENT_TYPE, type);
         Log.v("===", type);
@@ -127,12 +128,7 @@ public class TestProvider extends AndroidTestCase {
         assertEquals("Number of row returned incorrect", 2, retCursor.getCount());
 
         // Query for specific row
-        retCursor = cr.query(
-                MovieEntry.CONTENT_URI,
-                null,
-                MovieEntry.COLUMN_TMDB_MOVIE_ID + " = ?",
-                new String[]{Integer.toString(TestUtilities.MAD_MAX_MOVIE_ID)},
-                null);
+        retCursor = cr.query(MovieEntry.buildMovieUri(MAD_MAX_TMDB_ID), null, null, null, null);
         TestUtilities.validateCursor("testBasicMovieQuery [ITEM]: ", retCursor, testValues1);
 
         db.close();
@@ -148,7 +144,7 @@ public class TestProvider extends AndroidTestCase {
         Cursor retCursor = db.query(MovieEntry.TABLE_NAME, null, null, null, null, null, null);
         assertEquals("Number of row returned incorrect", 1, retCursor.getCount());
 
-        // Query out via Provider
+        // Query out Movie via Provider (just double check)
         ContentResolver cr = mContext.getContentResolver();
         retCursor = cr.query(MovieEntry.CONTENT_URI, null, null, null, null);
         Log.v("===", DatabaseUtils.dumpCursorToString(retCursor));
@@ -168,7 +164,7 @@ public class TestProvider extends AndroidTestCase {
         // Query out Videos via Provider
         retCursor = cr.query(VideoEntry.CONTENT_URI, null, null, null, null);
         assertEquals("Number of row returned should be 2", 2, retCursor.getCount());
-
+        
         db.close();
     }
 

@@ -37,6 +37,12 @@ public class MovieContract {
     public static final String PATH_VIDEO = "video";
     public static final String PATH_REVIEW = "review";
 
+    public static int getMovieIdFromUri(Uri uri){
+        List<String> segment = uri.getPathSegments();
+        int movieId = Integer.parseInt(segment.get(1));
+        return movieId;
+    }
+
     public static final class MovieEntry implements BaseColumns {
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_MOVIE).build();
         public static final String CONTENT_TYPE =
@@ -83,12 +89,6 @@ public class MovieContract {
                     .appendPath(Integer.toString(movieId))
                     .appendPath("videos").build();
         }
-        public static int getMovieIdFromUri(Uri uri){
-            List<String> segment = uri.getPathSegments();
-            int movieId = Integer.parseInt(segment.get(1));
-            return movieId;
-        }
-
     }
 
     public static final class ReviewEntry implements BaseColumns {
@@ -112,11 +112,6 @@ public class MovieContract {
             return MovieEntry.CONTENT_URI.buildUpon()
                     .appendPath(Integer.toString(movieId))
                     .appendPath("reviews").build();
-        }
-        public static int getMovieIdFromUri(Uri uri) {
-            List<String> segment = uri.getPathSegments();
-            int movieId = Integer.parseInt(segment.get(1));
-            return movieId;
         }
     }
 
