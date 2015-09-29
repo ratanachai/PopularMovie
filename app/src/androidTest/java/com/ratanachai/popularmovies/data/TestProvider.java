@@ -74,28 +74,24 @@ public class TestProvider extends AndroidTestCase {
         String type = contentResolver.getType(MovieEntry.buildMoviesUri());
         assertEquals("Error: MovieEntry CONTENT_URI should return MovieEntry.CONTENT_TYPE",
                 MovieEntry.CONTENT_TYPE, type);
-        Log.v("===", type);
 
         // content://com.ratanachai.popularmovies/movie/76341
         // vnd.android.cursor.item/com.ratanachai.popularmovies/movie
         type = contentResolver.getType(MovieEntry.buildMovieUri(MAD_MAX_TMDB_ID));
         assertEquals("Error: MovieEntry CONTENT_URI with ID should return MovieEntry.CONTENT_ITEM_TYPE",
                 MovieEntry.CONTENT_ITEM_TYPE, type);
-        Log.v("===", type);
 
         // content://com.ratanachai.popularmovies/movie/76341/videos
         // vnd.android.cursor.dir/com.ratanachai.popularmovies/videos
         type = contentResolver.getType(VideoEntry.buildMovieVideosUri(MAD_MAX_TMDB_ID));
         assertEquals("Error: VideoEntry CONTENT_URI should return VideoEntry.CONTENT_TYPE",
                 VideoEntry.CONTENT_TYPE, type);
-        Log.v("===", type);
 
         // content://com.ratanachai.popularmovies/movie/76341/reviews
         // vnd.android.cursor.dir/com.ratanachai.popularmovies/reviews
         type = contentResolver.getType(ReviewEntry.buildMovieReviewsUri(MAD_MAX_TMDB_ID));
         assertEquals("Error: ReviewEntry CONTENT_URI should return ReviewEntry.CONTENT_TYPE",
                 ReviewEntry.CONTENT_TYPE, type);
-        Log.v("===", type);
 
     }
 
@@ -168,6 +164,33 @@ public class TestProvider extends AndroidTestCase {
         retCursor = cr.query(VideoEntry.buildMovieVideosUri(MAD_MAX_TMDB_ID), null, null, null, null);
         assertEquals("Number of row returned incorrect", 2, retCursor.getCount());
         Log.d(LOG_TAG, DatabaseUtils.dumpCursorToString(retCursor));
+
+        db.close();
+    }
+
+    public void testBasicReviewQuery() {
+        MovieDbHelper dbHelper = new MovieDbHelper(mContext);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        // Insert Reviews into DB directly
+        long madMaxRowId = TestUtilities.insertMovie(mContext, TestUtilities.createMadmaxMovieValues());
+        ContentValues reviewValue1 = TestUtilities.createReview1ValuesForMovie(madMaxRowId);
+        long rowId1 = db.insert(ReviewEntry.TABLE_NAME, null, reviewValue1);
+        assertTrue("Unable to Insert a review into DB", rowId1 != -1);
+
+        ContentValues reviewValue2 = TestUtilities.createReview2ValuesForMovie(madMaxRowId);
+        long rowId2 = db.insert(ReviewEntry.TABLE_NAME, null, reviewValue2);
+        assertTrue("Unable to Insert a review into DB", rowId2 != -1);
+
+        Cursor retCursor = db.query(ReviewEntry.TABLE_NAME, null, null, null, null, null, null);
+        assertEquals("Number of row returned incorrect", 2, retCursor.getCount());
+
+        // Query out Reviews via Content Provider
+        ContentResolver cr = mContext.getContentResolver();
+        retCursor = cr.query(ReviewEntry.buildMovieReviewsUri(MAD_MAX_TMDB_ID),
+                null, null, null, null);
+        Log.d(LOG_TAG, DatabaseUtils.dumpCursorToString(retCursor));
+        assertEquals("Number of row returned incorrect", 2, retCursor.getCount());
 
         db.close();
     }

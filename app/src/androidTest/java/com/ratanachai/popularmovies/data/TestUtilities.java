@@ -110,6 +110,19 @@ public class TestUtilities extends AndroidTestCase {
         reviewValues.put(MovieContract.ReviewEntry.COLUMN_URL, "http://j.mp/1HLTNzT");
         return reviewValues;
     }
+    static ContentValues createReview2ValuesForMovie(long movieRowId) {
+        ContentValues reviewValues = new ContentValues();
+        reviewValues.put(MovieContract.ReviewEntry.COLUMN_MOV_KEY, movieRowId);
+        reviewValues.put(MovieContract.ReviewEntry.COLUMN_TMDB_REVIEW_ID, "55732a53925141456e000639");
+        reviewValues.put(MovieContract.ReviewEntry.COLUMN_AUTHOR, "Andres Gomez");
+        reviewValues.put(MovieContract.ReviewEntry.COLUMN_CONTENT, "Good action movie with a decent " +
+                "script for the genre. The photography is really good too but, in the end, it is " +
+                "quite repeating itself from beginning to end and the stormy OST is exhausting.");
+        reviewValues.put(MovieContract.ReviewEntry.COLUMN_URL, "http://j.mp/1dUnvpG");
+        return reviewValues;
+    }
+
+
 
     static long insertMovie(Context context, ContentValues contentValues){
         MovieDbHelper dbHelper = new MovieDbHelper(context);
