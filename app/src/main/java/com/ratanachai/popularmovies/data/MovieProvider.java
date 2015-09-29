@@ -13,7 +13,28 @@ import com.ratanachai.popularmovies.data.MovieContract.VideoEntry;
 /**
  *  The Content Provider class for this app
  *  Created by Ratanachai on 15/09/22.
+ *
+ *  ** Content URIs will follow patterns below **
+ *  -- Movie URIs --
+ *  [DIR] content://com.ratanachai.popularmovies/movie
+ *  [ITEM] content://com.ratanachai.popularmovies/movie/[TMDB_MOV_ID]
+ *  -- Video URIs --
+ *  [DIR] content://com.ratanachai.popularmovies/videos
+ *  [DIR] content://com.ratanachai.popularmovies/movie/[TMDB_MOV_ID]/videos
+ *  -- Review URIs --
+ *  [DIR] content://com.ratanachai.popularmovies/reviews
+ *  [DIR] content://com.ratanachai.popularmovies/movie/[TMDB_MOV_ID]/reviews
+ *
+ *  NOTE: This is API request URL http://api.themoviedb.org/3/movie/76341/reviews
+ *
+ *  Created by Ratanachai on 2015/09
  */
+
+// TODO: Add these 3 Uris?
+// content://com.ratanachai.popularmovies/movie?sort_by=popularity.desc
+// content://com.ratanachai.popularmovies/movie?sort_by=vote_average.desc
+// content://com.ratanachai.popularmovies/movie?sort_by=favorite
+
 public class MovieProvider extends ContentProvider {
 
     private MovieDbHelper mOpenHelper;

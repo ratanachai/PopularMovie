@@ -6,27 +6,9 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 
 import java.util.List;
-
 /**
  *  Defines Tables and column names for the app database.
- *
- *  ** Content URIs will follow patterns below **
- *  -- Movie URIs --
- *  [DIR] content://com.ratanachai.popularmovies/movie
- *  [ITEM] content://com.ratanachai.popularmovies/movie/[TMDB_MOV_ID]
- *  -- Video URIs --
- *  [DIR] content://com.ratanachai.popularmovies/movie/[TMDB_MOV_ID]/videos
- *  -- Review URIs --
- *  [DIR] content://com.ratanachai.popularmovies/movie/[TMDB_MOV_ID]/reviews
- *
- *  NOTE: This is API request URL http://api.themoviedb.org/3/movie/76341/reviews
- *
- *  Created by Ratanachai on 2015/09
  */
-// TODO: Add these 3 Uris?
-// content://com.ratanachai.popularmovies/movie?sort_by=popularity.desc
-// content://com.ratanachai.popularmovies/movie?sort_by=vote_average.desc
-// content://com.ratanachai.popularmovies/movie?sort_by=favorite
 
 public class MovieContract {
 
