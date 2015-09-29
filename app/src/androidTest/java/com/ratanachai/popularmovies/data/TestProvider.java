@@ -20,7 +20,7 @@ import com.ratanachai.popularmovies.data.MovieContract.VideoEntry;
  * Created by Ratanachai on 15/09/22.
  */
 public class TestProvider extends AndroidTestCase {
-
+    public static final String LOG_TAG = TestProvider.class.getSimpleName();
     private static final int MAD_MAX_TMDB_ID = TestUtilities.MAD_MAX_TMDB_ID;
 
     /*
@@ -139,7 +139,7 @@ public class TestProvider extends AndroidTestCase {
         MovieDbHelper dbHelper = new MovieDbHelper(mContext);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-        // Insert into DB directly
+        // Insert Movie into DB directly
         long madMaxRowId = TestUtilities.insertMovie(mContext, TestUtilities.createMadmaxMovieValues());
         Cursor retCursor = db.query(MovieEntry.TABLE_NAME, null, null, null, null, null, null);
         assertEquals("Number of row returned incorrect", 1, retCursor.getCount());
@@ -147,9 +147,10 @@ public class TestProvider extends AndroidTestCase {
         // Query out Movie via Provider (just double check)
         ContentResolver cr = mContext.getContentResolver();
         retCursor = cr.query(MovieEntry.CONTENT_URI, null, null, null, null);
-        Log.v("===", DatabaseUtils.dumpCursorToString(retCursor));
+//        Log.d(LOG_TAG, DatabaseUtils.dumpCursorToString(retCursor));
         assertEquals("Number of row returned incorrect", 1, retCursor.getCount());
 
+        // Insert Video into DB directly
         ContentValues videoValue1 = TestUtilities.createVideo1ValuesForMovie(madMaxRowId);
         long rowId1 = db.insert(VideoEntry.TABLE_NAME, null, videoValue1);
         assertTrue("Unable to Insert a video into DB", rowId1 != -1);
@@ -159,11 +160,14 @@ public class TestProvider extends AndroidTestCase {
         assertTrue("Unable to Insert a video into DB", rowId2 != -1);
 
         retCursor = db.query(VideoEntry.TABLE_NAME, null, null, null, null, null, null);
-        assertEquals("Number of row returned should be 2", 2, retCursor.getCount());
+        assertEquals("Number of row returned incorrect", 2, retCursor.getCount());
 
         // Query out Videos via Provider
         retCursor = cr.query(VideoEntry.CONTENT_URI, null, null, null, null);
-        assertEquals("Number of row returned should be 2", 2, retCursor.getCount());
+        assertEquals("Number of row returned incorrect", 2, retCursor.getCount());
+        retCursor = cr.query(VideoEntry.buildMovieVideosUri(MAD_MAX_TMDB_ID), null, null, null, null);
+        assertEquals("Number of row returned incorrect", 2, retCursor.getCount());
+        Log.d(LOG_TAG, DatabaseUtils.dumpCursorToString(retCursor));
 
         db.close();
     }

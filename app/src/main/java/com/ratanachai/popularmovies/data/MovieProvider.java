@@ -1,9 +1,11 @@
 package com.ratanachai.popularmovies.data;
 
+import android.annotation.TargetApi;
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 
 import com.ratanachai.popularmovies.data.MovieContract.MovieEntry;
@@ -50,6 +52,8 @@ public class MovieProvider extends ContentProvider {
     static final int REVIEW = 32;
     static final int REVIEWS_FOR_MOVIE = 33;
     static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+    static final SQLiteQueryBuilder sVideoByMovieQueryBuilder = new SQLiteQueryBuilder();
+
     static {
         final String authority = MovieContract.CONTENT_AUTHORITY;
         sUriMatcher.addURI(authority, MovieContract.PATH_MOVIE, MOVIES);
@@ -60,6 +64,32 @@ public class MovieProvider extends ContentProvider {
         sUriMatcher.addURI(authority, MovieContract.PATH_REVIEW, REVIEWS);
         sUriMatcher.addURI(authority, MovieContract.PATH_REVIEW + "/#", REVIEW);
         sUriMatcher.addURI(authority, MovieContract.PATH_MOVIE + "/#/reviews", REVIEWS_FOR_MOVIE);
+
+        // Define INNER JOIN in FROM part here
+        sVideoByMovieQueryBuilder.setTables(
+                VideoEntry.TABLE_NAME + " INNER JOIN " + MovieEntry.TABLE_NAME +
+                " ON " + VideoEntry.TABLE_NAME + "." + VideoEntry.COLUMN_MOV_KEY +
+                " = " + MovieEntry.TABLE_NAME + "." + MovieEntry._ID);
+    }
+
+    static final String sTmdbMovieIdSelection = MovieEntry.TABLE_NAME + "." +
+            MovieEntry.COLUMN_TMDB_MOVIE_ID + " = ? ";
+
+
+    private Cursor getVideobyTmdbMovieId(Uri uri, String[] proj, String sortOrder) {
+        int tmdb_mov_id = MovieContract.getMovieIdFromUri(uri);
+        String select = sTmdbMovieIdSelection;
+        String[] selectArgs = new String[]{Integer.toString(tmdb_mov_id)};
+
+        return sVideoByMovieQueryBuilder.query(
+                mOpenHelper.getReadableDatabase(),
+                proj,
+                select,
+                selectArgs,
+                null,
+                null,
+                sortOrder
+        );
     }
 
     @Override
@@ -95,18 +125,12 @@ public class MovieProvider extends ContentProvider {
                         VideoEntry.TABLE_NAME, proj, select, selectArgs, null, null, sortOrder);
                 break;
 
-//            }case VIDEOS_FOR_MOVIE: {
-//                retCursor = mOpenHelper.getReadableDatabase().query(VideoEntry.TABLE_NAME, null,null,null,null,null,null);
-//
-//                retCursor = mOpenHelper.getReadableDatabase().query(
-//                        VideoEntry.TABLE_NAME, proj, select, selectArgs, null, null, sortOrder);
-//                        VideoEntry.COLUMN_MOV_KEY + "= ?",
-//                        new String[]{Integer.toString(VideoEntry.getMovieIdFromUri(uri))},
-//                        new String[]{VideoEntry.getMovieIdFromUri(uri)},
-//                        null,
-//                        null,
-//                        sortOrder);
-//                break;
+            // "movie/[TMDB_MOV_ID]/videos
+            }case VIDEOS_FOR_MOVIE: {
+                proj = new String[] {MovieEntry.COLUMN_TITLE, VideoEntry.COLUMN_KEY,
+                        VideoEntry.COLUMN_NAME, VideoEntry.COLUMN_SITE, VideoEntry.COLUMN_TYPE};
+                retCursor = getVideobyTmdbMovieId(uri, proj, sortOrder);
+                break;
             }
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
