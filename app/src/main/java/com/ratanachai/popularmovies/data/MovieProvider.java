@@ -46,7 +46,7 @@ public class MovieProvider extends ContentProvider {
     static final int MOVIE = 12;
     static final int VIDEOS = 21;
     static final int VIDEO = 22;
-    static final int VIDEOS_FOR_MOVIE = 31;
+    static final int VIDEOS_FOR_MOVIE = 23;
     static final int REVIEWS = 31;
     static final int REVIEW = 32;
     static final int REVIEWS_FOR_MOVIE = 33;
@@ -147,6 +147,12 @@ public class MovieProvider extends ContentProvider {
                 proj = new String[] {MovieEntry.COLUMN_TITLE, VideoEntry.COLUMN_KEY,
                         VideoEntry.COLUMN_NAME, VideoEntry.COLUMN_SITE, VideoEntry.COLUMN_TYPE};
                 retCursor = getVideobyTmdbMovieId(uri, proj, sortOrder);
+                break;
+
+            // "review"
+            }case REVIEWS: {
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        ReviewEntry.TABLE_NAME, proj, select, selectArgs, null, null, sortOrder);
                 break;
 
             // "movie/[TMDB_MOV_ID]/reviews

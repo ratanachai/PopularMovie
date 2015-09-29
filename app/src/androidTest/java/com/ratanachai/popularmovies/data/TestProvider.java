@@ -187,6 +187,10 @@ public class TestProvider extends AndroidTestCase {
 
         // Query out Reviews via Content Provider
         ContentResolver cr = mContext.getContentResolver();
+        retCursor = cr.query(ReviewEntry.CONTENT_URI, null, null, null, null);
+        Log.d(LOG_TAG, DatabaseUtils.dumpCursorToString(retCursor));
+        assertEquals("Number of row returned incorrect", 2, retCursor.getCount());
+
         retCursor = cr.query(ReviewEntry.buildMovieReviewsUri(MAD_MAX_TMDB_ID),
                 null, null, null, null);
         Log.d(LOG_TAG, DatabaseUtils.dumpCursorToString(retCursor));
