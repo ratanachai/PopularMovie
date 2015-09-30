@@ -17,8 +17,8 @@ import java.util.Set;
  */
 
 public class TestUtilities extends AndroidTestCase {
-    static final Integer MAD_MAX_TMDB_ID = 76341;
-    static final Integer INTERSTELLAR_TMDB_ID = 157336;
+    static final Long MAD_MAX_TMDB_ID = 76341L;
+    static final Long INTERSTELLAR_TMDB_ID = 157336L;
 
     /**
      *  Helper functions to validate cursor

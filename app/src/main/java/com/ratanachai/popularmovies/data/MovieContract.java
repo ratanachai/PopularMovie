@@ -44,7 +44,7 @@ public class MovieContract {
         public static Uri buildMoviesUri(){
             return CONTENT_URI;
         }
-        public static Uri buildMovieUri(int id){
+        public static Uri buildMovieUri(long id){
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
     }
@@ -63,12 +63,12 @@ public class MovieContract {
         public static final String COLUMN_TYPE = "type";
         public static final String COLUMN_SITE = "site";
 
-        public static Uri buildVideoUri(int id){
+        public static Uri buildVideoUri(long id){
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
-        public static Uri buildMovieVideosUri(int movieId){
+        public static Uri buildMovieVideosUri(long movieId){
             return MovieEntry.CONTENT_URI.buildUpon()
-                    .appendPath(Integer.toString(movieId))
+                    .appendPath(Long.toString(movieId))
                     .appendPath("videos").build();
         }
     }
@@ -87,12 +87,12 @@ public class MovieContract {
         public static final String COLUMN_CONTENT = "content";
         public static final String COLUMN_URL = "url";
 
-        public static Uri buildReviewUri(int id){
+        public static Uri buildReviewUri(long id){
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
-        public static Uri buildMovieReviewsUri(int movieId){
+        public static Uri buildMovieReviewsUri(long movieId){
             return MovieEntry.CONTENT_URI.buildUpon()
-                    .appendPath(Integer.toString(movieId))
+                    .appendPath(Long.toString(movieId))
                     .appendPath("reviews").build();
         }
     }

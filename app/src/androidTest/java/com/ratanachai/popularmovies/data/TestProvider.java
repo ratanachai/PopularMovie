@@ -21,7 +21,7 @@ import com.ratanachai.popularmovies.data.MovieContract.VideoEntry;
  */
 public class TestProvider extends AndroidTestCase {
     public static final String LOG_TAG = TestProvider.class.getSimpleName();
-    private static final int MAD_MAX_TMDB_ID = TestUtilities.MAD_MAX_TMDB_ID;
+    private static final long MAD_MAX_TMDB_ID = TestUtilities.MAD_MAX_TMDB_ID;
 
     /*
        This helper function deletes all records from both database tables using the database
