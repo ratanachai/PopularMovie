@@ -82,9 +82,9 @@ public class MovieProvider extends ContentProvider {
 
 
     private Cursor getVideobyTmdbMovieId(Uri uri, String[] proj, String sortOrder) {
-        int tmdb_mov_id = MovieContract.getMovieIdFromUri(uri);
+        long tmdb_mov_id = MovieContract.getTmdbMovieIdFromUri(uri);
         String select = sTmdbMovieIdSelection;
-        String[] selectArgs = new String[]{Integer.toString(tmdb_mov_id)};
+        String[] selectArgs = new String[]{Long.toString(tmdb_mov_id)};
 
         return sVideoByMovieQueryBuilder.query(
                 mOpenHelper.getReadableDatabase(),
@@ -96,9 +96,9 @@ public class MovieProvider extends ContentProvider {
                 sortOrder);
     }
     private Cursor getReviewbyTmdbMovieId(Uri uri, String[] proj, String sortOrder){
-        int tmdb_mov_id = MovieContract.getMovieIdFromUri(uri);
+        long tmdb_mov_id = MovieContract.getTmdbMovieIdFromUri(uri);
         String select = sTmdbMovieIdSelection;
-        String[] selectArgs = new String[]{Integer.toString(tmdb_mov_id)};
+        String[] selectArgs = new String[]{Long.toString(tmdb_mov_id)};
 
         return sReviewByMovieQueryBuilder.query(
                 mOpenHelper.getReadableDatabase(),
@@ -117,6 +117,26 @@ public class MovieProvider extends ContentProvider {
     }
 
     @Override
+    public String getType(Uri uri) {
+
+        // Use the Uri Matcher to determine what kind of URI this is.
+        final int match = sUriMatcher.match(uri);
+
+        switch (match) {
+            case MOVIES:
+                return MovieEntry.CONTENT_TYPE;
+            case MOVIE:
+                return MovieEntry.CONTENT_ITEM_TYPE;
+            case VIDEOS_FOR_MOVIE:
+                return VideoEntry.CONTENT_TYPE;
+            case REVIEWS_FOR_MOVIE:
+                return ReviewEntry.CONTENT_TYPE;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+    }
+
+    @Override
     public Cursor query(Uri uri, String[] proj, String select, String[] selectArgs, String sortOrder) {
         Cursor retCursor;
         switch (sUriMatcher.match(uri)){
@@ -126,12 +146,12 @@ public class MovieProvider extends ContentProvider {
                         MovieContract.MovieEntry.TABLE_NAME, proj, select, selectArgs, null, null, sortOrder);
                 break;
 
-            // "movie/[MOV_ID]
+            // "movie/[TMDB_MOV_ID]
             }case MOVIE: {
                 retCursor = mOpenHelper.getReadableDatabase().query(
                         MovieContract.MovieEntry.TABLE_NAME, proj,
                         MovieEntry.COLUMN_TMDB_MOVIE_ID + " = ?",
-                        new String[]{Integer.toString(MovieContract.getMovieIdFromUri(uri))},
+                        new String[]{Long.toString(MovieContract.getTmdbMovieIdFromUri(uri))},
                         null,
                         null,
                         sortOrder);
@@ -171,27 +191,6 @@ public class MovieProvider extends ContentProvider {
         return retCursor;
     }
 
-
-    @Override
-    public String getType(Uri uri) {
-
-        // Use the Uri Matcher to determine what kind of URI this is.
-        final int match = sUriMatcher.match(uri);
-
-        switch (match) {
-            case MOVIES:
-                return MovieEntry.CONTENT_TYPE;
-            case MOVIE:
-                return MovieEntry.CONTENT_ITEM_TYPE;
-            case VIDEOS_FOR_MOVIE:
-                return VideoEntry.CONTENT_TYPE;
-            case REVIEWS_FOR_MOVIE:
-                return ReviewEntry.CONTENT_TYPE;
-            default:
-                throw new UnsupportedOperationException("Unknown uri: " + uri);
-        }
-    }
-
     @Override
     public Uri insert(Uri uri, ContentValues values) {
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
@@ -202,7 +201,7 @@ public class MovieProvider extends ContentProvider {
             case MOVIES: {
                 long _id = db.insert(MovieEntry.TABLE_NAME, null, values);
                 if (_id > 0)
-                    retUri = MovieEntry.buildMovieUri(_id);
+                    retUri = MovieEntry.buildMovieUri(values.getAsLong(MovieEntry.COLUMN_TMDB_MOVIE_ID));
                 else
                     throw new android.database.SQLException("Failed to insert row into" + uri);
                 break;

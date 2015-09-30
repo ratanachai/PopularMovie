@@ -206,7 +206,7 @@ public class TestProvider extends AndroidTestCase {
         TestUtilities.TestContentObserver tco = TestUtilities.getTestContentObserver();
         ContentValues testValues = TestUtilities.createMadmaxMovieValues();
 
-        // Register a content observer for our insert.  This time, directly with the content resolver
+        // Register a content observer before insert via ContentResolver to test
         cr.registerContentObserver(MovieEntry.CONTENT_URI, true, tco);
         Uri movieUri = cr.insert(MovieEntry.CONTENT_URI, testValues);
 

@@ -19,10 +19,9 @@ public class MovieContract {
     public static final String PATH_VIDEO = "video";
     public static final String PATH_REVIEW = "review";
 
-    public static int getMovieIdFromUri(Uri uri){
+    public static long getTmdbMovieIdFromUri(Uri uri){
         List<String> segment = uri.getPathSegments();
-        int movieId = Integer.parseInt(segment.get(1));
-        return movieId;
+        return Long.parseLong(segment.get(1));
     }
 
     public static final class MovieEntry implements BaseColumns {
