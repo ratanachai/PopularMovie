@@ -203,17 +203,18 @@ public class MovieProvider extends ContentProvider {
                 if (_id > 0)
                     retUri = MovieEntry.buildMovieUri(values.getAsLong(MovieEntry.COLUMN_TMDB_MOVIE_ID));
                 else
-                    throw new android.database.SQLException("Failed to insert row into" + uri);
+                    throw new android.database.SQLException("Failed to insert row into " + uri);
+
                 break;
             }
-//            case VIDEOS: {
-//
-//                break;
-//            }
-//            case REVIEWS: {
-//
-//                break;
-//            }
+            case VIDEOS: {
+                long _id = db.insert(VideoEntry.TABLE_NAME, null, values);
+                if (_id > 0)
+                    retUri = VideoEntry.buildVideoUri(_id);
+                else
+                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                break;
+            }
             default:
                 throw new UnsupportedOperationException("Unknown Uri: " + uri);
         }

@@ -193,8 +193,7 @@ public class TestProvider extends AndroidTestCase {
         Log.d(LOG_TAG, DatabaseUtils.dumpCursorToString(retCursor));
         assertEquals("Number of row returned incorrect", 2, retCursor.getCount());
 
-        retCursor = cr.query(ReviewEntry.buildMovieReviewsUri(MAD_MAX_TMDB_ID),
-                null, null, null, null);
+        retCursor = cr.query(ReviewEntry.buildMovieReviewsUri(MAD_MAX_TMDB_ID), null, null, null, null);
         Log.d(LOG_TAG, DatabaseUtils.dumpCursorToString(retCursor));
         assertEquals("Number of row returned incorrect", 2, retCursor.getCount());
 
@@ -215,44 +214,50 @@ public class TestProvider extends AndroidTestCase {
         tco.waitForNotificationOrFail();
         cr.unregisterContentObserver(tco);
 
-        // Verify we got a row back.
-        long movieRowId = ContentUris.parseId(movieUri);
-        assertTrue(movieRowId != -1);
-
-        // Data's inserted. Now pull some out to stare at it and verify it made the round trip.
+        // Verify we got a row back. Then, pull some out and verify it made the round trip.
+        long madMaxRowId = ContentUris.parseId(movieUri);
+        assertTrue(madMaxRowId != -1);
         Cursor retCursor = cr.query(MovieEntry.CONTENT_URI, null, null, null, null);
         assertEquals("Number of row returned incorrect", 1, retCursor.getCount());
         TestUtilities.validateCursor("testInsertReadProvider. Error validating MovieEntry.",
                 retCursor, testValues);
-//
-//        // Fantastic.  Now that we have a location, add some weather!
-//        ContentValues weatherValues = TestUtilities.createWeatherValues(locationRowId);
-//        // The TestContentObserver is a one-shot class
-//        tco = TestUtilities.getTestContentObserver();
-//
-//        cr.registerContentObserver(WeatherEntry.CONTENT_URI, true, tco);
-//
-//        Uri weatherInsertUri = cr
-//                .insert(WeatherEntry.CONTENT_URI, weatherValues);
-//        assertTrue(weatherInsertUri != null);
-//
-//        // Did our content observer get called?  Students:  If this fails, your insert weather
-//        // in your ContentProvider isn't calling
-//        // getContext().getContentResolver().notifyChange(uri, null);
-//        tco.waitForNotificationOrFail();
-//        cr.unregisterContentObserver(tco);
-//
-//        // A cursor is your primary interface to the query results.
-//        Cursor weatherCursor = cr.query(
-//                WeatherEntry.CONTENT_URI,  // Table to Query
-//                null, // leaving "columns" null just returns all the columns.
-//                null, // cols for "where" clause
-//                null, // values for "where" clause
-//                null // columns to group by
-//        );
-//
-//        TestUtilities.validateCursor("testInsertReadProvider. Error validating WeatherEntry insert.",
-//                weatherCursor, weatherValues);
+
+        //--- 1st Video: Add some videos since now we have a movie
+        ContentValues videoValue1 = TestUtilities.createVideo1ValuesForMovie(madMaxRowId);
+        tco = TestUtilities.getTestContentObserver();
+        cr.registerContentObserver(VideoEntry.CONTENT_URI, true, tco);
+        Uri videoUri1 = cr.insert(VideoEntry.CONTENT_URI, videoValue1);
+        assertTrue(videoUri1 != null);
+
+        // If this fails, your insert isn't calling notifyChange(uri, null);
+        tco.waitForNotificationOrFail();
+        cr.unregisterContentObserver(tco);
+
+        // Verify we got a row back. Then, pull some out and verify it made the round trip.
+        retCursor = cr.query(VideoEntry.CONTENT_URI, null, null, null, null);
+        TestUtilities.validateCursor("testInsertReadProvider. Error validating VideoEntry insert.",
+                retCursor, videoValue1);
+
+        //--- 2nd Video
+        ContentValues videoValue2 = TestUtilities.createVideo2ValuesForMovie(madMaxRowId);
+        tco = TestUtilities.getTestContentObserver();
+        cr.registerContentObserver(VideoEntry.CONTENT_URI, true, tco);
+        Uri videoUri2 = cr.insert(VideoEntry.CONTENT_URI, videoValue2);
+        assertTrue(videoUri2 != null);
+
+        // If this fails, your insert isn't calling notifyChange(uri, null);
+        tco.waitForNotificationOrFail();
+        cr.unregisterContentObserver(tco);
+
+        // Verify we got a row back. Then, pull some out and verify it made the round trip.
+        retCursor = cr.query(VideoEntry.CONTENT_URI, null, null, null, null);
+        assertEquals("Num of rows returned incorrect", 2, retCursor.getCount());
+        retCursor.moveToFirst();
+        TestUtilities.validateCurrentRecord("Error validating VideoEntry insert.", retCursor, videoValue1);
+        retCursor.moveToNext();
+        TestUtilities.validateCurrentRecord("Error validating VideoEntry insert.", retCursor, videoValue2);
+
+
 //
 //        // Add the location values in with the weather data so that we can make
 //        // sure that the join worked and we actually get all the values back
