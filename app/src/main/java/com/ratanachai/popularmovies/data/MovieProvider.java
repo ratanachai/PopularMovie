@@ -165,8 +165,8 @@ public class MovieProvider extends ContentProvider {
 
             // "movie/[TMDB_MOV_ID]/videos
             }case VIDEOS_FOR_MOVIE: {
-                proj = new String[] {MovieEntry.COLUMN_TITLE, VideoEntry.COLUMN_KEY,
-                        VideoEntry.COLUMN_NAME, VideoEntry.COLUMN_SITE, VideoEntry.COLUMN_TYPE};
+//                proj = new String[] {MovieEntry.COLUMN_TITLE, VideoEntry.COLUMN_KEY,
+//                        VideoEntry.COLUMN_NAME, VideoEntry.COLUMN_SITE, VideoEntry.COLUMN_TYPE};
                 retCursor = getVideobyTmdbMovieId(uri, proj, sortOrder);
                 break;
 

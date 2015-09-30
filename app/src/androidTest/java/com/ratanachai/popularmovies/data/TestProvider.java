@@ -2,7 +2,6 @@ package com.ratanachai.popularmovies.data;
 
 import android.content.ComponentName;
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.pm.PackageManager;
 import android.content.pm.ProviderInfo;
@@ -203,11 +202,11 @@ public class TestProvider extends AndroidTestCase {
     public void testInsertReadProvider() {
         ContentResolver cr = mContext.getContentResolver();
         TestUtilities.TestContentObserver tco = TestUtilities.getTestContentObserver();
-        ContentValues testValues = TestUtilities.createMadmaxMovieValues();
+        ContentValues madMaxValues = TestUtilities.createMadmaxMovieValues();
 
         // Register a content observer before insert via ContentResolver to test
         cr.registerContentObserver(MovieEntry.CONTENT_URI, true, tco);
-        Uri movieUri = cr.insert(MovieEntry.CONTENT_URI, testValues);
+        Uri movieUri = cr.insert(MovieEntry.CONTENT_URI, madMaxValues);
 
         // Did our content observer get called? If this fails, your insert movie
         // isn't calling getContext().getContentResolver().notifyChange(uri, null);
@@ -215,12 +214,13 @@ public class TestProvider extends AndroidTestCase {
         cr.unregisterContentObserver(tco);
 
         // Verify we got a row back. Then, pull some out and verify it made the round trip.
-        long madMaxRowId = ContentUris.parseId(movieUri);
-        assertTrue(madMaxRowId != -1);
         Cursor retCursor = cr.query(MovieEntry.CONTENT_URI, null, null, null, null);
         assertEquals("Number of row returned incorrect", 1, retCursor.getCount());
-        TestUtilities.validateCursor("testInsertReadProvider. Error validating MovieEntry.",
-                retCursor, testValues);
+        retCursor.moveToFirst();
+        TestUtilities.validateCurrentRecord("testInsertReadProvider. Error validating MovieEntry.",
+                retCursor, madMaxValues);
+        long madMaxRowId = retCursor.getLong(retCursor.getColumnIndex(MovieEntry._ID));
+        assertTrue(madMaxRowId != -1);
 
         //--- 1st Video: Add some videos since now we have a movie
         ContentValues videoValue1 = TestUtilities.createVideo1ValuesForMovie(madMaxRowId);
@@ -257,45 +257,16 @@ public class TestProvider extends AndroidTestCase {
         retCursor.moveToNext();
         TestUtilities.validateCurrentRecord("Error validating VideoEntry insert.", retCursor, videoValue2);
 
+        // Add the Video values in with the Movie data so that we can make
+        // sure that the join worked and we actually get all the values back
+        videoValue1.putAll(madMaxValues);
 
-//
-//        // Add the location values in with the weather data so that we can make
-//        // sure that the join worked and we actually get all the values back
-//        weatherValues.putAll(testValues);
-//
-//        // Get the joined Weather and Location data
-//        weatherCursor = cr.query(
-//                WeatherEntry.buildWeatherLocation(TestUtilities.TEST_LOCATION),
-//                null, // leaving "columns" null just returns all the columns.
-//                null, // cols for "where" clause
-//                null, // values for "where" clause
-//                null  // sort order
-//        );
-//        TestUtilities.validateCursor("testInsertReadProvider.  Error validating joined Weather and Location Data.",
-//                weatherCursor, weatherValues);
-//
-//        // Get the joined Weather and Location data with a start date
-//        weatherCursor = cr.query(
-//                WeatherEntry.buildWeatherLocationWithStartDate(
-//                        TestUtilities.TEST_LOCATION, TestUtilities.TEST_DATE),
-//                null, // leaving "columns" null just returns all the columns.
-//                null, // cols for "where" clause
-//                null, // values for "where" clause
-//                null  // sort order
-//        );
-//        TestUtilities.validateCursor("testInsertReadProvider.  Error validating joined Weather and Location Data with start date.",
-//                weatherCursor, weatherValues);
-//
-//        // Get the joined Weather data for a specific date
-//        weatherCursor = cr.query(
-//                WeatherEntry.buildWeatherLocationWithDate(TestUtilities.TEST_LOCATION, TestUtilities.TEST_DATE),
-//                null,
-//                null,
-//                null,
-//                null
-//        );
-//        TestUtilities.validateCursor("testInsertReadProvider.  Error validating joined Weather and Location data for a specific date.",
-//                weatherCursor, weatherValues);
+        // Get the joined Video and Movie data
+        retCursor = cr.query(VideoEntry.buildMovieVideosUri(MAD_MAX_TMDB_ID), null, null, null, null);
+//        Log.d(LOG_TAG, DatabaseUtils.dumpCursorToString(retCursor));
+        retCursor.moveToFirst();
+        TestUtilities.validateCurrentRecord("Error validating joined Video and Movie Data.",
+                retCursor, videoValue1);
     }
 
     // TODO: To which Test functions should this code be in ?
