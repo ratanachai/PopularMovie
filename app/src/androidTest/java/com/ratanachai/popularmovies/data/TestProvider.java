@@ -2,6 +2,7 @@ package com.ratanachai.popularmovies.data;
 
 import android.content.ComponentName;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.pm.PackageManager;
 import android.content.pm.ProviderInfo;
@@ -22,7 +23,7 @@ import com.ratanachai.popularmovies.data.MovieContract.VideoEntry;
  */
 public class TestProvider extends AndroidTestCase {
     public static final String LOG_TAG = TestProvider.class.getSimpleName();
-    private static final long MAD_MAX_TMDB_ID = TestUtilities.MAD_MAX_TMDB_ID;
+    private static final long MAD_MAX_ROW_ID = 1L;
 
     /*
        This helper function deletes all records from both database tables using the database
@@ -76,21 +77,21 @@ public class TestProvider extends AndroidTestCase {
         assertEquals("Error: MovieEntry CONTENT_URI should return MovieEntry.CONTENT_TYPE",
                 MovieEntry.CONTENT_TYPE, type);
 
-        // content://com.ratanachai.popularmovies/movie/76341
+        // content://com.ratanachai.popularmovies/movie/1
         // vnd.android.cursor.item/com.ratanachai.popularmovies/movie
-        type = contentResolver.getType(MovieEntry.buildMovieUri(MAD_MAX_TMDB_ID));
+        type = contentResolver.getType(MovieEntry.buildMovieUri(MAD_MAX_ROW_ID));
         assertEquals("Error: MovieEntry CONTENT_URI with ID should return MovieEntry.CONTENT_ITEM_TYPE",
                 MovieEntry.CONTENT_ITEM_TYPE, type);
 
-        // content://com.ratanachai.popularmovies/movie/76341/videos
+        // content://com.ratanachai.popularmovies/movie/1/videos
         // vnd.android.cursor.dir/com.ratanachai.popularmovies/videos
-        type = contentResolver.getType(VideoEntry.buildMovieVideosUri(MAD_MAX_TMDB_ID));
+        type = contentResolver.getType(VideoEntry.buildMovieVideosUri(MAD_MAX_ROW_ID));
         assertEquals("Error: VideoEntry CONTENT_URI should return VideoEntry.CONTENT_TYPE",
                 VideoEntry.CONTENT_TYPE, type);
 
-        // content://com.ratanachai.popularmovies/movie/76341/reviews
+        // content://com.ratanachai.popularmovies/movie/1/reviews
         // vnd.android.cursor.dir/com.ratanachai.popularmovies/reviews
-        type = contentResolver.getType(ReviewEntry.buildMovieReviewsUri(MAD_MAX_TMDB_ID));
+        type = contentResolver.getType(ReviewEntry.buildMovieReviewsUri(MAD_MAX_ROW_ID));
         assertEquals("Error: ReviewEntry CONTENT_URI should return ReviewEntry.CONTENT_TYPE",
                 ReviewEntry.CONTENT_TYPE, type);
 
@@ -125,7 +126,7 @@ public class TestProvider extends AndroidTestCase {
         assertEquals("Number of row returned incorrect", 2, retCursor.getCount());
 
         // Query for specific row
-        retCursor = cr.query(MovieEntry.buildMovieUri(MAD_MAX_TMDB_ID), null, null, null, null);
+        retCursor = cr.query(MovieEntry.buildMovieUri(movieRowId1), null, null, null, null);
         TestUtilities.validateCursor("testBasicMovieQuery [ITEM]: ", retCursor, testValues1);
 
         db.close();
@@ -162,7 +163,7 @@ public class TestProvider extends AndroidTestCase {
         // Query out Videos via Provider
         retCursor = cr.query(VideoEntry.CONTENT_URI, null, null, null, null);
         assertEquals("Number of row returned incorrect", 2, retCursor.getCount());
-        retCursor = cr.query(VideoEntry.buildMovieVideosUri(MAD_MAX_TMDB_ID), null, null, null, null);
+        retCursor = cr.query(VideoEntry.buildMovieVideosUri(madMaxRowId), null, null, null, null);
         assertEquals("Number of row returned incorrect", 2, retCursor.getCount());
         Log.d(LOG_TAG, DatabaseUtils.dumpCursorToString(retCursor));
 
@@ -173,8 +174,9 @@ public class TestProvider extends AndroidTestCase {
         MovieDbHelper dbHelper = new MovieDbHelper(mContext);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-        // Insert Reviews into DB directly
         long madMaxRowId = TestUtilities.insertMovie(mContext, TestUtilities.createMadmaxMovieValues());
+
+        // Insert Reviews into DB directly
         ContentValues reviewValue1 = TestUtilities.createReview1ValuesForMovie(madMaxRowId);
         long rowId1 = db.insert(ReviewEntry.TABLE_NAME, null, reviewValue1);
         assertTrue("Unable to Insert a review into DB", rowId1 != -1);
@@ -192,7 +194,7 @@ public class TestProvider extends AndroidTestCase {
         Log.d(LOG_TAG, DatabaseUtils.dumpCursorToString(retCursor));
         assertEquals("Number of row returned incorrect", 2, retCursor.getCount());
 
-        retCursor = cr.query(ReviewEntry.buildMovieReviewsUri(MAD_MAX_TMDB_ID), null, null, null, null);
+        retCursor = cr.query(ReviewEntry.buildMovieReviewsUri(madMaxRowId), null, null, null, null);
         Log.d(LOG_TAG, DatabaseUtils.dumpCursorToString(retCursor));
         assertEquals("Number of row returned incorrect", 2, retCursor.getCount());
 
@@ -207,6 +209,7 @@ public class TestProvider extends AndroidTestCase {
         // Register a content observer before insert via ContentResolver to test
         cr.registerContentObserver(MovieEntry.CONTENT_URI, true, tco);
         Uri movieUri = cr.insert(MovieEntry.CONTENT_URI, madMaxValues);
+        long madMaxRowId = ContentUris.parseId(movieUri);
 
         // Did our content observer get called? If this fails, your insert movie
         // isn't calling getContext().getContentResolver().notifyChange(uri, null);
@@ -219,7 +222,6 @@ public class TestProvider extends AndroidTestCase {
         retCursor.moveToFirst();
         TestUtilities.validateCurrentRecord("testInsertReadProvider. Error validating MovieEntry.",
                 retCursor, madMaxValues);
-        long madMaxRowId = retCursor.getLong(retCursor.getColumnIndex(MovieEntry._ID));
         assertTrue(madMaxRowId != -1);
 
         //--- 1st Video: Add some videos since now we have a movie
@@ -262,7 +264,7 @@ public class TestProvider extends AndroidTestCase {
         videoValue1.putAll(madMaxValues);
 
         // Get the joined Video and Movie data
-        retCursor = cr.query(VideoEntry.buildMovieVideosUri(MAD_MAX_TMDB_ID), null, null, null, null);
+        retCursor = cr.query(VideoEntry.buildMovieVideosUri(madMaxRowId), null, null, null, null);
 //        Log.d(LOG_TAG, DatabaseUtils.dumpCursorToString(retCursor));
         retCursor.moveToFirst();
         TestUtilities.validateCurrentRecord("Error validating joined Video and Movie Data.",

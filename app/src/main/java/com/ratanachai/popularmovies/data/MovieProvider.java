@@ -19,13 +19,13 @@ import com.ratanachai.popularmovies.data.MovieContract.VideoEntry;
  *  ** Content URIs will follow patterns below **
  *  -- Movie URIs --
  *  [DIR] content://com.ratanachai.popularmovies/movie
- *  [ITEM] content://com.ratanachai.popularmovies/movie/[TMDB_MOV_ID]
+ *  [ITEM] content://com.ratanachai.popularmovies/movie/[MOV_ID]
  *  -- Video URIs --
  *  [DIR] content://com.ratanachai.popularmovies/videos
- *  [DIR] content://com.ratanachai.popularmovies/movie/[TMDB_MOV_ID]/videos
+ *  [DIR] content://com.ratanachai.popularmovies/movie/[MOV_ID]/videos
  *  -- Review URIs --
  *  [DIR] content://com.ratanachai.popularmovies/reviews
- *  [DIR] content://com.ratanachai.popularmovies/movie/[TMDB_MOV_ID]/reviews
+ *  [DIR] content://com.ratanachai.popularmovies/movie/[MOV_ID]/reviews
  *
  *  NOTE: This is API request URL http://api.themoviedb.org/3/movie/76341/reviews
  *
@@ -77,13 +77,11 @@ public class MovieProvider extends ContentProvider {
                 " = " + MovieEntry.TABLE_NAME + "." + MovieEntry._ID);
     }
 
-    static final String sTmdbMovieIdSelection = MovieEntry.TABLE_NAME + "." +
-            MovieEntry.COLUMN_TMDB_MOVIE_ID + " = ? ";
+    static final String sMovieIdSelection = MovieEntry.TABLE_NAME + "." + MovieEntry._ID + " = ? ";
 
-
-    private Cursor getVideobyTmdbMovieId(Uri uri, String[] proj, String sortOrder) {
+    private Cursor getVideobyMovieId(Uri uri, String[] proj, String sortOrder) {
         long mov_id = MovieContract.getMovieIdFromUri(uri);
-        String select = sTmdbMovieIdSelection;
+        String select = sMovieIdSelection;
         String[] selectArgs = new String[]{Long.toString(mov_id)};
 
         return sVideoByMovieQueryBuilder.query(
@@ -95,9 +93,9 @@ public class MovieProvider extends ContentProvider {
                 null,
                 sortOrder);
     }
-    private Cursor getReviewbyTmdbMovieId(Uri uri, String[] proj, String sortOrder){
+    private Cursor getReviewbyMovieId(Uri uri, String[] proj, String sortOrder){
         long mov_id = MovieContract.getMovieIdFromUri(uri);
-        String select = sTmdbMovieIdSelection;
+        String select = sMovieIdSelection;
         String[] selectArgs = new String[]{Long.toString(mov_id)};
 
         return sReviewByMovieQueryBuilder.query(
@@ -146,11 +144,11 @@ public class MovieProvider extends ContentProvider {
                         MovieContract.MovieEntry.TABLE_NAME, proj, select, selectArgs, null, null, sortOrder);
                 break;
 
-            // "movie/[TMDB_MOV_ID]
+            // "movie/[MOV_ID]
             }case MOVIE: {
                 retCursor = mOpenHelper.getReadableDatabase().query(
                         MovieContract.MovieEntry.TABLE_NAME, proj,
-                        MovieEntry.COLUMN_TMDB_MOVIE_ID + " = ?",
+                        MovieEntry._ID + " = ?",
                         new String[]{Long.toString(MovieContract.getMovieIdFromUri(uri))},
                         null,
                         null,
@@ -163,11 +161,11 @@ public class MovieProvider extends ContentProvider {
                         VideoEntry.TABLE_NAME, proj, select, selectArgs, null, null, sortOrder);
                 break;
 
-            // "movie/[TMDB_MOV_ID]/videos
+            // "movie/[MOV_ID]/videos
             }case VIDEOS_FOR_MOVIE: {
 //                proj = new String[] {MovieEntry.COLUMN_TITLE, VideoEntry.COLUMN_KEY,
 //                        VideoEntry.COLUMN_NAME, VideoEntry.COLUMN_SITE, VideoEntry.COLUMN_TYPE};
-                retCursor = getVideobyTmdbMovieId(uri, proj, sortOrder);
+                retCursor = getVideobyMovieId(uri, proj, sortOrder);
                 break;
 
             // "review"
@@ -176,11 +174,11 @@ public class MovieProvider extends ContentProvider {
                         ReviewEntry.TABLE_NAME, proj, select, selectArgs, null, null, sortOrder);
                 break;
 
-            // "movie/[TMDB_MOV_ID]/reviews
+            // "movie/[MOV_ID]/reviews
             }case REVIEWS_FOR_MOVIE: {
                 proj = new String[] {MovieEntry.COLUMN_TITLE, ReviewEntry.COLUMN_AUTHOR,
                         ReviewEntry.COLUMN_CONTENT, ReviewEntry.COLUMN_URL, ReviewEntry.COLUMN_TMDB_REVIEW_ID};
-                retCursor = getReviewbyTmdbMovieId(uri, proj, sortOrder);
+                retCursor = getReviewbyMovieId(uri, proj, sortOrder);
                 break;
             }
             default:
@@ -201,7 +199,7 @@ public class MovieProvider extends ContentProvider {
             case MOVIES: {
                 long _id = db.insert(MovieEntry.TABLE_NAME, null, values);
                 if (_id > 0)
-                    retUri = MovieEntry.buildMovieUri(values.getAsLong(MovieEntry.COLUMN_TMDB_MOVIE_ID));
+                    retUri = MovieEntry.buildMovieUri(_id);
                 else
                     throw new android.database.SQLException("Failed to insert row into " + uri);
 

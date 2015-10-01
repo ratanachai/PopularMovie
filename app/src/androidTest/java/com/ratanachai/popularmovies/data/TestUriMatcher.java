@@ -12,15 +12,15 @@ public class TestUriMatcher extends AndroidTestCase {
 
     /** Test for
      * content://com.ratanachai.popularmovies/movie
-     * content://com.ratanachai.popularmovies/movie/76341
-     * content://com.ratanachai.popularmovies/movie/76341/videos
-     * content://com.ratanachai.popularmovies/movie/76341/reviews
+     * content://com.ratanachai.popularmovies/movie/1
+     * content://com.ratanachai.popularmovies/movie/1/videos
+     * content://com.ratanachai.popularmovies/movie/1/reviews
      */
-    private static final long TEST_TMDB_MOV_ID = TestUtilities.MAD_MAX_TMDB_ID;
+    private static final long TEST_MOV_ROW_ID = 1L;
     private static final Uri TEST_MOVIE_DIR = MovieContract.MovieEntry.buildMoviesUri();
-    private static final Uri TEST_MOVIE_DETAIL = MovieContract.MovieEntry.buildMovieUri(TEST_TMDB_MOV_ID);
-    private static final Uri TEST_VIDEO_DIR = MovieContract.VideoEntry.buildMovieVideosUri(TEST_TMDB_MOV_ID);
-    private static final Uri TEST_REVIEW_DIR = MovieContract.ReviewEntry.buildMovieReviewsUri(TEST_TMDB_MOV_ID);
+    private static final Uri TEST_MOVIE_DETAIL = MovieContract.MovieEntry.buildMovieUri(TEST_MOV_ROW_ID);
+    private static final Uri TEST_VIDEO_DIR = MovieContract.VideoEntry.buildMovieVideosUri(TEST_MOV_ROW_ID);
+    private static final Uri TEST_REVIEW_DIR = MovieContract.ReviewEntry.buildMovieReviewsUri(TEST_MOV_ROW_ID);
 
 
     public void testUriMatcher(){
