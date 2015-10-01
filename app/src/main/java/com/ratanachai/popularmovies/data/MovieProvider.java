@@ -82,9 +82,9 @@ public class MovieProvider extends ContentProvider {
 
 
     private Cursor getVideobyTmdbMovieId(Uri uri, String[] proj, String sortOrder) {
-        long tmdb_mov_id = MovieContract.getTmdbMovieIdFromUri(uri);
+        long mov_id = MovieContract.getMovieIdFromUri(uri);
         String select = sTmdbMovieIdSelection;
-        String[] selectArgs = new String[]{Long.toString(tmdb_mov_id)};
+        String[] selectArgs = new String[]{Long.toString(mov_id)};
 
         return sVideoByMovieQueryBuilder.query(
                 mOpenHelper.getReadableDatabase(),
@@ -96,9 +96,9 @@ public class MovieProvider extends ContentProvider {
                 sortOrder);
     }
     private Cursor getReviewbyTmdbMovieId(Uri uri, String[] proj, String sortOrder){
-        long tmdb_mov_id = MovieContract.getTmdbMovieIdFromUri(uri);
+        long mov_id = MovieContract.getMovieIdFromUri(uri);
         String select = sTmdbMovieIdSelection;
-        String[] selectArgs = new String[]{Long.toString(tmdb_mov_id)};
+        String[] selectArgs = new String[]{Long.toString(mov_id)};
 
         return sReviewByMovieQueryBuilder.query(
                 mOpenHelper.getReadableDatabase(),
@@ -151,7 +151,7 @@ public class MovieProvider extends ContentProvider {
                 retCursor = mOpenHelper.getReadableDatabase().query(
                         MovieContract.MovieEntry.TABLE_NAME, proj,
                         MovieEntry.COLUMN_TMDB_MOVIE_ID + " = ?",
-                        new String[]{Long.toString(MovieContract.getTmdbMovieIdFromUri(uri))},
+                        new String[]{Long.toString(MovieContract.getMovieIdFromUri(uri))},
                         null,
                         null,
                         sortOrder);

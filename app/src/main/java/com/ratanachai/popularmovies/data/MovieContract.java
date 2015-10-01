@@ -19,7 +19,7 @@ public class MovieContract {
     public static final String PATH_VIDEO = "video";
     public static final String PATH_REVIEW = "review";
 
-    public static long getTmdbMovieIdFromUri(Uri uri){
+    public static long getMovieIdFromUri(Uri uri){
         List<String> segment = uri.getPathSegments();
         return Long.parseLong(segment.get(1));
     }
