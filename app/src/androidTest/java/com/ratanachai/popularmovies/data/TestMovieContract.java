@@ -21,7 +21,7 @@ public class TestMovieContract extends AndroidTestCase {
     }
 
     public void testBuildMoviesUri(){
-        Uri moviesUri = MovieContract.MovieEntry.buildMoviesUri();
+        Uri moviesUri = MovieContract.MovieEntry.CONTENT_URI;
         assertEquals("Error: Movies Uri does not match",
                 moviesUri.toString(), "content://com.ratanachai.popularmovies/movie");
     }

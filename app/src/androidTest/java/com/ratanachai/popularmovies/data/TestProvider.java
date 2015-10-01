@@ -74,7 +74,7 @@ public class TestProvider extends AndroidTestCase {
         // content://com.ratanachai.popularmovies/movie
         // vnd.android.cursor.dir/com.ratanachai.popularmovies/movie
         ContentResolver contentResolver = mContext.getContentResolver();
-        String type = contentResolver.getType(MovieEntry.buildMoviesUri());
+        String type = contentResolver.getType(MovieEntry.CONTENT_URI);
         assertEquals("Error: MovieEntry CONTENT_URI should return MovieEntry.CONTENT_TYPE",
                 MovieEntry.CONTENT_TYPE, type);
 
