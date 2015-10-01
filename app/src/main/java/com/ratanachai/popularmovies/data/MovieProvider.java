@@ -222,8 +222,28 @@ public class MovieProvider extends ContentProvider {
     }
 
     @Override
-    public int delete(Uri uri, String s, String[] strings) {
-        return 0;
+    public int delete(Uri uri, String select, String[] selectArgs) {
+        final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        final int match = sUriMatcher.match(uri);
+        int rowsDeleted;
+        if (select == null) select = "1"; // This makes Delete All rows and return num of row deleted;
+
+        switch (match){
+            case MOVIES:
+                rowsDeleted = db.delete(MovieEntry.TABLE_NAME, select, selectArgs);
+                break;
+            case VIDEOS:
+                rowsDeleted = db.delete(VideoEntry.TABLE_NAME, select, selectArgs);
+                break;
+            case REVIEWS:
+                rowsDeleted = db.delete(ReviewEntry.TABLE_NAME, select, selectArgs);
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown Uri: " + uri);
+        }
+        if (rowsDeleted != 0) getContext().getContentResolver().notifyChange(uri, null);
+
+        return rowsDeleted;
     }
 
     @Override

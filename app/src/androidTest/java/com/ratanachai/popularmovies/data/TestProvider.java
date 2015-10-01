@@ -26,11 +26,30 @@ public class TestProvider extends AndroidTestCase {
     public static final String LOG_TAG = TestProvider.class.getSimpleName();
     private static final long MAD_MAX_ROW_ID = 1L;
 
-    /*
-       This helper function deletes all records from both database tables using the database
+    /* This helper function deletes all records from both database tables using the ContentProvider.
+       It also queries the ContentProvider to make sure that the database has been successfully deleted */
+    public void deleteAllRecordsFromProvider() {
+        ContentResolver cr = mContext.getContentResolver();
+        cr.delete(MovieEntry.CONTENT_URI, null, null);
+        cr.delete(VideoEntry.CONTENT_URI, null, null);
+        cr.delete(ReviewEntry.CONTENT_URI, null, null);
+
+        Cursor retCursor = cr.query(MovieEntry.CONTENT_URI, null, null, null, null);
+        assertEquals("Error: Records not deleted from Weather table during delete", 0, retCursor.getCount());
+        retCursor.close();
+
+        retCursor = cr.query(VideoEntry.CONTENT_URI, null, null, null, null);
+        assertEquals("Error: Records not deleted from Weather table during delete", 0, retCursor.getCount());
+        retCursor.close();
+
+        retCursor = cr.query(ReviewEntry.CONTENT_URI, null, null, null, null);
+        assertEquals("Error: Records not deleted from Weather table during delete", 0, retCursor.getCount());
+        retCursor.close();
+    }
+
+    /* This helper function deletes all records from both database tables using the database
        functions only.  This is designed to be used to reset the state of the database until the
-       delete functionality is available in the ContentProvider.
-     */
+       delete functionality is available in the ContentProvider.*/
     public void deleteAllRecordsFromDB() {
         MovieDbHelper dbHelper = new MovieDbHelper(mContext);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -44,8 +63,8 @@ public class TestProvider extends AndroidTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        deleteAllRecordsFromDB();
-        //TODO: Change to delete each table via Provider?
+//        deleteAllRecordsFromDB();
+        deleteAllRecordsFromProvider();
     }
 
     public void testProviderRegistry() {
@@ -323,6 +342,29 @@ public class TestProvider extends AndroidTestCase {
         cursor.close();
 
         // TODO: The same test for Video and Review
+    }
 
+    // Make sure we can still delete after adding/updating stuff
+    public void testDeleteRecords() {
+        // Insert first
+        testInsertReadProvider();
+
+        // Register a content observer for our Movie delete.
+        TestUtilities.TestContentObserver testMovOb = TestUtilities.getTestContentObserver();
+        ContentResolver cr = mContext.getContentResolver();
+        cr.registerContentObserver(MovieEntry.CONTENT_URI, true, testMovOb);
+
+        // Register a content observer for our Video delete.
+        TestUtilities.TestContentObserver testVideoOb = TestUtilities.getTestContentObserver();
+        cr.registerContentObserver(VideoEntry.CONTENT_URI, true, testVideoOb);
+
+        deleteAllRecordsFromProvider();
+
+        // If Fail, did you call NotifyChange(uri, null); in the ContentProvider delete?
+        testMovOb.waitForNotificationOrFail();
+        testVideoOb.waitForNotificationOrFail();
+
+        cr.unregisterContentObserver(testMovOb);
+        cr.unregisterContentObserver(testVideoOb);
     }
 }
