@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.os.Build;
 import android.test.AndroidTestCase;
 import android.util.Log;
 
@@ -125,11 +126,19 @@ public class TestProvider extends AndroidTestCase {
         retCursor = cr.query(MovieEntry.CONTENT_URI, null, null, null, null);
         assertEquals("Number of row returned incorrect", 2, retCursor.getCount());
 
+        // Has the NotificationUri been set correctly? --- we can only test this easily against API
+        // level 19 or greater because getNotificationUri was added in API level 19.
+        if ( Build.VERSION.SDK_INT >= 19 ) {
+            assertEquals("Error: Movie Query did not properly set NotificationUri",
+                    retCursor.getNotificationUri(), MovieEntry.CONTENT_URI);
+        }
+
         // Query for specific row
         retCursor = cr.query(MovieEntry.buildMovieUri(movieRowId1), null, null, null, null);
         TestUtilities.validateCursor("testBasicMovieQuery [ITEM]: ", retCursor, testValues1);
 
         db.close();
+
     }
 
     public void testBasicVideoQuery() {
@@ -269,13 +278,51 @@ public class TestProvider extends AndroidTestCase {
         retCursor.moveToFirst();
         TestUtilities.validateCurrentRecord("Error validating joined Video and Movie Data.",
                 retCursor, videoValue1);
+
+        // TODO: The same test for Review
     }
 
-    // TODO: To which Test functions should this code be in ?
-    // Has the NotificationUri been set correctly? --- we can only test this easily against API
-    // level 19 or greater because getNotificationUri was added in API level 19.
-//    if ( Build.VERSION.SDK_INT >= 19 ) {
-//        assertEquals("Error: Location Query did not properly set NotificationUri",
-//                locationCursor.getNotificationUri(), LocationEntry.CONTENT_URI);
-//    }
+    /*
+        This test uses the provider to insert and then update the data.
+     */
+
+    public void testUpdateLocation() {
+
+        // Create a test Movie
+        ContentValues madMaxValues = TestUtilities.createMadmaxMovieValues();
+        ContentResolver cr = mContext.getContentResolver();
+        Uri madMaxUri = cr.insert(MovieEntry.CONTENT_URI, madMaxValues);
+        long madMaxRowId = ContentUris.parseId(madMaxUri);
+        assertTrue(madMaxRowId != -1);
+        Log.d(LOG_TAG, "New row id: " + madMaxRowId);
+
+        // Create a new map of values, where column names are the keys
+        ContentValues updatedValues = new ContentValues(madMaxValues);
+        updatedValues.put(MovieEntry._ID, madMaxRowId);
+        updatedValues.put(MovieEntry.COLUMN_OVERVIEW, "Overview should be this short.");
+
+        // Create a cursor with observer to make sure that content provider is notifying the observers
+        Cursor movCursor = cr.query(MovieEntry.CONTENT_URI, null, null, null, null);
+        TestUtilities.TestContentObserver tco = TestUtilities.getTestContentObserver();
+        movCursor.registerContentObserver(tco);
+
+        // Perform Update
+        int count = cr.update(MovieEntry.CONTENT_URI, updatedValues, MovieEntry._ID + "= ?",
+                new String[]{Long.toString(madMaxRowId)});
+        assertEquals(count, 1);
+
+        // Test to make sure our observer is called.  If not, we throw an assertion.
+        // If this fail, Content provider isn't calling notifyChange(uri, null)
+        tco.waitForNotificationOrFail();
+        movCursor.unregisterContentObserver(tco);
+        movCursor.close();
+
+        // Query out to verify update
+        Cursor cursor = cr.query(MovieEntry.buildMovieUri(madMaxRowId), null, null, null, null);
+        TestUtilities.validateCursor("Error validating Movie entry update.", cursor, updatedValues);
+        cursor.close();
+
+        // TODO: The same test for Video and Review
+
+    }
 }

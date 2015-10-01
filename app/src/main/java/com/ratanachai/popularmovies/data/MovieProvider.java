@@ -184,7 +184,7 @@ public class MovieProvider extends ContentProvider {
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
-
+        // Watch queried URI for a change, The listener attached to this resolver will be notified.
         retCursor.setNotificationUri(getContext().getContentResolver(), uri);
         return retCursor;
     }
@@ -216,6 +216,7 @@ public class MovieProvider extends ContentProvider {
             default:
                 throw new UnsupportedOperationException("Unknown Uri: " + uri);
         }
+        // Notify registered observer that content in URI is changed
         getContext().getContentResolver().notifyChange(uri, null);
         return retUri;
     }
@@ -226,7 +227,29 @@ public class MovieProvider extends ContentProvider {
     }
 
     @Override
-    public int update(Uri uri, ContentValues contentValues, String s, String[] strings) {
-        return 0;
+    public int update(Uri uri, ContentValues values, String select, String[] selectArgs) {
+        final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        final int match = sUriMatcher.match(uri);
+        int rowsUpdated;
+
+        switch (match){
+            case MOVIES:
+                rowsUpdated = db.update(MovieEntry.TABLE_NAME, values, select, selectArgs);
+                    break;
+
+            case VIDEOS:
+                rowsUpdated = db.update(VideoEntry.TABLE_NAME, values, select, selectArgs);
+                break;
+
+            case REVIEWS:
+                rowsUpdated = db.update(ReviewEntry.TABLE_NAME, values, select, selectArgs);
+                break;
+
+            default:
+                throw new UnsupportedOperationException("Unknown Uri: " + uri);
+        }
+        // Notify registered observer that content in URI is changed
+        if (rowsUpdated != 0) { getContext().getContentResolver().notifyChange(uri, null); }
+        return rowsUpdated;
     }
 }
