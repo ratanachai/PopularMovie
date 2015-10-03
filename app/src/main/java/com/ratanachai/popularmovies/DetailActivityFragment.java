@@ -72,7 +72,8 @@ public class DetailActivityFragment extends Fragment {
     void saveMovieOffline(String[] movieInfo){
 
         ContentResolver cr = getActivity().getContentResolver();
-        Cursor movieCursor = cr.query(MovieEntry.CONTENT_URI, MOVIE_COLUMNS, MovieEntry.COLUMN_TMDB_MOVIE_ID + " = ? ",
+        Cursor movieCursor = cr.query(MovieEntry.CONTENT_URI,
+                MOVIE_COLUMNS, MovieEntry.COLUMN_TMDB_MOVIE_ID + " = ? ",
                 new String[]{movieInfo[0]},null);
         if (movieCursor.getCount() == 0) {
 
@@ -85,12 +86,24 @@ public class DetailActivityFragment extends Fragment {
             movieValues.put(MovieEntry.COLUMN_RELEASE_DATE, movieInfo[5]);
             cr.insert(MovieContract.MovieEntry.CONTENT_URI, movieValues);
 
-            Toast.makeText(getActivity(), movieInfo[1] + "is saved for Offline view",
+            Toast.makeText(getActivity(), "Movie is saved for Offline view",
                     Toast.LENGTH_SHORT).show();
         }else{
             Toast.makeText(getActivity(), "Movie with the same TMDB ID already saved",
                     Toast.LENGTH_SHORT).show();
         }
+    }
+    void removeMovieFromOffline(String tmdbMovieId){
+        ContentResolver cr = getActivity().getContentResolver();
+        int rowsDeleted = cr.delete(MovieEntry.CONTENT_URI,
+                MovieEntry.COLUMN_TMDB_MOVIE_ID + " = ?", new String[]{tmdbMovieId});
+
+        if (rowsDeleted != 0)
+            Toast.makeText(getActivity(), "Movie is removed from Offline view",
+                    Toast.LENGTH_SHORT).show();
+        else
+            Toast.makeText(getActivity(), "No movie removed from Offline view",
+                    Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -184,6 +197,7 @@ public class DetailActivityFragment extends Fragment {
                     }
                     else{
                         fav_movie_ids.remove(tmdb_id);
+                        removeMovieFromOffline(tmdb_id);
                     }
 
                     // Save new Set into SharedPref
