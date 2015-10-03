@@ -10,6 +10,7 @@
     <string name="pref_sort_rating">vote_average</string>
     <string name="pref_sort_popularity_label">Popularity</string>
     <string name="pref_sort_rating_label">Rating</string>
+    <string name="pref_movie_ids_key">fav_movie_ids</string>
     <string name="title_activity_detail">Movie Detail</string>
     <string name="movie_title">Movie Title</string>
     <string name="movie_overview_placeholder">Lorem ipsum dolor sit amet, consectetur adipiscing elit,

@@ -2,18 +2,22 @@ package com.ratanachai.popularmovies;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.squareup.picasso.Picasso;
 
@@ -28,9 +32,12 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class DetailActivityFragment extends Fragment {
 
+    public static final String LOG_TAG = DetailActivityFragment.class.getSimpleName();
     private ArrayList<Video> mVideos = new ArrayList<>();
     private ArrayList<Review> mReviews = new ArrayList<>();
     private View mRootview;
@@ -73,17 +80,45 @@ public class DetailActivityFragment extends Fragment {
 
         Intent intent = getActivity().getIntent();
         if (intent != null && intent.hasExtra("strings")){
-            String[] movieInfo = intent.getStringArrayExtra("strings");
+            final String[] movieInfo = intent.getStringArrayExtra("strings");
 
             // Set all TextView and Poster
             ((TextView) mRootview.findViewById(R.id.movie_title)).setText(movieInfo[1]);
             ((TextView) mRootview.findViewById(R.id.movie_overview)).setText(movieInfo[3]);
-            ((TextView) mRootview.findViewById(R.id.movie_rating)).append(" "+movieInfo[4]+"/10");
+            ((TextView) mRootview.findViewById(R.id.movie_rating)).append(" " + movieInfo[4] + "/10");
             ((TextView) mRootview.findViewById(R.id.movie_release)).append(" " + movieInfo[5]);
             Picasso.with(getActivity())
                     .load("http://image.tmdb.org/t/p/w185" + movieInfo[2])
                     .fit().centerInside()
                     .into((ImageView) mRootview.findViewById(R.id.movie_poster));
+
+            // Set Listener: Add/Remove TMDB_MOV_ID on checked/unchecked
+            ToggleButton favToggle = (ToggleButton) mRootview.findViewById(R.id.favorite_toggle);
+            favToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                SharedPreferences.Editor editor = prefs.edit();
+                String key = getString(R.string.pref_movie_ids_key);
+
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                    Set<String> fav_movie_ids = prefs.getStringSet(key, new HashSet<String>());
+
+                    if (isChecked){
+                        Log.d(LOG_TAG, "Now ON: Saving");
+                        fav_movie_ids.add(movieInfo[0]);
+                        editor.putStringSet(key, fav_movie_ids);
+                        editor.commit();
+                    } else {
+                        Log.d(LOG_TAG, "Now Off: Removing from Save");
+                        fav_movie_ids.remove(movieInfo[0]);
+                        editor.putStringSet(key, fav_movie_ids);
+                        editor.commit();
+                    }
+                    fav_movie_ids = prefs.getStringSet(key, new HashSet<String>());
+                    Log.d(LOG_TAG + "==After==", fav_movie_ids.toString());
+                }
+            });
 
             // Restore Trailer Videos and Reviews (First time added via OnPostExecute)
             if (mRestoreView) {
