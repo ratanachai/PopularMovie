@@ -102,21 +102,23 @@ public class DetailActivityFragment extends Fragment {
 
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                    Set<String> fav_movie_ids = prefs.getStringSet(key, new HashSet<String>());
+                    Set<String> outSet = prefs.getStringSet(key, new HashSet<String>());
+                    Set<String> fav_movie_ids = new HashSet<String>(outSet);
+                    Log.d(LOG_TAG + "==Before==", fav_movie_ids.toString());
 
                     if (isChecked){
-                        Log.d(LOG_TAG, "Now ON: Saving");
                         fav_movie_ids.add(movieInfo[0]);
-                        editor.putStringSet(key, fav_movie_ids);
-                        editor.commit();
                     } else {
-                        Log.d(LOG_TAG, "Now Off: Removing from Save");
                         fav_movie_ids.remove(movieInfo[0]);
-                        editor.putStringSet(key, fav_movie_ids);
-                        editor.commit();
                     }
-                    fav_movie_ids = prefs.getStringSet(key, new HashSet<String>());
-                    Log.d(LOG_TAG + "==After==", fav_movie_ids.toString());
+                    // Save new Set into SharedPref
+                    editor.putStringSet(key, fav_movie_ids);
+                    editor.commit();
+
+                    // Pull out from SharedPref again to check
+                    outSet = prefs.getStringSet(key, new HashSet<String>());
+                    Log.d(LOG_TAG + "==After==", outSet.toString());
+
                 }
             });
 
