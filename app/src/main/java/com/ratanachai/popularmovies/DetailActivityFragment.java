@@ -94,30 +94,34 @@ public class DetailActivityFragment extends Fragment {
 
             // Set Listener: Add/Remove TMDB_MOV_ID on checked/unchecked
             ToggleButton favToggle = (ToggleButton) mRootview.findViewById(R.id.favorite_toggle);
-            favToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            final String key = getString(R.string.pref_movie_ids_key);
+            final Set<String> outSet = prefs.getStringSet(key, new HashSet<String>());
+            final String tmdb_id = movieInfo[0];
 
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            // Toggle ON if current movie is in the Favorite Movie Set
+            if(outSet.contains(tmdb_id)) favToggle.setChecked(true);
+
+            // Pull out from SharedPref before any click
+            Log.d(LOG_TAG + "==Before==", outSet.toString());
+            favToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 SharedPreferences.Editor editor = prefs.edit();
-                String key = getString(R.string.pref_movie_ids_key);
 
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                    Set<String> outSet = prefs.getStringSet(key, new HashSet<String>());
-                    Set<String> fav_movie_ids = new HashSet<String>(outSet);
-                    Log.d(LOG_TAG + "==Before==", fav_movie_ids.toString());
 
-                    if (isChecked){
-                        fav_movie_ids.add(movieInfo[0]);
-                    } else {
-                        fav_movie_ids.remove(movieInfo[0]);
-                    }
+                    Set<String> fav_movie_ids = new HashSet<String>(outSet);
+                    if (isChecked)
+                        fav_movie_ids.add(tmdb_id);
+                    else
+                        fav_movie_ids.remove(tmdb_id);
+
                     // Save new Set into SharedPref
                     editor.putStringSet(key, fav_movie_ids);
                     editor.commit();
 
                     // Pull out from SharedPref again to check
-                    outSet = prefs.getStringSet(key, new HashSet<String>());
-                    Log.d(LOG_TAG + "==After==", outSet.toString());
+                    Log.d(LOG_TAG + "==After==", prefs.getStringSet(key, new HashSet<String>()).toString());
 
                 }
             });
