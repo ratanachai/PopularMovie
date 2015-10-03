@@ -1,8 +1,13 @@
 package com.ratanachai.popularmovies;
 
 import android.content.ActivityNotFoundException;
+import android.content.ContentResolver;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -19,6 +24,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.ratanachai.popularmovies.data.MovieContract;
+import com.ratanachai.popularmovies.data.MovieContract.MovieEntry;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -42,6 +49,24 @@ public class DetailActivityFragment extends Fragment {
     private ArrayList<Review> mReviews = new ArrayList<>();
     private View mRootview;
     private boolean mRestoreView = false;
+
+    // PROJECTION
+    private static final String[] MOVIE_COLUMNS = {
+            MovieEntry.TABLE_NAME + "." + MovieEntry._ID,
+            MovieEntry.COLUMN_TMDB_MOVIE_ID,
+            MovieEntry.COLUMN_TITLE,
+            MovieEntry.COLUMN_POSTER_PATH,
+            MovieEntry.COLUMN_OVERVIEW,
+            MovieEntry.COLUMN_USER_RATING,
+            MovieEntry.COLUMN_RELEASE_DATE
+    };
+    private static final int COL_MOVIE_ROW_ID = 0;
+    private static final int COL_TMDB_MOVIE_ID = 1;
+    private static final int COL_TITLE = 2;
+    private static final int COL_POSTER_PATH = 3;
+    private static final int COL_OVERVIEW = 4;
+    private static final int COL_USER_RATING = 5;
+    private static final int COL_RELEASE_DATE = 6;
 
     public DetailActivityFragment() {}
 
