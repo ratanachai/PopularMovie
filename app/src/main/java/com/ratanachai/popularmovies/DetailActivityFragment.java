@@ -2,6 +2,7 @@ package com.ratanachai.popularmovies;
 
 import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -22,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.ratanachai.popularmovies.data.MovieContract;
 import com.ratanachai.popularmovies.data.MovieContract.MovieEntry;
 import com.squareup.picasso.Picasso;
 
@@ -66,6 +68,30 @@ public class DetailActivityFragment extends Fragment {
     private static final int COL_RELEASE_DATE = 6;
 
     public DetailActivityFragment() {}
+
+    void saveMovieOffline(String[] movieInfo){
+
+        ContentResolver cr = getActivity().getContentResolver();
+        Cursor movieCursor = cr.query(MovieEntry.CONTENT_URI, MOVIE_COLUMNS, MovieEntry.COLUMN_TMDB_MOVIE_ID + " = ? ",
+                new String[]{movieInfo[0]},null);
+        if (movieCursor.getCount() == 0) {
+
+            ContentValues movieValues = new ContentValues();
+            movieValues.put(MovieEntry.COLUMN_TMDB_MOVIE_ID, movieInfo[0]);
+            movieValues.put(MovieEntry.COLUMN_TITLE, movieInfo[1]);
+            movieValues.put(MovieEntry.COLUMN_POSTER_PATH, movieInfo[2]);
+            movieValues.put(MovieEntry.COLUMN_OVERVIEW, movieInfo[3]);
+            movieValues.put(MovieEntry.COLUMN_USER_RATING, movieInfo[4]);
+            movieValues.put(MovieEntry.COLUMN_RELEASE_DATE, movieInfo[5]);
+            cr.insert(MovieContract.MovieEntry.CONTENT_URI, movieValues);
+
+            Toast.makeText(getActivity(), movieInfo[1] + "is saved for Offline view",
+                    Toast.LENGTH_SHORT).show();
+        }else{
+            Toast.makeText(getActivity(), "Movie with the same TMDB ID already saved",
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -145,16 +171,20 @@ public class DetailActivityFragment extends Fragment {
             });
 
             favToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                SharedPreferences.Editor editor = prefs.edit();
 
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
 
+                    SharedPreferences.Editor editor = prefs.edit();
                     Set<String> fav_movie_ids = new HashSet<String>(outSet);
-                    if (isChecked)
+                    // Add/Remove to SharedPref and Database
+                    if (isChecked) {
                         fav_movie_ids.add(tmdb_id);
-                    else
+                        saveMovieOffline(movieInfo);
+                    }
+                    else{
                         fav_movie_ids.remove(tmdb_id);
+                    }
 
                     // Save new Set into SharedPref
                     editor.putStringSet(key, fav_movie_ids);
