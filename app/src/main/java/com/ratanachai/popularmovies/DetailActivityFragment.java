@@ -2,8 +2,6 @@ package com.ratanachai.popularmovies;
 
 import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
-import android.content.ContentUris;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -24,7 +22,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import com.ratanachai.popularmovies.data.MovieContract;
 import com.ratanachai.popularmovies.data.MovieContract.MovieEntry;
 import com.squareup.picasso.Picasso;
 
@@ -127,8 +124,26 @@ public class DetailActivityFragment extends Fragment {
             // Toggle ON if current movie is in the Favorite Movie Set
             if(outSet.contains(tmdb_id)) favToggle.setChecked(true);
 
-            // Pull out from SharedPref before any click
+            // Test area
             Log.d(LOG_TAG + "==Before==", outSet.toString());
+            mRootview.findViewById(R.id.reset).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Clear SharedPref
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.clear().commit();
+
+                    // Clear Database
+                    ContentResolver cr = getActivity().getContentResolver();
+                    Cursor movieCursor = cr.query(MovieEntry.CONTENT_URI,
+                            new String[]{MovieEntry._ID, MovieEntry.COLUMN_TITLE},
+                            null, null, null);
+                    Log.d(LOG_TAG, DatabaseUtils.dumpCursorToString(movieCursor));
+                    int rowsDeleted = cr.delete(MovieEntry.CONTENT_URI, null, null);
+                    Log.d(LOG_TAG, "RESET: " + Integer.toString(rowsDeleted) + " rows deleted" );
+                }
+            });
+
             favToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 SharedPreferences.Editor editor = prefs.edit();
 
