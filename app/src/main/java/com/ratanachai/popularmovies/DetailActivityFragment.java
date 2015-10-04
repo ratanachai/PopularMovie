@@ -12,7 +12,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -156,8 +155,7 @@ public class DetailActivityFragment extends BaseFragment {
                     // Clear Database
                     ContentResolver cr = getActivity().getContentResolver();
                     Cursor movieCursor = cr.query(MovieEntry.CONTENT_URI,
-                            new String[]{MovieEntry._ID, MovieEntry.COLUMN_TITLE},
-                            null, null, null);
+                            new String[]{MovieEntry._ID, MovieEntry.COLUMN_TITLE}, null, null, null);
                     Log.d(LOG_TAG, DatabaseUtils.dumpCursorToString(movieCursor));
                     int rowsDeleted = cr.delete(MovieEntry.CONTENT_URI, null, null);
                     Log.d(LOG_TAG, "RESET: " + Integer.toString(rowsDeleted) + " rows deleted" );
@@ -211,9 +209,9 @@ public class DetailActivityFragment extends BaseFragment {
             FetchVideosTask fetchMoviesTask = new FetchVideosTask();
             fetchMoviesTask.execute(video_id);
         }else{
-            Toast toast = Toast.makeText(getActivity(), "Please check your network connection", Toast.LENGTH_LONG);
-            toast.setGravity(Gravity.CENTER, 0, 0);
-            toast.show();
+//            Toast toast = Toast.makeText(getActivity(), "Please check your network connection", Toast.LENGTH_LONG);
+//            toast.setGravity(Gravity.CENTER, 0, 0);
+//            toast.show();
         }
     }
     private void addVideosTextView(ArrayList<Video> videos) {
@@ -378,9 +376,9 @@ public class DetailActivityFragment extends BaseFragment {
             FetchReviewsTask fetchReviewsTask = new FetchReviewsTask();
             fetchReviewsTask.execute(video_id);
         }else{
-            Toast toast = Toast.makeText(getActivity(), "Please check your network connection", Toast.LENGTH_LONG);
-            toast.setGravity(Gravity.CENTER, 0, 0);
-            toast.show();
+//            Toast toast = Toast.makeText(getActivity(), "Please check your network connection", Toast.LENGTH_LONG);
+//            toast.setGravity(Gravity.CENTER, 0, 0);
+//            toast.show();
         }
     }
 

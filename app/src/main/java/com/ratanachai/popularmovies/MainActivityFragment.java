@@ -130,16 +130,7 @@ public class MainActivityFragment extends BaseFragment {
         Log.d(LOG_TAG, "== fetchMovieInfo()");
         String sort_by = getCurrentSortBy(getActivity());
 
-        // Fetch movies information in background if Network Available and Not Favorite movie
-        if(Utility.isNetworkAvailable(getActivity()) & !isSortByFavorite(sort_by)) {
-            Log.d(LOG_TAG, "== Getting Movies from the Internet");
-
-            // Get Movie from Internet
-            FetchMoviesTask fetchMoviesTask = new FetchMoviesTask();
-            fetchMoviesTask.execute(sort_by);
-            mSortMode = sort_by;
-
-        }else if(isSortByFavorite(sort_by)) {
+        if(isSortByFavorite(sort_by)) {
             Log.d(LOG_TAG, "== Getting Favorite Movies from DB");
 
             // Get Movie from Database
@@ -151,24 +142,36 @@ public class MainActivityFragment extends BaseFragment {
             mMovies.clear(); // Must clear the list before adding new
             while(cur.moveToNext()) {
                 Movie movieObj = new Movie(cur.getString(Movie.COL_TMDB_MOVIE_ID),
-                                        cur.getString(Movie.COL_TITLE),
-                                        cur.getString(Movie.COL_POSTER_PATH),
-                                        cur.getString(Movie.COL_OVERVIEW),
-                                        cur.getString(Movie.COL_USER_RATING),
-                                        cur.getString(Movie.COL_RELEASE_DATE));
+                        cur.getString(Movie.COL_TITLE),
+                        cur.getString(Movie.COL_POSTER_PATH),
+                        cur.getString(Movie.COL_OVERVIEW),
+                        cur.getString(Movie.COL_USER_RATING),
+                        cur.getString(Movie.COL_RELEASE_DATE));
                 mMovies.add(movieObj);
             }
             // Populate Movie Poster to ArrayAdapter
             mMovieAdapter.clear(); //Must clear adapter before adding new
             for(Movie aMovie : mMovies) { mMovieAdapter.add(aMovie.getPosterUrl()); }
 
-            mSortMode = sort_by; //Remember current SortMode
             needReFetch = false; //Reset flag after fetched
+
+        }else if(Utility.isNetworkAvailable(getActivity())) {
+            Log.d(LOG_TAG, "== Getting Movies from the Internet");
+
+            // Get Movie from Internet
+            FetchMoviesTask fetchMoviesTask = new FetchMoviesTask();
+            fetchMoviesTask.execute(sort_by);
+
         }else{
-            Toast toast = Toast.makeText(getActivity(), "Please check your network connection", Toast.LENGTH_LONG);
+            Toast toast = Toast.makeText(getActivity(), "No network connection. " +
+                    "Please Switch to Favorite Movie list.", Toast.LENGTH_LONG);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
+            mMovieAdapter.clear();
+            mMovies.clear();
         }
+
+        mSortMode = sort_by; //Remember current SortMode
     }
 
     // How-to use Picasso with ArrayAdapter from Big Nerd Ranch
@@ -180,6 +183,7 @@ public class MainActivityFragment extends BaseFragment {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
+            Log.d(LOG_TAG, "== getView()");
             if (convertView == null) {
                 convertView = getActivity().getLayoutInflater()
                         .inflate(R.layout.grid_item_movie, parent, false);
