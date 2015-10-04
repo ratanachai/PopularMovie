@@ -48,12 +48,16 @@ public class MainActivityFragment extends Fragment {
     public MainActivityFragment() {
     }
 
-    // Get Sort_by settings from Pref
-    private String getCurrentSortBy(){
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        return prefs.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_default));
-    }
+    @Override
+    public void onStart(){
 
+        /** Force Fetch Movies if Sort Mode changed */
+        String sort_by = getCurrentSortBy();
+        if(!mSortMode.isEmpty() && sort_by != null && !sort_by.equals(mSortMode)){
+            fetchMoviesInfo();
+        }
+        super.onStart();
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,29 +82,6 @@ public class MainActivityFragment extends Fragment {
                 mMovieAdapter.add(aMovie.getPosterUrl());
             }
         }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState){
-        super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList("movies", mMovies);
-        outState.putString("sort_mode", mSortMode);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_main_fragment, menu);
-    }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.action_refresh) {
-            // Force Fetch Movies data
-            fetchMoviesInfo();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -137,6 +118,56 @@ public class MainActivityFragment extends Fragment {
 
         return rootView;
     }
+    @Override
+    public void onSaveInstanceState(Bundle outState){
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList("movies", mMovies);
+        outState.putString("sort_mode", mSortMode);
+    }
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_main_fragment, menu);
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_refresh) {
+            // Force Fetch Movies data
+            fetchMoviesInfo();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    // Get Sort_by settings from Pref
+    private String getCurrentSortBy(){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        return prefs.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_default));
+    }
+    private boolean isSortByFavorite(String sort_by){
+        return sort_by.equalsIgnoreCase(getString(R.string.pref_favorite));
+    }
+    private void fetchMoviesInfo(){
+        String sort_by = getCurrentSortBy();
+
+        // Fetch movies information in background if Network Available and Not Favorite movie
+        if(Utility.isNetworkAvailable(getActivity()) & !isSortByFavorite(sort_by)) {
+            //Toast.makeText(getActivity(),"Fetching", Toast.LENGTH_SHORT).show();
+            FetchMoviesTask fetchMoviesTask = new FetchMoviesTask();
+            fetchMoviesTask.execute(sort_by);
+            mSortMode = sort_by;
+
+        }else if(isSortByFavorite(sort_by)) {
+            Toast.makeText(getActivity(), "Favorite Movies (Offline)", Toast.LENGTH_LONG).show();
+            mSortMode = sort_by;
+
+        }else{
+            Toast toast = Toast.makeText(getActivity(), "Please check your network connection", Toast.LENGTH_LONG);
+            toast.setGravity(Gravity.CENTER, 0, 0);
+            toast.show();
+        }
+    }
 
     // How-to use Picasso with ArrayAdapter from Big Nerd Ranch
     // https://www.bignerdranch.com/blog/solving-the-android-image-loading-problem-volley-vs-picasso/
@@ -162,42 +193,6 @@ public class MainActivityFragment extends Fragment {
 
             return convertView;
         }
-
-    }
-    private boolean isSortByFavorite(String sort_by){
-        return sort_by.equalsIgnoreCase(getString(R.string.pref_favorite));
-    }
-    private void fetchMoviesInfo(){
-
-        String sort_by = getCurrentSortBy();
-
-        // Fetch movies information in background if Network Available and Not Favorite movie
-        if(Utility.isNetworkAvailable(getActivity()) & !isSortByFavorite(sort_by)) {
-            //Toast.makeText(getActivity(),"Fetching", Toast.LENGTH_SHORT).show();
-            FetchMoviesTask fetchMoviesTask = new FetchMoviesTask();
-            fetchMoviesTask.execute(sort_by);
-            mSortMode = sort_by;
-
-        }else if(isSortByFavorite(sort_by)) {
-            Toast.makeText(getActivity(), "Favorite Movies (Offline)", Toast.LENGTH_LONG).show();
-            mSortMode = sort_by;
-
-        }else{
-            Toast toast = Toast.makeText(getActivity(), "Please check your network connection", Toast.LENGTH_LONG);
-            toast.setGravity(Gravity.CENTER, 0, 0);
-            toast.show();
-        }
-    }
-
-    @Override
-    public void onStart(){
-
-        /** Force Fetch Movies if Sort Mode changed */
-        String sort_by = getCurrentSortBy();
-        if(!mSortMode.isEmpty() && sort_by != null && !sort_by.equals(mSortMode)){
-            fetchMoviesInfo();
-        }
-        super.onStart();
     }
 
     public class FetchMoviesTask extends AsyncTask<String, Void, ArrayList<Movie>> {
