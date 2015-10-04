@@ -11,7 +11,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -41,7 +40,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-public class DetailActivityFragment extends Fragment {
+public class DetailActivityFragment extends BaseFragment {
 
     public static final String LOG_TAG = DetailActivityFragment.class.getSimpleName();
     private ArrayList<Video> mVideos = new ArrayList<>();
@@ -176,12 +175,14 @@ public class DetailActivityFragment extends Fragment {
                     if (isChecked) {
                         fav_movie_ids.add(tmdb_id);
                         saveMovieOffline(movieInfo);
+                        if ( isSortByFavorite(getCurrentSortBy(getActivity())) ) needReFetch = false;
                     }
                     else{
                         fav_movie_ids.remove(tmdb_id);
                         removeMovieFromOffline(tmdb_id);
+                        // MainFragment will need to be refetched movie if movie removed
+                        if ( isSortByFavorite(getCurrentSortBy(getActivity())) ) needReFetch = true;
                     }
-
                     // Save new Set into SharedPref
                     editor.putStringSet(key, fav_movie_ids);
                     editor.commit();

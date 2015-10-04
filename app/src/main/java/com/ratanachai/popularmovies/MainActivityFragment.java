@@ -1,14 +1,11 @@
 package com.ratanachai.popularmovies;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -38,7 +35,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class MainActivityFragment extends Fragment {
+public class MainActivityFragment extends BaseFragment {
     public static final String LOG_TAG = MainActivityFragment.class.getSimpleName();
 
     private CustomImageAdapter mMovieAdapter;
@@ -98,10 +95,11 @@ public class MainActivityFragment extends Fragment {
     @Override
     public void onStart(){
         Log.d(LOG_TAG, "== onStart()");
-        String sort_by = getCurrentSortBy();
+        String sort_by = getCurrentSortBy(getActivity());
 
-        // If Sort Criteria changed
-        if(!mSortMode.isEmpty() && sort_by != null && !sort_by.equals(mSortMode))
+        // Force Re-Fetch If needReFetch OR Sort Criteria changed
+        if( needReFetch ||
+                (!mSortMode.isEmpty() && sort_by != null && !sort_by.equals(mSortMode)) )
             fetchMoviesInfo();
 
         super.onStart();
@@ -128,17 +126,9 @@ public class MainActivityFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    // Get Sort_by settings from Pref
-    private String getCurrentSortBy(){
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        return prefs.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_default));
-    }
-    private boolean isSortByFavorite(String sort_by){
-        return sort_by.equalsIgnoreCase(getString(R.string.pref_favorite));
-    }
     private void fetchMoviesInfo(){
         Log.d(LOG_TAG, "== fetchMovieInfo()");
-        String sort_by = getCurrentSortBy();
+        String sort_by = getCurrentSortBy(getActivity());
 
         // Fetch movies information in background if Network Available and Not Favorite movie
         if(Utility.isNetworkAvailable(getActivity()) & !isSortByFavorite(sort_by)) {
@@ -173,6 +163,7 @@ public class MainActivityFragment extends Fragment {
             for(Movie aMovie : mMovies) { mMovieAdapter.add(aMovie.getPosterUrl()); }
 
             mSortMode = sort_by; //Remember current SortMode
+            needReFetch = false; //Reset flag after fetched
         }else{
             Toast toast = Toast.makeText(getActivity(), "Please check your network connection", Toast.LENGTH_LONG);
             toast.setGravity(Gravity.CENTER, 0, 0);
