@@ -3,6 +3,7 @@ package com.ratanachai.popularmovies;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.ratanachai.popularmovies.data.MovieContract.MovieEntry;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -39,11 +41,19 @@ import java.util.ArrayList;
 public class MainActivityFragment extends Fragment {
 
     private CustomImageAdapter mMovieAdapter;
+    private FavoriteMovieAdapter mFavMovAdapter;
     private ArrayList<Movie> mMovies = new ArrayList<Movie>();
     private String mSortMode = "";
 
     public MainActivityFragment() {
     }
+
+    // Get Sort_by settings from Pref
+    private String getCurrentSortBy(){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        return prefs.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_default));
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,10 +108,24 @@ public class MainActivityFragment extends Fragment {
         // Inflate fragment main into Root View
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        // GridView with the adapter
         GridView gridView = (GridView) rootView.findViewById(R.id.gridview_movies);
-        gridView.setAdapter(mMovieAdapter);
-        // Set OnItemClick
+        // More Number of columns in Landscape mode
+        if(getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
+            gridView.setNumColumns(5);
+
+        // Fetch from Database or the internet
+        if(isSortByFavorite(getCurrentSortBy())){
+
+            String sortOrder = MovieEntry._ID + " DESC";
+            Cursor cur = getActivity().getContentResolver().query(MovieEntry.CONTENT_URI,
+                    Movie.MOVIE_COLUMNS, null, null, sortOrder);
+            mFavMovAdapter = new FavoriteMovieAdapter(getActivity(), cur, 0);
+            gridView.setAdapter(mFavMovAdapter);
+
+        }else{
+            gridView.setAdapter(mMovieAdapter);
+        }
+
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -110,11 +134,6 @@ public class MainActivityFragment extends Fragment {
                 startActivity(intent);
             }
         });
-
-        // More Number of columns in Landscape mode
-        if(getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
-            gridView.setNumColumns(5);
-        }
 
         return rootView;
     }
@@ -145,22 +164,23 @@ public class MainActivityFragment extends Fragment {
         }
 
     }
-
+    private boolean isSortByFavorite(String sort_by){
+        return sort_by.equalsIgnoreCase(getString(R.string.pref_favorite));
+    }
     private void fetchMoviesInfo(){
 
-        // Get Sort_by settings from Pref
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String sort_by = prefs.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_default));
+        String sort_by = getCurrentSortBy();
 
         // Fetch movies information in background if Network Available and Not Favorite movie
-        if(Utility.isNetworkAvailable(getActivity()) & !sort_by.equalsIgnoreCase(getString(R.string.pref_favorite))) {
+        if(Utility.isNetworkAvailable(getActivity()) & !isSortByFavorite(sort_by)) {
             //Toast.makeText(getActivity(),"Fetching", Toast.LENGTH_SHORT).show();
             FetchMoviesTask fetchMoviesTask = new FetchMoviesTask();
             fetchMoviesTask.execute(sort_by);
             mSortMode = sort_by;
 
-        }else if(sort_by.equalsIgnoreCase(getString(R.string.pref_favorite))) {
+        }else if(isSortByFavorite(sort_by)) {
             Toast.makeText(getActivity(), "Favorite Movies (Offline)", Toast.LENGTH_LONG).show();
+            mSortMode = sort_by;
 
         }else{
             Toast toast = Toast.makeText(getActivity(), "Please check your network connection", Toast.LENGTH_LONG);
@@ -173,8 +193,7 @@ public class MainActivityFragment extends Fragment {
     public void onStart(){
 
         /** Force Fetch Movies if Sort Mode changed */
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String sort_by = prefs.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_default));
+        String sort_by = getCurrentSortBy();
         if(!mSortMode.isEmpty() && sort_by != null && !sort_by.equals(mSortMode)){
             fetchMoviesInfo();
         }

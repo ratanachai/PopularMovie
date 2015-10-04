@@ -49,31 +49,13 @@ public class DetailActivityFragment extends Fragment {
     private View mRootview;
     private boolean mRestoreView = false;
 
-    // PROJECTION
-    private static final String[] MOVIE_COLUMNS = {
-            MovieEntry.TABLE_NAME + "." + MovieEntry._ID,
-            MovieEntry.COLUMN_TMDB_MOVIE_ID,
-            MovieEntry.COLUMN_TITLE,
-            MovieEntry.COLUMN_POSTER_PATH,
-            MovieEntry.COLUMN_OVERVIEW,
-            MovieEntry.COLUMN_USER_RATING,
-            MovieEntry.COLUMN_RELEASE_DATE
-    };
-    private static final int COL_MOVIE_ROW_ID = 0;
-    private static final int COL_TMDB_MOVIE_ID = 1;
-    private static final int COL_TITLE = 2;
-    private static final int COL_POSTER_PATH = 3;
-    private static final int COL_OVERVIEW = 4;
-    private static final int COL_USER_RATING = 5;
-    private static final int COL_RELEASE_DATE = 6;
-
     public DetailActivityFragment() {}
 
     void saveMovieOffline(String[] movieInfo){
 
         ContentResolver cr = getActivity().getContentResolver();
         Cursor movieCursor = cr.query(MovieEntry.CONTENT_URI,
-                MOVIE_COLUMNS, MovieEntry.COLUMN_TMDB_MOVIE_ID + " = ? ",
+                Movie.MOVIE_COLUMNS, MovieEntry.COLUMN_TMDB_MOVIE_ID + " = ? ",
                 new String[]{movieInfo[0]},null);
         if (movieCursor.getCount() == 0) {
 

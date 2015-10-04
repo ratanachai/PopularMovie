@@ -3,6 +3,8 @@ package com.ratanachai.popularmovies;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.ratanachai.popularmovies.data.MovieContract;
+
 public class Movie implements Parcelable{
     private String id;
     private String title;
@@ -10,6 +12,24 @@ public class Movie implements Parcelable{
     private String overview;
     private String userRating;
     private String releaseDate;
+
+    // PROJECTION for Content Provider Query
+    static final String[] MOVIE_COLUMNS = {
+            MovieContract.MovieEntry.TABLE_NAME + "." + MovieContract.MovieEntry._ID,
+            MovieContract.MovieEntry.COLUMN_TMDB_MOVIE_ID,
+            MovieContract.MovieEntry.COLUMN_TITLE,
+            MovieContract.MovieEntry.COLUMN_POSTER_PATH,
+            MovieContract.MovieEntry.COLUMN_OVERVIEW,
+            MovieContract.MovieEntry.COLUMN_USER_RATING,
+            MovieContract.MovieEntry.COLUMN_RELEASE_DATE
+    };
+    static final int COL_MOVIE_ROW_ID = 0;
+    static final int COL_TMDB_MOVIE_ID = 1;
+    static final int COL_TITLE = 2;
+    static final int COL_POSTER_PATH = 3;
+    static final int COL_OVERVIEW = 4;
+    static final int COL_USER_RATING = 5;
+    static final int COL_RELEASE_DATE = 6;
 
     //Take Json string and create an instance
     public Movie(String id, String title, String poster, String overview, String userRating, String releaseDate){
