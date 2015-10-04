@@ -152,15 +152,19 @@ public class MainActivityFragment extends Fragment {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String sort_by = prefs.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_default));
 
-        // Fetch movies information in background
-        if(Utility.isNetworkAvailable(getActivity())) {
+        // Fetch movies information in background if Network Available and Not Favorite movie
+        if(Utility.isNetworkAvailable(getActivity()) & !sort_by.equalsIgnoreCase(getString(R.string.pref_favorite))) {
             //Toast.makeText(getActivity(),"Fetching", Toast.LENGTH_SHORT).show();
             FetchMoviesTask fetchMoviesTask = new FetchMoviesTask();
             fetchMoviesTask.execute(sort_by);
             mSortMode = sort_by;
+
+        }else if(sort_by.equalsIgnoreCase(getString(R.string.pref_favorite))) {
+            Toast.makeText(getActivity(), "Favorite Movies (Offline)", Toast.LENGTH_LONG).show();
+
         }else{
             Toast toast = Toast.makeText(getActivity(), "Please check your network connection", Toast.LENGTH_LONG);
-            toast.setGravity(Gravity.CENTER,0, 0);
+            toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
         }
     }

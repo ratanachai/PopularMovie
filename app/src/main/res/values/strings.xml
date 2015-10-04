@@ -7,9 +7,11 @@
     <string name="pref_sort_label">Sort by</string>
     <string name="pref_sort_default">popularity</string>
     <string name="pref_sort_popularity">popularity</string>
-    <string name="pref_sort_rating">vote_average</string>
     <string name="pref_sort_popularity_label">Popularity</string>
+    <string name="pref_sort_rating">vote_average</string>
     <string name="pref_sort_rating_label">Rating</string>
+    <string name="pref_favorite">favorite</string>
+    <string name="pref_favorite_label">Favorite List (Offline)</string>
     <string name="pref_movie_ids_key">fav_movie_ids</string>
     <string name="title_activity_detail">Movie Detail</string>
     <string name="movie_title">Movie Title</string>
