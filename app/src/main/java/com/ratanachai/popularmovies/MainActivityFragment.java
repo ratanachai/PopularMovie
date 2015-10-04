@@ -39,9 +39,9 @@ import java.net.URL;
 import java.util.ArrayList;
 
 public class MainActivityFragment extends Fragment {
+    public static final String LOG_TAG = MainActivityFragment.class.getSimpleName();
 
     private CustomImageAdapter mMovieAdapter;
-    private FavoriteMovieAdapter mFavMovAdapter;
     private ArrayList<Movie> mMovies = new ArrayList<Movie>();
     private String mSortMode = "";
 
@@ -49,30 +49,19 @@ public class MainActivityFragment extends Fragment {
     }
 
     @Override
-    public void onStart(){
-
-        /** Force Fetch Movies if Sort Mode changed */
-        String sort_by = getCurrentSortBy();
-        if(!mSortMode.isEmpty() && sort_by != null && !sort_by.equals(mSortMode)){
-            fetchMoviesInfo();
-        }
-        super.onStart();
-    }
-    @Override
     public void onCreate(Bundle savedInstanceState) {
+        Log.d(LOG_TAG, "== onCreate()");
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true); //For this fragment to handle menu events.
 
         // Create MovieAdapter every times
         mMovieAdapter = new CustomImageAdapter(new ArrayList<String>());
 
-        /** Fetch Movies from TMDB */
+        /** Fetch Movies or Restore from savedInstanceState */
         // http://stackoverflow.com/questions/12503836/how-to-save-custom-arraylist-on-android-screen-rotate
         if (savedInstanceState == null || !savedInstanceState.containsKey("movies")) {
-
             fetchMoviesInfo();
 
-        /** or Restore from savedInstanceState and load into MovieAdapter*/
         }else {
             mSortMode = savedInstanceState.getString("sort_mode");
             mMovies = savedInstanceState.getParcelableArrayList("movies");
@@ -85,28 +74,16 @@ public class MainActivityFragment extends Fragment {
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-        // Inflate fragment main into Root View
+        Log.d(LOG_TAG, "== onCreateView()");
+        // Inflate fragment main into Root View, and get gridView
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-
         GridView gridView = (GridView) rootView.findViewById(R.id.gridview_movies);
-        // More Number of columns in Landscape mode
+
+        // Set more Number of columns in Landscape mode
         if(getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
             gridView.setNumColumns(5);
 
-        // Fetch from Database or the internet
-        if(isSortByFavorite(getCurrentSortBy())){
-
-            String sortOrder = MovieEntry._ID + " DESC";
-            Cursor cur = getActivity().getContentResolver().query(MovieEntry.CONTENT_URI,
-                    Movie.MOVIE_COLUMNS, null, null, sortOrder);
-            mFavMovAdapter = new FavoriteMovieAdapter(getActivity(), cur, 0);
-            gridView.setAdapter(mFavMovAdapter);
-
-        }else{
-            gridView.setAdapter(mMovieAdapter);
-        }
-
+        gridView.setAdapter(mMovieAdapter);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -117,6 +94,17 @@ public class MainActivityFragment extends Fragment {
         });
 
         return rootView;
+    }
+    @Override
+    public void onStart(){
+        Log.d(LOG_TAG, "== onStart()");
+        String sort_by = getCurrentSortBy();
+
+        // If Sort Criteria changed
+        if(!mSortMode.isEmpty() && sort_by != null && !sort_by.equals(mSortMode))
+            fetchMoviesInfo();
+
+        super.onStart();
     }
     @Override
     public void onSaveInstanceState(Bundle outState){
@@ -149,19 +137,42 @@ public class MainActivityFragment extends Fragment {
         return sort_by.equalsIgnoreCase(getString(R.string.pref_favorite));
     }
     private void fetchMoviesInfo(){
+        Log.d(LOG_TAG, "== fetchMovieInfo()");
         String sort_by = getCurrentSortBy();
 
         // Fetch movies information in background if Network Available and Not Favorite movie
         if(Utility.isNetworkAvailable(getActivity()) & !isSortByFavorite(sort_by)) {
-            //Toast.makeText(getActivity(),"Fetching", Toast.LENGTH_SHORT).show();
+            Log.d(LOG_TAG, "== Getting Movies from the Internet");
+
+            // Get Movie from Internet
             FetchMoviesTask fetchMoviesTask = new FetchMoviesTask();
             fetchMoviesTask.execute(sort_by);
             mSortMode = sort_by;
 
         }else if(isSortByFavorite(sort_by)) {
-            Toast.makeText(getActivity(), "Favorite Movies (Offline)", Toast.LENGTH_LONG).show();
-            mSortMode = sort_by;
+            Log.d(LOG_TAG, "== Getting Favorite Movies from DB");
 
+            // Get Movie from Database
+            String sortOrder = MovieEntry._ID + " DESC";
+            Cursor cur = getActivity().getContentResolver().query(MovieEntry.CONTENT_URI,
+                    Movie.MOVIE_COLUMNS, null, null, sortOrder);
+
+            // Populate ArrayList of Movies
+            mMovies.clear(); // Must clear the list before adding new
+            while(cur.moveToNext()) {
+                Movie movieObj = new Movie(cur.getString(Movie.COL_TMDB_MOVIE_ID),
+                                        cur.getString(Movie.COL_TITLE),
+                                        cur.getString(Movie.COL_POSTER_PATH),
+                                        cur.getString(Movie.COL_OVERVIEW),
+                                        cur.getString(Movie.COL_USER_RATING),
+                                        cur.getString(Movie.COL_RELEASE_DATE));
+                mMovies.add(movieObj);
+            }
+            // Populate Movie Poster to ArrayAdapter
+            mMovieAdapter.clear(); //Must clear adapter before adding new
+            for(Movie aMovie : mMovies) { mMovieAdapter.add(aMovie.getPosterUrl()); }
+
+            mSortMode = sort_by; //Remember current SortMode
         }else{
             Toast toast = Toast.makeText(getActivity(), "Please check your network connection", Toast.LENGTH_LONG);
             toast.setGravity(Gravity.CENTER, 0, 0);
