@@ -9,10 +9,23 @@ import android.view.MenuItem;
 
 public class MainActivity extends ActionBarActivity {
 
+    private boolean mTwoPane;
+    private static final String DETAILFRAGMENT_TAG = "DFTAG";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if (findViewById(R.id.movie_detail_container) != null){
+            mTwoPane = true;
+            if (savedInstanceState == null) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.movie_detail_container, new DetailActivityFragment(), DETAILFRAGMENT_TAG)
+                        .commit();
+            }
+        } else {
+            mTwoPane = false;
+        }
     }
 
 

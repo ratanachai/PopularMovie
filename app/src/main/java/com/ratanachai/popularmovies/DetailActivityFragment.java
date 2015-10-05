@@ -92,11 +92,11 @@ public class DetailActivityFragment extends BaseFragment {
 
         /** Fetch Videos from TMDB */
         // http://stackoverflow.com/questions/12503836/how-to-save-custom-arraylist-on-android-screen-rotate
-        String movie_id = getActivity().getIntent().getStringArrayExtra("strings")[0];
+//        String movie_id = getActivity().getIntent().getStringArrayExtra("strings")[0];
         if (savedInstanceState == null
                 || !savedInstanceState.containsKey("videos") || !savedInstanceState.containsKey("reviews")) {
-            fetchTrailers(movie_id);
-            fetchReviews(movie_id);
+//            fetchTrailers(movie_id);
+//            fetchReviews(movie_id);
 
         /** or Restore from savedInstanceState */
         }else {
