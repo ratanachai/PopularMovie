@@ -1,6 +1,5 @@
 package com.ratanachai.popularmovies;
 
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
@@ -41,6 +40,15 @@ public class MainActivityFragment extends BaseFragment {
     private CustomImageAdapter mMovieAdapter;
     private ArrayList<Movie> mMovies = new ArrayList<Movie>();
     private String mSortMode = "";
+
+    /**
+     * A callback interface that all activities containing this fragment must implement.
+     * This mechanism allows activities to be notified of item selections.
+     */
+    public interface Callback {
+        // DetailFragmentCallback for when an item has been selected.
+        void onItemSelected(String[] movieInfo);
+    }
 
     public MainActivityFragment() {
     }
@@ -84,9 +92,7 @@ public class MainActivityFragment extends BaseFragment {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getActivity(), DetailActivity.class)
-                        .putExtra("strings", mMovies.get(position).getAll());
-                startActivity(intent);
+                ((Callback) getActivity()).onItemSelected(mMovies.get(position).getAll());
             }
         });
 

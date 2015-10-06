@@ -42,6 +42,8 @@ import java.util.Set;
 public class DetailActivityFragment extends BaseFragment {
 
     public static final String LOG_TAG = DetailActivityFragment.class.getSimpleName();
+    static final String MOVIE_INFO = "MOVIE_INFO";
+    private String[] mMovieInfo;
     private ArrayList<Video> mVideos = new ArrayList<>();
     private ArrayList<Review> mReviews = new ArrayList<>();
     private View mRootview;
@@ -90,19 +92,26 @@ public class DetailActivityFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
 
-        /** Fetch Videos from TMDB */
-        // http://stackoverflow.com/questions/12503836/how-to-save-custom-arraylist-on-android-screen-rotate
-//        String movie_id = getActivity().getIntent().getStringArrayExtra("strings")[0];
-        if (savedInstanceState == null
-                || !savedInstanceState.containsKey("videos") || !savedInstanceState.containsKey("reviews")) {
-//            fetchTrailers(movie_id);
-//            fetchReviews(movie_id);
+        // Get data passed from Activity
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            mMovieInfo = arguments.getStringArray(MOVIE_INFO);
 
-        /** or Restore from savedInstanceState */
-        }else {
-            mVideos = savedInstanceState.getParcelableArrayList("videos");
-            mReviews = savedInstanceState.getParcelableArrayList("reviews");
-            mRestoreView = true;
+            /** Fetch Videos from TMDB */
+            // http://stackoverflow.com/questions/12503836/how-to-save-custom-arraylist-on-android-screen-rotate
+
+            String movie_id = mMovieInfo[0];
+            if (savedInstanceState == null
+                    || !savedInstanceState.containsKey("videos") || !savedInstanceState.containsKey("reviews")) {
+                fetchTrailers(movie_id);
+                fetchReviews(movie_id);
+
+                /** or Restore from savedInstanceState */
+            } else {
+                mVideos = savedInstanceState.getParcelableArrayList("videos");
+                mReviews = savedInstanceState.getParcelableArrayList("reviews");
+                mRestoreView = true;
+            }
         }
     }
 
@@ -119,17 +128,15 @@ public class DetailActivityFragment extends BaseFragment {
 
         mRootview = inflater.inflate(R.layout.fragment_detail, container, false);
 
-        Intent intent = getActivity().getIntent();
-        if (intent != null && intent.hasExtra("strings")){
-            final String[] movieInfo = intent.getStringArrayExtra("strings");
+        if (getArguments() != null) {
 
             // Set all TextView and Poster
-            ((TextView) mRootview.findViewById(R.id.movie_title)).setText(movieInfo[1]);
-            ((TextView) mRootview.findViewById(R.id.movie_overview)).setText(movieInfo[3]);
-            ((TextView) mRootview.findViewById(R.id.movie_rating)).append(" " + movieInfo[4] + "/10");
-            ((TextView) mRootview.findViewById(R.id.movie_release)).append(" " + movieInfo[5]);
+            ((TextView) mRootview.findViewById(R.id.movie_title)).setText(mMovieInfo[1]);
+            ((TextView) mRootview.findViewById(R.id.movie_overview)).setText(mMovieInfo[3]);
+            ((TextView) mRootview.findViewById(R.id.movie_rating)).append(" " + mMovieInfo[4] + "/10");
+            ((TextView) mRootview.findViewById(R.id.movie_release)).append(" " + mMovieInfo[5]);
             Picasso.with(getActivity())
-                    .load("http://image.tmdb.org/t/p/w185" + movieInfo[2])
+                    .load("http://image.tmdb.org/t/p/w185" + mMovieInfo[2])
                     .fit().centerInside()
                     .into((ImageView) mRootview.findViewById(R.id.movie_poster));
 
@@ -138,7 +145,7 @@ public class DetailActivityFragment extends BaseFragment {
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
             final String key = getString(R.string.pref_movie_ids_key);
             final Set<String> outSet = prefs.getStringSet(key, new HashSet<String>());
-            final String tmdb_id = movieInfo[0];
+            final String tmdb_id = mMovieInfo[0];
 
             // Toggle ON if current movie is in the Favorite Movie Set
             if(outSet.contains(tmdb_id)) favToggle.setChecked(true);
@@ -172,7 +179,7 @@ public class DetailActivityFragment extends BaseFragment {
                     // Add/Remove to SharedPref and Database
                     if (isChecked) {
                         fav_movie_ids.add(tmdb_id);
-                        saveMovieOffline(movieInfo);
+                        saveMovieOffline(mMovieInfo);
                         if ( isSortByFavorite(getCurrentSortBy(getActivity())) ) needReFetch = false;
                     }
                     else{
