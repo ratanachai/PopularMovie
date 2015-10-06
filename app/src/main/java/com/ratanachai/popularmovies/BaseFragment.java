@@ -2,6 +2,7 @@ package com.ratanachai.popularmovies;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 
@@ -11,6 +12,12 @@ import android.support.v4.app.Fragment;
  */
 public class BaseFragment extends Fragment {
     protected static boolean needReFetch = false;
+
+    public static boolean isTablet(Context context) {
+        return (context.getResources().getConfiguration().screenLayout
+                & Configuration.SCREENLAYOUT_SIZE_MASK)
+                >= Configuration.SCREENLAYOUT_SIZE_LARGE;
+    }
 
     // Get Sort_by settings from Pref
     protected String getCurrentSortBy(Context context){

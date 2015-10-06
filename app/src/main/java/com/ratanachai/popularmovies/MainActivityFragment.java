@@ -85,9 +85,10 @@ public class MainActivityFragment extends BaseFragment {
         GridView gridView = (GridView) rootView.findViewById(R.id.gridview_movies);
 
         // Set more Number of columns in Landscape mode
-        if(getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
+        if( (getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
+                & !isTablet(getActivity())){
             gridView.setNumColumns(5);
-
+        }
         gridView.setAdapter(mMovieAdapter);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -189,7 +190,7 @@ public class MainActivityFragment extends BaseFragment {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            Log.d(LOG_TAG, "== getView()");
+
             if (convertView == null) {
                 convertView = getActivity().getLayoutInflater()
                         .inflate(R.layout.grid_item_movie, parent, false);
