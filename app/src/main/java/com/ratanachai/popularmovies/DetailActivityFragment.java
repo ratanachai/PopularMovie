@@ -6,7 +6,6 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -150,6 +149,7 @@ public class DetailActivityFragment extends BaseFragment {
             // Toggle ON if current movie is in the Favorite Movie Set
             if(outSet.contains(tmdb_id)) favToggle.setChecked(true);
 
+            /*
             // Test area
             Log.d(LOG_TAG + "==Before==", outSet.toString());
             mRootview.findViewById(R.id.reset).setOnClickListener(new View.OnClickListener() {
@@ -168,7 +168,7 @@ public class DetailActivityFragment extends BaseFragment {
                     Log.d(LOG_TAG, "RESET: " + Integer.toString(rowsDeleted) + " rows deleted" );
                 }
             });
-
+            */
             favToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
                 @Override

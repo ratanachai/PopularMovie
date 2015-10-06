@@ -15,6 +15,9 @@
     <string name="pref_movie_ids_key">fav_movie_ids</string>
     <string name="title_activity_detail">Movie Detail</string>
     <string name="movie_title">Movie Title</string>
+    <string name="please_select_movie">Please Select a Movie</string>
+    <string name="please_select_movie_desc">Please Select a Movie to view Movie Detail with Video
+    Trailer and User Review</string>
     <string name="movie_overview_placeholder">Lorem ipsum dolor sit amet, consectetur adipiscing elit,
         sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
         quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
