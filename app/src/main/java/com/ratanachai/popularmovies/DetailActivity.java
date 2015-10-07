@@ -2,12 +2,16 @@ package com.ratanachai.popularmovies;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.ShareActionProvider;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 
 public class DetailActivity extends ActionBarActivity {
+    private ShareActionProvider mShareActionProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,13 +30,31 @@ public class DetailActivity extends ActionBarActivity {
         }
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_detail, menu);
-        return true;
+
+        // Based on Android ActionBarCompat-ShareActionProvider Sample
+        // https://github.com/googlesamples/android-ActionBarCompat-ShareActionProvider
+        
+        // Get ActionProvider and Things to Share
+        MenuItem item = menu.findItem(R.id.menu_item_share);
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+        TextView tv = (TextView)findViewById(R.id.movie_title);
+        String text = (String)tv.getText();
+
+        // Then, Set Share Intent
+        if (mShareActionProvider != null){
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("text/plain");
+            intent.putExtra(Intent.EXTRA_TEXT, text);
+            mShareActionProvider.setShareIntent(intent);
+        }
+
+        return super.onCreateOptionsMenu(menu);
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -49,4 +71,6 @@ public class DetailActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
 }
