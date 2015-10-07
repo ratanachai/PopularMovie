@@ -103,6 +103,7 @@ public class MainActivityFragment extends BaseFragment {
     public void onStart(){
         Log.d(LOG_TAG, "== onStart()");
         String sort_by = getCurrentSortBy(getActivity());
+        getActivity().setTitle(getString(R.string.app_name) + " - " + getCurrentSortByLabel(sort_by));
 
         // Force Re-Fetch If needReFetch OR Sort Criteria changed
         if( needReFetch ||

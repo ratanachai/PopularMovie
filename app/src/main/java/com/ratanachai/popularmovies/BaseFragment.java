@@ -6,8 +6,10 @@ import android.content.res.Configuration;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 
+import java.util.Arrays;
+
 /**
- * Brief explaination about this file
+ * Functions that are shared by all Fragments
  * Created by Ratanachai on 15/10/04.
  */
 public class BaseFragment extends Fragment {
@@ -26,5 +28,9 @@ public class BaseFragment extends Fragment {
     }
     protected boolean isSortByFavorite(String sort_by){
         return sort_by.equalsIgnoreCase(getString(R.string.pref_favorite));
+    }
+    protected String getCurrentSortByLabel(String sort_by){
+        int index = Arrays.asList(getResources().getStringArray(R.array.pref_sort_values)).indexOf(sort_by);
+        return getResources().getStringArray(R.array.pref_sort_options)[index];
     }
 }
