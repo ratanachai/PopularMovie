@@ -241,7 +241,9 @@ public class DetailActivityFragment extends BaseFragment {
         TextView tv = (TextView)getActivity().findViewById(R.id.movie_title);
         String movieTitle = (String)tv.getText();
 
-        String text = "Have you seen this movie, " + movieTitle + "?\n" + url;
+        String text = "Please select a movie before you share!";
+        if (mMovieInfo != null)
+            text = "Have you seen this movie, " + movieTitle + "?\n" + url;
         intent.putExtra(Intent.EXTRA_TEXT, text);
 
         return intent;
