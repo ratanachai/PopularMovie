@@ -10,8 +10,13 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
@@ -47,15 +52,16 @@ public class DetailActivityFragment extends BaseFragment {
     private ArrayList<Review> mReviews = new ArrayList<>();
     private View mRootview;
     private boolean mRestoreView = false;
+    private ShareActionProvider mShareActionProvider;
 
-    public DetailActivityFragment() {}
+    public DetailActivityFragment() {setHasOptionsMenu(true);}
 
     void saveMovieOffline(String[] movieInfo){
 
         ContentResolver cr = getActivity().getContentResolver();
         Cursor movieCursor = cr.query(MovieEntry.CONTENT_URI,
                 Movie.MOVIE_COLUMNS, MovieEntry.COLUMN_TMDB_MOVIE_ID + " = ? ",
-                new String[]{movieInfo[0]},null);
+                new String[]{movieInfo[0]}, null);
         if (movieCursor.getCount() == 0) {
 
             ContentValues movieValues = new ContentValues();
@@ -205,6 +211,31 @@ public class DetailActivityFragment extends BaseFragment {
             }
         }
         return mRootview;
+    }
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        Log.d("DetailActivityFragment", "== onCreateOptionMenu");
+        inflater.inflate(R.menu.menu_detail_fragment, menu);
+
+        /** Based on Android ActionBarCompat-ShareActionProvider Sample
+           https://github.com/googlesamples/android-ActionBarCompat-ShareActionProvider */
+
+        // Get ActionProvider and Things to Share
+        MenuItem item = menu.findItem(R.id.menu_item_share);
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+        TextView tv = (TextView)getActivity().findViewById(R.id.movie_title);
+        String movieTitle = (String)tv.getText();
+//        String movieUrl =
+
+        // Then, Set Share Intent
+        if (mShareActionProvider != null){
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("text/plain");
+            String text = "Have you seen this movie, " + movieTitle + "?\n"; // + mFirstVideoUrl;
+            intent.putExtra(Intent.EXTRA_TEXT, text);
+            mShareActionProvider.setShareIntent(intent);
+        }
+
     }
 
     /** Code for Movie Video (Trailer) ---------------------------------------------------------- */
