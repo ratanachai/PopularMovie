@@ -23,6 +23,13 @@ public class Video implements Parcelable {
     }
     public String getName(){return name;}
     public String getKey(){return key;}
+    public String getYoutubeUrl(){
+        Video tmp = this;
+        if (site.equalsIgnoreCase("YouTube") & key != null)
+            return "https://www.youtube.com/watch?v=" + key;
+        else
+            return "";
+    }
 
     /** Methods needed for implementing Parcelable
      * http://stackoverflow.com/questions/12503836/how-to-save-custom-arraylist-on-android-screen-rotate */

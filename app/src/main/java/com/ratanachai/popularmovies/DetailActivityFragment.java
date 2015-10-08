@@ -220,22 +220,29 @@ public class DetailActivityFragment extends BaseFragment {
         /** Based on Android ActionBarCompat-ShareActionProvider Sample
            https://github.com/googlesamples/android-ActionBarCompat-ShareActionProvider */
 
-        // Get ActionProvider and Things to Share
+        // Get ActionProvider
         MenuItem item = menu.findItem(R.id.menu_item_share);
         mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+
+        // Set Share Intent with/without Video URL depend whether Video fetching onPostExec() has finished
+        if (mVideos.isEmpty()) {
+            mShareActionProvider.setShareIntent(createShareVideoLinkIntent(""));
+            Log.v(LOG_TAG, "=== onCreateOptionsMenu() Set intent with EMPTY STRING");
+        }else {
+            mShareActionProvider.setShareIntent(createShareVideoLinkIntent(mVideos.get(0).getYoutubeUrl()));
+            Log.v(LOG_TAG, "=== onCreateOptionsMenu() Set intent with " + mVideos.get(0).getYoutubeUrl());
+        }
+    }
+    private Intent createShareVideoLinkIntent(String url) {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
         TextView tv = (TextView)getActivity().findViewById(R.id.movie_title);
         String movieTitle = (String)tv.getText();
-//        String movieUrl =
 
-        // Then, Set Share Intent
-        if (mShareActionProvider != null){
-            Intent intent = new Intent(Intent.ACTION_SEND);
-            intent.setType("text/plain");
-            String text = "Have you seen this movie, " + movieTitle + "?\n"; // + mFirstVideoUrl;
-            intent.putExtra(Intent.EXTRA_TEXT, text);
-            mShareActionProvider.setShareIntent(intent);
-        }
+        String text = "Have you seen this movie, " + movieTitle + "?\n" + url;
+        intent.putExtra(Intent.EXTRA_TEXT, text);
 
+        return intent;
     }
 
     /** Code for Movie Video (Trailer) ---------------------------------------------------------- */
@@ -307,8 +314,8 @@ public class DetailActivityFragment extends BaseFragment {
                 JSONObject aVideo = videosArray.getJSONObject(i);
                 Video videoObj = new Video(aVideo.getString(TMDB_VIDEO_KEY),
                                             aVideo.getString(TMDB_VIDEO_NAME),
-                                            aVideo.getString(TMDB_VIDEO_SITE),
-                                            aVideo.getString(TMDB_VIDEO_TYPE));
+                                            aVideo.getString(TMDB_VIDEO_TYPE),
+                                            aVideo.getString(TMDB_VIDEO_SITE));
                 mVideos.add(videoObj);
             }
 
@@ -403,6 +410,12 @@ public class DetailActivityFragment extends BaseFragment {
         protected void onPostExecute(ArrayList<Video> videos) {
             if (videos != null) {
                 addVideosTextView(videos);
+
+                // If onCreateOptionsMenu has already happened, we need to update the share intent.
+                if (mShareActionProvider != null) {
+                    Log.v(LOG_TAG, "=== onPostExec() Updating intent with " + videos.get(0).getYoutubeUrl());
+                    mShareActionProvider.setShareIntent(createShareVideoLinkIntent(videos.get(0).getYoutubeUrl()));
+                }
             }
         }
     }
