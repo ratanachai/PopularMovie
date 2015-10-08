@@ -95,6 +95,7 @@ public class DetailActivityFragment extends BaseFragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState){
+        Log.v(LOG_TAG, "=== onCreate");
         super.onCreate(savedInstanceState);
 
         // Get data passed from Activity
@@ -102,17 +103,19 @@ public class DetailActivityFragment extends BaseFragment {
         if (arguments != null) {
             mMovieInfo = arguments.getStringArray(MOVIE_INFO);
 
-            /** Fetch Videos from TMDB */
-            // http://stackoverflow.com/questions/12503836/how-to-save-custom-arraylist-on-android-screen-rotate
-
-            String movie_id = mMovieInfo[0];
+            // Based on http://stackoverflow.com/questions/12503836/how-to-save-custom-arraylist-on-android-screen-rotate
+            // Fetch if no savedInstance at all, or for both video and review
             if (savedInstanceState == null
-                    || !savedInstanceState.containsKey("videos") || !savedInstanceState.containsKey("reviews")) {
+                    || !savedInstanceState.containsKey("videos")
+                    || !savedInstanceState.containsKey("reviews")) {
+
+                // Fetch from the internet or DB
+                String movie_id = mMovieInfo[0];
                 fetchTrailers(movie_id);
                 fetchReviews(movie_id);
 
-                /** or Restore from savedInstanceState */
             } else {
+                // Restore from savedInstanceState
                 mVideos = savedInstanceState.getParcelableArrayList("videos");
                 mReviews = savedInstanceState.getParcelableArrayList("reviews");
                 mRestoreView = true;
@@ -130,6 +133,7 @@ public class DetailActivityFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.v(LOG_TAG, "=== onCreateView");
 
         mRootview = inflater.inflate(R.layout.fragment_detail, container, false);
 
@@ -214,12 +218,10 @@ public class DetailActivityFragment extends BaseFragment {
     }
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        Log.d("DetailActivityFragment", "== onCreateOptionMenu");
         inflater.inflate(R.menu.menu_detail_fragment, menu);
 
         /** Based on Android ActionBarCompat-ShareActionProvider Sample
            https://github.com/googlesamples/android-ActionBarCompat-ShareActionProvider */
-
         // Get ActionProvider
         MenuItem item = menu.findItem(R.id.menu_item_share);
         mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
@@ -411,8 +413,8 @@ public class DetailActivityFragment extends BaseFragment {
             if (videos != null) {
                 addVideosTextView(videos);
 
-                // If onCreateOptionsMenu has already happened, we need to update the share intent.
-                if (mShareActionProvider != null) {
+                // Update ShareIntent IF onCreateOptionsMenu already happened and there's some videos
+                if (mShareActionProvider != null & !mVideos.isEmpty()) {
                     Log.v(LOG_TAG, "=== onPostExec() Updating intent with " + videos.get(0).getYoutubeUrl());
                     mShareActionProvider.setShareIntent(createShareVideoLinkIntent(videos.get(0).getYoutubeUrl()));
                 }
