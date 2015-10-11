@@ -3,11 +3,27 @@ package com.ratanachai.popularmovies;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.ratanachai.popularmovies.data.MovieContract.VideoEntry;
+
 public class Video implements Parcelable {
     private String key;
     private String name;
     private String type;
     private String site;
+
+    // PROJECTION for Content Provider query
+    static final String[] VIDEO_COLUMNS = {
+            VideoEntry.TABLE_NAME + "." + VideoEntry._ID,
+            VideoEntry.COLUMN_KEY,
+            VideoEntry.COLUMN_NAME,
+            VideoEntry.COLUMN_TYPE,
+            VideoEntry.COLUMN_SITE
+    };
+    static final int COL_VIDEO_ROW_ID = 0;
+    static final int COL_KEY = 1;
+    static final int COL_NAME = 2;
+    static final int COL_TYPE = 3;
+    static final int COL_SITE = 4;
 
     //Take Json string and create an instance
     public Video(String key, String name, String type, String site){
@@ -23,8 +39,9 @@ public class Video implements Parcelable {
     }
     public String getName(){return name;}
     public String getKey(){return key;}
+    public String getType(){return type;}
+    public String getSite(){return site;}
     public String getYoutubeUrl(){
-        Video tmp = this;
         if (site.equalsIgnoreCase("YouTube") & key != null)
             return "https://www.youtube.com/watch?v=" + key;
         else

@@ -30,9 +30,9 @@ public class TestProvider extends AndroidTestCase {
        It also queries the ContentProvider to make sure that the database has been successfully deleted */
     public void deleteAllRecordsFromProvider() {
         ContentResolver cr = mContext.getContentResolver();
-        cr.delete(MovieEntry.CONTENT_URI, null, null);
-        cr.delete(VideoEntry.CONTENT_URI, null, null);
         cr.delete(ReviewEntry.CONTENT_URI, null, null);
+        cr.delete(VideoEntry.CONTENT_URI, null, null);
+        cr.delete(MovieEntry.CONTENT_URI, null, null);
 
         Cursor retCursor = cr.query(MovieEntry.CONTENT_URI, null, null, null, null);
         assertEquals("Error: Records not deleted from Weather table during delete", 0, retCursor.getCount());

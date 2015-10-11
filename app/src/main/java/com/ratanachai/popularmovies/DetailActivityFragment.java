@@ -2,6 +2,7 @@ package com.ratanachai.popularmovies;
 
 import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -25,8 +26,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import com.ratanachai.popularmovies.data.MovieContract;
 import com.ratanachai.popularmovies.data.MovieContract.MovieEntry;
+import com.ratanachai.popularmovies.data.MovieContract.VideoEntry;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -51,19 +52,23 @@ public class DetailActivityFragment extends BaseFragment {
     private ArrayList<Video> mVideos = new ArrayList<>();
     private ArrayList<Review> mReviews = new ArrayList<>();
     private View mRootview;
-    private boolean mRestoreView = false;
+    private boolean mAddVideosAndReviews = false;
     private ShareActionProvider mShareActionProvider;
 
     public DetailActivityFragment() {setHasOptionsMenu(true);}
 
-    void saveMovieOffline(String[] movieInfo){
+    long saveMovieOffline(String[] movieInfo){
 
+        /** SAVE MOVIE */
+        // QUERY to check before INSERT
+        long rowId;
         ContentResolver cr = getActivity().getContentResolver();
         Cursor movieCursor = cr.query(MovieEntry.CONTENT_URI,
                 Movie.MOVIE_COLUMNS, MovieEntry.COLUMN_TMDB_MOVIE_ID + " = ? ",
                 new String[]{movieInfo[0]}, null);
         if (movieCursor.getCount() == 0) {
 
+            // Prepare ContentValues, then INSERT
             ContentValues movieValues = new ContentValues();
             movieValues.put(MovieEntry.COLUMN_TMDB_MOVIE_ID, movieInfo[0]);
             movieValues.put(MovieEntry.COLUMN_TITLE, movieInfo[1]);
@@ -71,26 +76,55 @@ public class DetailActivityFragment extends BaseFragment {
             movieValues.put(MovieEntry.COLUMN_OVERVIEW, movieInfo[3]);
             movieValues.put(MovieEntry.COLUMN_USER_RATING, movieInfo[4]);
             movieValues.put(MovieEntry.COLUMN_RELEASE_DATE, movieInfo[5]);
-            cr.insert(MovieContract.MovieEntry.CONTENT_URI, movieValues);
-
+            Uri movieUri = cr.insert(MovieEntry.CONTENT_URI, movieValues);
             Toast.makeText(getActivity(), "Movie is saved for Offline view",
                     Toast.LENGTH_SHORT).show();
+            rowId = ContentUris.parseId(movieUri);
+
         }else{
-            Toast.makeText(getActivity(), "Movie with the same TMDB ID already saved",
-                    Toast.LENGTH_SHORT).show();
+            Log.v(LOG_TAG, "Movie with the same TMDB ID already saved");
+            rowId = -1;
+        }
+        movieCursor.close();
+        return rowId;
+    }
+    void saveVideosOffline(ArrayList<Video> videos, long movieRowId){
+        ContentResolver cr = getActivity().getContentResolver();
+
+        // FOR each Video...
+        for (int i = 0; i < mVideos.size(); i++) {
+            Video video = mVideos.get(i);
+
+            // QUERY to check before INSERT
+            Cursor videoCursor = cr.query(VideoEntry.CONTENT_URI, null,
+                    VideoEntry.COLUMN_KEY + " = ? ", new String[]{video.getKey()}, null);
+            Log.v(LOG_TAG, "== getCount() = " + Integer.toString(videoCursor.getCount()));
+            if (videoCursor.getCount() == 0) {
+
+                // Prepare ContentValues, then INSERT
+                ContentValues videoValues = new ContentValues();
+                videoValues.put(VideoEntry.COLUMN_MOV_KEY, movieRowId);
+                videoValues.put(VideoEntry.COLUMN_KEY, video.getKey());
+                videoValues.put(VideoEntry.COLUMN_NAME, video.getName());
+                videoValues.put(VideoEntry.COLUMN_TYPE, video.getType());
+                videoValues.put(VideoEntry.COLUMN_SITE, video.getSite());
+                cr.insert(VideoEntry.CONTENT_URI, videoValues);
+                Log.v(LOG_TAG, "== a Video inserted into DB");
+            } else {
+                Log.v(LOG_TAG, "== a Video with the same Key is already in DB");
+            }
+            videoCursor.close();
         }
     }
-    void removeMovieFromOffline(String tmdbMovieId){
+    void removeOfflineMovie(String tmdbMovieId){
         ContentResolver cr = getActivity().getContentResolver();
         int rowsDeleted = cr.delete(MovieEntry.CONTENT_URI,
                 MovieEntry.COLUMN_TMDB_MOVIE_ID + " = ?", new String[]{tmdbMovieId});
 
         if (rowsDeleted != 0)
-            Toast.makeText(getActivity(), "Movie is removed from Offline view",
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Movie is removed from Offline view", Toast.LENGTH_SHORT).show();
         else
-            Toast.makeText(getActivity(), "No movie removed from Offline view",
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "No movie removed from Offline view", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -103,22 +137,20 @@ public class DetailActivityFragment extends BaseFragment {
         if (arguments != null) {
             mMovieInfo = arguments.getStringArray(MOVIE_INFO);
 
-            // Based on http://stackoverflow.com/questions/12503836/how-to-save-custom-arraylist-on-android-screen-rotate
-            // Fetch if no savedInstance at all, or for both video and review
+            /** Fetch if no savedInstance at all, or for both video and review */
+            // http://stackoverflow.com/questions/12503836/how-to-save-custom-arraylist-on-android-screen-rotate
             if (savedInstanceState == null
                     || !savedInstanceState.containsKey("videos")
                     || !savedInstanceState.containsKey("reviews")) {
-
-                // Fetch from the internet or DB
                 String movie_id = mMovieInfo[0];
-                fetchTrailers(movie_id);
+                // Fetch from the internet for DB in offline mode
+                getVideosfromInternetOrDb(movie_id);
                 fetchReviews(movie_id);
-
             } else {
                 // Restore from savedInstanceState
                 mVideos = savedInstanceState.getParcelableArrayList("videos");
                 mReviews = savedInstanceState.getParcelableArrayList("reviews");
-                mRestoreView = true;
+                mAddVideosAndReviews = true;
             }
         }
     }
@@ -131,8 +163,7 @@ public class DetailActivityFragment extends BaseFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.v(LOG_TAG, "=== onCreateView");
 
         mRootview = inflater.inflate(R.layout.fragment_detail, container, false);
@@ -159,28 +190,8 @@ public class DetailActivityFragment extends BaseFragment {
             // Toggle ON if current movie is in the Favorite Movie Set
             if(outSet.contains(tmdb_id)) favToggle.setChecked(true);
 
-            /*
-            // Test area
-            Log.d(LOG_TAG + "==Before==", outSet.toString());
-            mRootview.findViewById(R.id.reset).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    // Clear SharedPref
-                    SharedPreferences.Editor editor = prefs.edit();
-                    editor.clear().commit();
-
-                    // Clear Database
-                    ContentResolver cr = getActivity().getContentResolver();
-                    Cursor movieCursor = cr.query(MovieEntry.CONTENT_URI,
-                            new String[]{MovieEntry._ID, MovieEntry.COLUMN_TITLE}, null, null, null);
-                    Log.d(LOG_TAG, DatabaseUtils.dumpCursorToString(movieCursor));
-                    int rowsDeleted = cr.delete(MovieEntry.CONTENT_URI, null, null);
-                    Log.d(LOG_TAG, "RESET: " + Integer.toString(rowsDeleted) + " rows deleted" );
-                }
-            });
-            */
+            // Set OnCheckChanged
             favToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
 
@@ -189,12 +200,15 @@ public class DetailActivityFragment extends BaseFragment {
                     // Add/Remove to SharedPref and Database
                     if (isChecked) {
                         fav_movie_ids.add(tmdb_id);
-                        saveMovieOffline(mMovieInfo);
+                        // Save the Movie and its Videos
+                        long movieRowId = saveMovieOffline(mMovieInfo);
+                        saveVideosOffline(mVideos, movieRowId);
                         if ( isSortByFavorite(getCurrentSortBy(getActivity())) ) needReFetch = false;
                     }
                     else{
                         fav_movie_ids.remove(tmdb_id);
-                        removeMovieFromOffline(tmdb_id);
+                        // Delete the Movie, its videos will be DELETE CASCADE via Foreign key constrain
+                        removeOfflineMovie(tmdb_id);
                         // MainFragment will need to be refetched movie if movie removed
                         if ( isSortByFavorite(getCurrentSortBy(getActivity())) ) needReFetch = true;
                     }
@@ -209,11 +223,34 @@ public class DetailActivityFragment extends BaseFragment {
             });
 
             // Restore Trailer Videos and Reviews (First time added via OnPostExecute)
-            if (mRestoreView) {
+            if (mAddVideosAndReviews) {
                 addVideosTextView(mVideos);
                 addReviewsTextView(mReviews);
             }
-        }
+
+            /* // Test area
+            Log.d(LOG_TAG + "==Before==", outSet.toString());
+            mRootview.findViewById(R.id.reset).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Clear SharedPref
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.clear().commit();
+                    // Clear Database
+                    ContentResolver cr = getActivity().getContentResolver();
+                    Cursor movieCursor = cr.query(MovieEntry.CONTENT_URI,
+                            new String[]{MovieEntry._ID, MovieEntry.COLUMN_TITLE}, null, null, null);
+                    // Dump out content to see before delete
+                    Log.d(LOG_TAG, DatabaseUtils.dumpCursorToString(movieCursor));
+                    int rowsDeleted = cr.delete(MovieEntry.CONTENT_URI, null, null);
+                    Log.d(LOG_TAG, "RESET MOVIE: " + Integer.toString(rowsDeleted) + " rows deleted" );
+                    // Delete Video
+                    rowsDeleted = cr.delete(VideoEntry.CONTENT_URI, null, null);
+                    Log.d(LOG_TAG, "RESET VIDEO: " + Integer.toString(rowsDeleted) + " rows deleted" );
+                }
+            }); */
+
+        } // end if getArguments() != null
         return mRootview;
     }
     @Override
@@ -248,19 +285,44 @@ public class DetailActivityFragment extends BaseFragment {
 
         return intent;
     }
-
+    private long getMovieRowId(String tmdb_movie_id){
+        ContentResolver cr = getActivity().getContentResolver();
+        Cursor movieCursor = cr.query(MovieEntry.CONTENT_URI, Movie.MOVIE_COLUMNS,
+                MovieEntry.COLUMN_TMDB_MOVIE_ID + " = ? ", new String[]{tmdb_movie_id}, null);
+        movieCursor.moveToNext();
+        long movieRowId = movieCursor.getLong(Movie.COL_MOVIE_ROW_ID);
+        movieCursor.close();
+        return movieRowId;
+    }
     /** Code for Movie Video (Trailer) ---------------------------------------------------------- */
-    private void fetchTrailers(String video_id){
+    private void getVideosfromInternetOrDb(String tmdb_movie_id){
 
-        // Fetch movies information in background
-        if(Utility.isNetworkAvailable(getActivity())) {
-            //Toast.makeText(getActivity(),"Fetching", Toast.LENGTH_SHORT).show();
-            FetchVideosTask fetchMoviesTask = new FetchVideosTask();
-            fetchMoviesTask.execute(video_id);
+        String sort_by = getCurrentSortBy(getActivity());
+
+        // Get Videos from Database
+        if(isSortByFavorite(sort_by)) {
+            ContentResolver cr = getActivity().getContentResolver();
+            long movieRowId = getMovieRowId(tmdb_movie_id);
+
+            // Query Video for the movie, then Populate ArrayList of Videos
+            Cursor cur  = cr.query(VideoEntry.buildMovieVideosUri(movieRowId),
+                    Video.VIDEO_COLUMNS, VideoEntry.COLUMN_MOV_KEY, null , null);
+            mVideos.clear();
+            while (cur.moveToNext()){
+                Video videoObj = new Video(cur.getString(Video.COL_KEY), cur.getString(Video.COL_NAME),
+                        cur.getString(Video.COL_TYPE), cur.getString(Video.COL_SITE));
+                mVideos.add(videoObj);
+            }
+            mAddVideosAndReviews = true;
+
+        // Fetch videos from the Internet in background
+        }else if(Utility.isNetworkAvailable(getActivity())) {
+
+            FetchVideosTask fetchVideosTask = new FetchVideosTask();
+            fetchVideosTask.execute(tmdb_movie_id);
+
         }else{
-//            Toast toast = Toast.makeText(getActivity(), "Please check your network connection", Toast.LENGTH_LONG);
-//            toast.setGravity(Gravity.CENTER, 0, 0);
-//            toast.show();
+            Log.v(LOG_TAG, "== No Network, Not in offline mode: will not try to fetch videos");
         }
     }
     private void addVideosTextView(ArrayList<Video> videos) {
@@ -268,17 +330,18 @@ public class DetailActivityFragment extends BaseFragment {
         ViewGroup containerView = (ViewGroup) mRootview.findViewById(R.id.movie_trailers_container);
         for (int i=0; i < videos.size(); i++) {
 
+            // Get TextView from Item layout
             View v = getLayoutInflater(null).inflate(R.layout.video_link_item, null);
             TextView videoTextView = (TextView) v.findViewById(R.id.movie_trailer_item);
 
+            // Set text and tag on TextView (Tag to be used in onClick
             videoTextView.setText(videos.get(i).getName());
             videoTextView.setTag(videos.get(i).getKey());
 
-            // Setup Youtube App launch a video OnItemClick
+            // Setup OnItemClick to launch Youtube App with the video
             videoTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
                     try {
                         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(
                                 "vnd.youtube:" + v.getTag()));
@@ -290,6 +353,7 @@ public class DetailActivityFragment extends BaseFragment {
                     }
                 }
             });
+            // Add the Video TextView into DetailActivityFragment
             containerView.addView(videoTextView);
         }
     }
@@ -425,11 +489,11 @@ public class DetailActivityFragment extends BaseFragment {
     }
 
     /** Code for Movie Review ------------------------------------------------------------------- */
-    private void fetchReviews(String video_id){
+    private void fetchReviews(String tmdb_movie_id){
 
         if(Utility.isNetworkAvailable(getActivity())) {
             FetchReviewsTask fetchReviewsTask = new FetchReviewsTask();
-            fetchReviewsTask.execute(video_id);
+            fetchReviewsTask.execute(tmdb_movie_id);
         }else{
 //            Toast toast = Toast.makeText(getActivity(), "Please check your network connection", Toast.LENGTH_LONG);
 //            toast.setGravity(Gravity.CENTER, 0, 0);
