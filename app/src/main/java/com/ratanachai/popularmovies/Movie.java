@@ -2,8 +2,7 @@ package com.ratanachai.popularmovies;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-
-import com.ratanachai.popularmovies.data.MovieContract;
+import com.ratanachai.popularmovies.data.MovieContract.MovieEntry;
 
 public class Movie implements Parcelable{
     private String id;
@@ -15,13 +14,13 @@ public class Movie implements Parcelable{
 
     // PROJECTION for Content Provider Query
     static final String[] MOVIE_COLUMNS = {
-            MovieContract.MovieEntry.TABLE_NAME + "." + MovieContract.MovieEntry._ID,
-            MovieContract.MovieEntry.COLUMN_TMDB_MOVIE_ID,
-            MovieContract.MovieEntry.COLUMN_TITLE,
-            MovieContract.MovieEntry.COLUMN_POSTER_PATH,
-            MovieContract.MovieEntry.COLUMN_OVERVIEW,
-            MovieContract.MovieEntry.COLUMN_USER_RATING,
-            MovieContract.MovieEntry.COLUMN_RELEASE_DATE
+            MovieEntry.TABLE_NAME + "." + MovieEntry._ID,
+            MovieEntry.COLUMN_TMDB_MOVIE_ID,
+            MovieEntry.COLUMN_TITLE,
+            MovieEntry.COLUMN_POSTER_PATH,
+            MovieEntry.COLUMN_OVERVIEW,
+            MovieEntry.COLUMN_USER_RATING,
+            MovieEntry.COLUMN_RELEASE_DATE
     };
     static final int COL_MOVIE_ROW_ID = 0;
     static final int COL_TMDB_MOVIE_ID = 1;

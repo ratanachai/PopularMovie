@@ -13,6 +13,7 @@ import java.util.Arrays;
  * Created by Ratanachai on 15/10/04.
  */
 public class BaseFragment extends Fragment {
+    // a flag for Detail to tell Main fragment that Star is removed, so Movie list need to be reFetch.
     protected static boolean needReFetch = false;
 
     public static boolean isTablet(Context context) {

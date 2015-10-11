@@ -76,7 +76,7 @@ public class MovieContract {
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_REVIEW;
 
         public static final String TABLE_NAME = "review";
-        public static final String COLUMN_MOV_KEY = "movie_id"; //TODO: Be careful movie_id is the ID from URI
+        public static final String COLUMN_MOV_KEY = "movie_id";
         public static final String COLUMN_TMDB_REVIEW_ID = "id";
         public static final String COLUMN_AUTHOR = "author";
         public static final String COLUMN_CONTENT = "content";

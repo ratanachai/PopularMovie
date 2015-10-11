@@ -32,11 +32,6 @@ import com.ratanachai.popularmovies.data.MovieContract.VideoEntry;
  *  Created by Ratanachai on 2015/09
  */
 
-// TODO: Add these 3 Uris?
-// content://com.ratanachai.popularmovies/movie?sort_by=popularity.desc
-// content://com.ratanachai.popularmovies/movie?sort_by=vote_average.desc
-// content://com.ratanachai.popularmovies/movie?sort_by=favorite
-
 public class MovieProvider extends ContentProvider {
 
     private MovieDbHelper mOpenHelper;
@@ -163,8 +158,6 @@ public class MovieProvider extends ContentProvider {
 
             // "movie/[MOV_ID]/videos
             }case VIDEOS_FOR_MOVIE: {
-//                proj = new String[] {MovieEntry.COLUMN_TITLE, VideoEntry.COLUMN_KEY,
-//                        VideoEntry.COLUMN_NAME, VideoEntry.COLUMN_SITE, VideoEntry.COLUMN_TYPE};
                 retCursor = getVideobyMovieId(uri, proj, sortOrder);
                 break;
 
