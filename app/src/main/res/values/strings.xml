@@ -13,7 +13,7 @@
     <string name="pref_favorite">favorite</string>
     <string name="pref_favorite_label">Favorite</string>
     <string name="pref_movie_ids_key">fav_movie_ids</string>
-    <string name="pref_reset_label">Reset</string>
+    <string name="pref_reset_label">Reset Favorite (Clear Preference/Database)</string>
     <string name="pref_reset">reset</string>
     <string name="title_activity_detail">Movie Detail</string>
     <string name="movie_title">Movie Title</string>

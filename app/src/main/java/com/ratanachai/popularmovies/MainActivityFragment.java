@@ -55,7 +55,7 @@ public class MainActivityFragment extends BaseFragment {
     }
 
     public void updateMoviesGrid() {
-        fetchMoviesInfo();
+        getMoviesFromInternetOrDb();
     }
 
     @Override
@@ -71,7 +71,7 @@ public class MainActivityFragment extends BaseFragment {
         /** Fetch Movies or Restore from savedInstanceState */
         // http://stackoverflow.com/questions/12503836/how-to-save-custom-arraylist-on-android-screen-rotate
         if (savedInstanceState == null || !savedInstanceState.containsKey("movies")) {
-            fetchMoviesInfo();
+            getMoviesFromInternetOrDb();
 
         }else {
             mSortMode = savedInstanceState.getString("sort_mode");
@@ -115,7 +115,7 @@ public class MainActivityFragment extends BaseFragment {
         // Force Re-Fetch If needReFetch OR Sort Criteria changed
         if( needReFetch ||
                 (!mSortMode.isEmpty() && sort_by != null && !sort_by.equals(mSortMode)) )
-            fetchMoviesInfo();
+            getMoviesFromInternetOrDb();
 
         super.onStart();
     }
@@ -135,13 +135,13 @@ public class MainActivityFragment extends BaseFragment {
 
         if (id == R.id.action_refresh) {
             // Force Fetch Movies data
-            fetchMoviesInfo();
+            getMoviesFromInternetOrDb();
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void fetchMoviesInfo(){
+    private void getMoviesFromInternetOrDb(){
         Log.d(LOG_TAG, "== fetchMovieInfo()");
         String sort_by = getCurrentSortBy(getActivity());
 

@@ -2,7 +2,6 @@ package com.ratanachai.popularmovies;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-
 import com.ratanachai.popularmovies.data.MovieContract.VideoEntry;
 
 public class Video implements Parcelable {
@@ -11,7 +10,7 @@ public class Video implements Parcelable {
     private String type;
     private String site;
 
-    // PROJECTION for Content Provider query
+    /** PROJECTION for Content Provider query */
     static final String[] VIDEO_COLUMNS = {
             VideoEntry.TABLE_NAME + "." + VideoEntry._ID,
             VideoEntry.COLUMN_KEY,

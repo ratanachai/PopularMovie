@@ -152,7 +152,7 @@ public class DetailActivityFragment extends BaseFragment {
                 MovieEntry.COLUMN_TMDB_MOVIE_ID + " = ?", new String[]{tmdbMovieId});
 
         if (rowsDeleted != 0)
-            Toast.makeText(getActivity(), "Movie and associated videos/reviews are removed", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Movie is removed from Offline view", Toast.LENGTH_SHORT).show();
         else
             Toast.makeText(getActivity(), "No movie removed from Offline view", Toast.LENGTH_SHORT).show();
     }
@@ -324,7 +324,7 @@ public class DetailActivityFragment extends BaseFragment {
 
             // Query Video for the movie, then Populate ArrayList of Videos
             Cursor cur  = cr.query(VideoEntry.buildMovieVideosUri(movieRowId), Video.VIDEO_COLUMNS,
-                    VideoEntry.COLUMN_MOV_KEY, null , null); //TODO: need fix selection
+                    null, null , null);
             mVideos.clear();
             while (cur.moveToNext()){
                 Video videoObj = new Video(cur.getString(Video.COL_KEY), cur.getString(Video.COL_NAME),
