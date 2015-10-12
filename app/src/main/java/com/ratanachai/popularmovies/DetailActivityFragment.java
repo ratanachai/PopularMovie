@@ -27,6 +27,7 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.ratanachai.popularmovies.data.MovieContract.MovieEntry;
+import com.ratanachai.popularmovies.data.MovieContract.ReviewEntry;
 import com.ratanachai.popularmovies.data.MovieContract.VideoEntry;
 import com.squareup.picasso.Picasso;
 
@@ -93,7 +94,7 @@ public class DetailActivityFragment extends BaseFragment {
         movieCursor.close();
         return rowId;
     }
-    void saveVideosOffline(ArrayList<Video> videos, long movieRowId){
+    void saveVideosOffline(long movieRowId){
         ContentResolver cr = getActivity().getContentResolver();
 
         // FOR each Video...
@@ -121,13 +122,37 @@ public class DetailActivityFragment extends BaseFragment {
             videoCursor.close();
         }
     }
+    void saveReviewOffline(long movieRowId){
+        ContentResolver cr = getActivity().getContentResolver();
+
+        for (int i = 0; i < mReviews.size(); i++ ){
+            Review review = mReviews.get(i);
+            // Query to check before insert
+            Cursor cur = cr.query(ReviewEntry.CONTENT_URI, null,
+                    ReviewEntry.COLUMN_TMDB_REVIEW_ID + " = ?", new String[]{review.getId()}, null);
+            if (cur.getCount() == 0){
+                ContentValues reviewValues = new ContentValues();
+                reviewValues.put(ReviewEntry.COLUMN_MOV_KEY, movieRowId);
+                reviewValues.put(ReviewEntry.COLUMN_TMDB_REVIEW_ID, review.getId());
+                reviewValues.put(ReviewEntry.COLUMN_AUTHOR, review.getAuthor());
+                reviewValues.put(ReviewEntry.COLUMN_CONTENT, review.getContent());
+                reviewValues.put(ReviewEntry.COLUMN_URL, review.getUrl());
+                cr.insert(ReviewEntry.CONTENT_URI, reviewValues);
+                Log.v(LOG_TAG, "== a Review inserted into DB");
+            } else {
+                Log.v(LOG_TAG, "== a Review with the same Review ID is already in DB");
+            }
+            cur.close();
+        }
+    }
+    // This will remove not just Movie, but its associated videos and reviews too.
     void removeOfflineMovie(String tmdbMovieId){
         ContentResolver cr = getActivity().getContentResolver();
         int rowsDeleted = cr.delete(MovieEntry.CONTENT_URI,
                 MovieEntry.COLUMN_TMDB_MOVIE_ID + " = ?", new String[]{tmdbMovieId});
 
         if (rowsDeleted != 0)
-            Toast.makeText(getActivity(), "Movie is removed from Offline view", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Movie and associated videos/reviews are removed", Toast.LENGTH_SHORT).show();
         else
             Toast.makeText(getActivity(), "No movie removed from Offline view", Toast.LENGTH_SHORT).show();
     }
@@ -149,8 +174,8 @@ public class DetailActivityFragment extends BaseFragment {
                     || !savedInstanceState.containsKey("reviews")) {
                 String movie_id = mMovieInfo[0];
                 // Fetch from the internet for DB in offline mode
-                getVideosfromInternetOrDb(movie_id);
-                fetchReviews(movie_id);
+                getVideosFromInternetOrDb(movie_id);
+                getReviewsFromInternetOrDb(movie_id);
             } else {
                 // Restore from savedInstanceState
                 mVideos = savedInstanceState.getParcelableArrayList("videos");
@@ -205,15 +230,19 @@ public class DetailActivityFragment extends BaseFragment {
                     // Add/Remove to SharedPref and Database
                     if (isChecked) {
                         fav_movie_ids.add(tmdb_id);
-                        // Save the Movie and its Videos
+                        // Save the Movie, its Videos and Reviews
                         long movieRowId = saveMovieOffline(mMovieInfo);
-                        saveVideosOffline(mVideos, movieRowId);
 
                         // In case of Favorite Movie Criteria ..
                         // MainFragment will need to refetch movies if movie added
                         if ( isSortByFavorite(getCurrentSortBy(getActivity())) ) {
                             ((Callback) getActivity()).onAddRemoveMovieFromFavorite(false);
                         }
+
+                        saveVideosOffline(movieRowId);
+                        saveReviewOffline(movieRowId);
+                        if ( isSortByFavorite(getCurrentSortBy(getActivity())) ) needReFetch = false;
+
                     }
                     else{
                         fav_movie_ids.remove(tmdb_id);
@@ -284,7 +313,7 @@ public class DetailActivityFragment extends BaseFragment {
         return movieRowId;
     }
     /** Code for Movie Video (Trailer) ---------------------------------------------------------- */
-    private void getVideosfromInternetOrDb(String tmdb_movie_id){
+    private void getVideosFromInternetOrDb(String tmdb_movie_id){
 
         String sort_by = getCurrentSortBy(getActivity());
 
@@ -294,8 +323,8 @@ public class DetailActivityFragment extends BaseFragment {
             long movieRowId = getMovieRowId(tmdb_movie_id);
 
             // Query Video for the movie, then Populate ArrayList of Videos
-            Cursor cur  = cr.query(VideoEntry.buildMovieVideosUri(movieRowId),
-                    Video.VIDEO_COLUMNS, VideoEntry.COLUMN_MOV_KEY, null , null);
+            Cursor cur  = cr.query(VideoEntry.buildMovieVideosUri(movieRowId), Video.VIDEO_COLUMNS,
+                    VideoEntry.COLUMN_MOV_KEY, null , null); //TODO: need fix selection
             mVideos.clear();
             while (cur.moveToNext()){
                 Video videoObj = new Video(cur.getString(Video.COL_KEY), cur.getString(Video.COL_NAME),
@@ -478,15 +507,33 @@ public class DetailActivityFragment extends BaseFragment {
     }
 
     /** Code for Movie Review ------------------------------------------------------------------- */
-    private void fetchReviews(String tmdb_movie_id){
+    private void getReviewsFromInternetOrDb(String tmdb_movie_id){
+        String sort_by = getCurrentSortBy(getActivity());
 
-        if(Utility.isNetworkAvailable(getActivity())) {
+        // Get from Database
+        if(isSortByFavorite(sort_by)) {
+            ContentResolver cr = getActivity().getContentResolver();
+            long movieRowId = getMovieRowId(tmdb_movie_id);
+
+            // Query Reviews for the movie, then Populate ArrayList of Reviews
+            Cursor cur  = cr.query(ReviewEntry.buildMovieReviewsUri(movieRowId), Review.REVIEW_COLUMNS,
+                    null, null , null);
+            mReviews.clear();
+            while (cur.moveToNext()){
+                Review reviewObj = new Review(cur.getString(Review.COL_TMDB_REVIEW_ID), cur.getString(
+                        Review.COL_AUTHOR), cur.getString(Review.COL_CONTENT), cur.getString(Review.COL_URL));
+                mReviews.add(reviewObj);
+            }
+            mAddVideosAndReviews = true;
+
+        // Fetch videos from the Internet in background
+        }else if(Utility.isNetworkAvailable(getActivity())) {
+
             FetchReviewsTask fetchReviewsTask = new FetchReviewsTask();
             fetchReviewsTask.execute(tmdb_movie_id);
+
         }else{
-//            Toast toast = Toast.makeText(getActivity(), "Please check your network connection", Toast.LENGTH_LONG);
-//            toast.setGravity(Gravity.CENTER, 0, 0);
-//            toast.show();
+            Log.v(LOG_TAG, "== No Network, Not in offline mode: will not try to fetch reviews");
         }
     }
 

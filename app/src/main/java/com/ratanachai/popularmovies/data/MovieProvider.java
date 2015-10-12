@@ -21,10 +21,10 @@ import com.ratanachai.popularmovies.data.MovieContract.VideoEntry;
  *  [DIR] content://com.ratanachai.popularmovies/movie
  *  [ITEM] content://com.ratanachai.popularmovies/movie/[MOV_ID]
  *  -- Video URIs --
- *  [DIR] content://com.ratanachai.popularmovies/videos
+ *  [DIR] content://com.ratanachai.popularmovies/video
  *  [DIR] content://com.ratanachai.popularmovies/movie/[MOV_ID]/videos
  *  -- Review URIs --
- *  [DIR] content://com.ratanachai.popularmovies/reviews
+ *  [DIR] content://com.ratanachai.popularmovies/review
  *  [DIR] content://com.ratanachai.popularmovies/movie/[MOV_ID]/reviews
  *
  *  NOTE: This is API request URL http://api.themoviedb.org/3/movie/76341/reviews
@@ -169,8 +169,6 @@ public class MovieProvider extends ContentProvider {
 
             // "movie/[MOV_ID]/reviews
             }case REVIEWS_FOR_MOVIE: {
-                proj = new String[] {MovieEntry.COLUMN_TITLE, ReviewEntry.COLUMN_AUTHOR,
-                        ReviewEntry.COLUMN_CONTENT, ReviewEntry.COLUMN_URL, ReviewEntry.COLUMN_TMDB_REVIEW_ID};
                 retCursor = getReviewbyMovieId(uri, proj, sortOrder);
                 break;
             }
@@ -204,6 +202,14 @@ public class MovieProvider extends ContentProvider {
                     retUri = VideoEntry.buildVideoUri(_id);
                 else
                     throw new android.database.SQLException("Failed to insert row into " + uri);
+                break;
+            }
+            case REVIEWS: {
+                long _id = db.insert(ReviewEntry.TABLE_NAME, null, values);
+                if (_id > 0)
+                    retUri = ReviewEntry.buildReviewUri(_id);
+                else
+                    throw new android.database.SQLException("Fail to insert row into " + uri);
                 break;
             }
             default:

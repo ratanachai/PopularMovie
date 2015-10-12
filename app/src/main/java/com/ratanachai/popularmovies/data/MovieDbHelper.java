@@ -15,7 +15,7 @@ import com.ratanachai.popularmovies.data.MovieContract.ReviewEntry;
 public class MovieDbHelper extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 5;
 
     static final String DATABASE_NAME = "movie.db";
 
@@ -64,7 +64,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
 
                 // Set up the location column as a foreign key to location table.
                 " FOREIGN KEY (" + ReviewEntry.COLUMN_MOV_KEY + ") REFERENCES " +
-                MovieEntry.TABLE_NAME + " (" + MovieEntry._ID + ") " +
+                MovieEntry.TABLE_NAME + " (" + MovieEntry._ID + ") ON DELETE CASCADE" +
                 " );";
 
         sqLiteDatabase.execSQL(SQL_CREATE_MOVIE_TABLE);
