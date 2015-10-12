@@ -15,11 +15,20 @@
  */
 package com.ratanachai.popularmovies;
 
+import android.content.ContentResolver;
+import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+import android.util.Log;
+
+import com.ratanachai.popularmovies.data.MovieContract.MovieEntry;
+import com.ratanachai.popularmovies.data.MovieContract.VideoEntry;
+import com.ratanachai.popularmovies.data.MovieContract.ReviewEntry;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings.
@@ -31,6 +40,7 @@ import android.preference.PreferenceManager;
  */
 public class SettingsActivity extends PreferenceActivity
         implements Preference.OnPreferenceChangeListener {
+    public static final String LOG_TAG = SettingsActivity.class.getSimpleName();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,6 +51,33 @@ public class SettingsActivity extends PreferenceActivity
         // For all preferences, attach an OnPreferenceChangeListener so the UI summary can be
         // updated when the preference changes.
         bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_sort_key)));
+
+        // Set listener for reset
+        final Preference prefs = findPreference(getString(R.string.pref_reset));
+        prefs.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                // Clear SharedPref
+                SharedPreferences.Editor editor = prefs.getEditor();
+                editor.clear().commit();
+                // Clear Database
+                ContentResolver cr = getApplicationContext().getContentResolver();
+                Cursor movieCursor = cr.query(MovieEntry.CONTENT_URI,
+                        new String[]{MovieEntry._ID, MovieEntry.COLUMN_TITLE}, null, null, null);
+                // Dump out content to see before delete
+                Log.d(LOG_TAG, DatabaseUtils.dumpCursorToString(movieCursor));
+                // Delete Review, Video, then Movie
+                int rowsDeleted = cr.delete(VideoEntry.CONTENT_URI, null, null);
+                Log.d(LOG_TAG, "RESET VIDEO: " + Integer.toString(rowsDeleted) + " rows deleted" );
+                rowsDeleted = cr.delete(ReviewEntry.CONTENT_URI, null, null);
+                Log.d(LOG_TAG, "RESET REVIEW: " + Integer.toString(rowsDeleted) + " rows deleted" );
+                rowsDeleted = cr.delete(MovieEntry.CONTENT_URI, null, null);
+                Log.d(LOG_TAG, "RESET MOVIE: " + Integer.toString(rowsDeleted) + " rows deleted" );
+
+                return true;
+            }
+        });
+
     }
 
     /**

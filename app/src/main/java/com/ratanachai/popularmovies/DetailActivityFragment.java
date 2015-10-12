@@ -218,38 +218,13 @@ public class DetailActivityFragment extends BaseFragment {
 
                     // Pull out from SharedPref again to check
                     Log.d(LOG_TAG + "==After==", prefs.getStringSet(key, new HashSet<String>()).toString());
-
                 }
             });
-
             // Restore Trailer Videos and Reviews (First time added via OnPostExecute)
             if (mAddVideosAndReviews) {
                 addVideosTextView(mVideos);
                 addReviewsTextView(mReviews);
             }
-
-            /* // Test area
-            Log.d(LOG_TAG + "==Before==", outSet.toString());
-            mRootview.findViewById(R.id.reset).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    // Clear SharedPref
-                    SharedPreferences.Editor editor = prefs.edit();
-                    editor.clear().commit();
-                    // Clear Database
-                    ContentResolver cr = getActivity().getContentResolver();
-                    Cursor movieCursor = cr.query(MovieEntry.CONTENT_URI,
-                            new String[]{MovieEntry._ID, MovieEntry.COLUMN_TITLE}, null, null, null);
-                    // Dump out content to see before delete
-                    Log.d(LOG_TAG, DatabaseUtils.dumpCursorToString(movieCursor));
-                    int rowsDeleted = cr.delete(MovieEntry.CONTENT_URI, null, null);
-                    Log.d(LOG_TAG, "RESET MOVIE: " + Integer.toString(rowsDeleted) + " rows deleted" );
-                    // Delete Video
-                    rowsDeleted = cr.delete(VideoEntry.CONTENT_URI, null, null);
-                    Log.d(LOG_TAG, "RESET VIDEO: " + Integer.toString(rowsDeleted) + " rows deleted" );
-                }
-            }); */
-
         } // end if getArguments() != null
         return mRootview;
     }
