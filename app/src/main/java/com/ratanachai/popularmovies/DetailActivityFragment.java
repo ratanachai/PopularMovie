@@ -55,6 +55,11 @@ public class DetailActivityFragment extends BaseFragment {
     private boolean mAddVideosAndReviews = false;
     private ShareActionProvider mShareActionProvider;
 
+    public interface Callback {
+        // All activity that contain this fragment must implement this Callback
+        // (MainActivity for tablet and DetailActivity for phone)
+        void onMovieRemovedFromFavorite();
+    }
     public DetailActivityFragment() {setHasOptionsMenu(true);}
 
     long saveMovieOffline(String[] movieInfo){
@@ -209,8 +214,12 @@ public class DetailActivityFragment extends BaseFragment {
                         fav_movie_ids.remove(tmdb_id);
                         // Delete the Movie, its videos will be DELETE CASCADE via Foreign key constrain
                         removeOfflineMovie(tmdb_id);
-                        // MainFragment will need to be refetched movie if movie removed
-                        if ( isSortByFavorite(getCurrentSortBy(getActivity())) ) needReFetch = true;
+
+                        // In case of Favorite Movie Criteria ..
+                        // MainFragment will need to refetch movies if movie removed
+                        if ( isSortByFavorite(getCurrentSortBy(getActivity())) ) {
+                            ((Callback) getActivity()).onMovieRemovedFromFavorite();
+                        }
                     }
                     // Save new Set into SharedPref
                     editor.putStringSet(key, fav_movie_ids);

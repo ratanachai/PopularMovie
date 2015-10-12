@@ -7,10 +7,19 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 
-public class MainActivity extends ActionBarActivity implements MainActivityFragment.Callback {
+public class MainActivity extends ActionBarActivity
+        implements MainActivityFragment.Callback, DetailActivityFragment.Callback {
 
     public static boolean mTwoPane;
     private static final String DETAILFRAGMENT_TAG = "DFTAG";
+
+    @Override
+    public void onMovieRemovedFromFavorite(){
+        MainActivityFragment mainFragment = (MainActivityFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.fragment);
+        mainFragment.updateMoviesGrid();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

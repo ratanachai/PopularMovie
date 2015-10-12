@@ -54,6 +54,10 @@ public class MainActivityFragment extends BaseFragment {
     public MainActivityFragment() {
     }
 
+    public void updateMoviesGrid() {
+        fetchMoviesInfo();
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         Log.d(LOG_TAG, "== onCreate()");

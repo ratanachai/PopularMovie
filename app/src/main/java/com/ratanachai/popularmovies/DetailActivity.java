@@ -7,7 +7,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 
-public class DetailActivity extends ActionBarActivity {
+public class DetailActivity extends ActionBarActivity implements DetailActivityFragment.Callback {
+
+    @Override
+    public void onMovieRemovedFromFavorite() {
+        // For one pane Activity, tell MasterView to refetch Grid on Create
+        BaseFragment.needReFetch = true;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +39,6 @@ public class DetailActivity extends ActionBarActivity {
         return true;
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -49,6 +54,4 @@ public class DetailActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
-
 }
