@@ -37,6 +37,7 @@ import java.util.ArrayList;
 public class MainActivityFragment extends BaseFragment {
     public static final String LOG_TAG = MainActivityFragment.class.getSimpleName();
 
+    private ArrayList<String> mMovieUrls;
     private CustomImageAdapter mMovieAdapter;
     private ArrayList<Movie> mMovies = new ArrayList<Movie>();
     private String mSortMode = "";
@@ -60,7 +61,8 @@ public class MainActivityFragment extends BaseFragment {
         setHasOptionsMenu(true); //For this fragment to handle menu events.
 
         // Create MovieAdapter every times
-        mMovieAdapter = new CustomImageAdapter(new ArrayList<String>());
+        mMovieUrls = new ArrayList<>();
+        mMovieAdapter = new CustomImageAdapter(mMovieUrls);
 
         /** Fetch Movies or Restore from savedInstanceState */
         // http://stackoverflow.com/questions/12503836/how-to-save-custom-arraylist-on-android-screen-rotate
@@ -70,11 +72,12 @@ public class MainActivityFragment extends BaseFragment {
         }else {
             mSortMode = savedInstanceState.getString("sort_mode");
             mMovies = savedInstanceState.getParcelableArrayList("movies");
-            mMovieAdapter.clear();
+            mMovieUrls.clear();
             for (Movie aMovie : mMovies) {
                 // Store movie poster URL into Adapter
-                mMovieAdapter.add(aMovie.getPosterUrl());
+                mMovieUrls.add(aMovie.getPosterUrl());
             }
+            mMovieAdapter.notifyDataSetChanged();
         }
     }
     @Override
@@ -158,8 +161,11 @@ public class MainActivityFragment extends BaseFragment {
                 mMovies.add(movieObj);
             }
             // Populate Movie Poster to ArrayAdapter
-            mMovieAdapter.clear(); //Must clear adapter before adding new
-            for(Movie aMovie : mMovies) { mMovieAdapter.add(aMovie.getPosterUrl()); }
+            mMovieUrls.clear();
+            for(Movie aMovie : mMovies) {
+                mMovieUrls.add(aMovie.getPosterUrl());
+            }
+            mMovieAdapter.notifyDataSetChanged();
 
             needReFetch = false; //Reset flag after fetched
 
@@ -175,7 +181,8 @@ public class MainActivityFragment extends BaseFragment {
                     "Please Switch to Favorite Movie list.", Toast.LENGTH_LONG);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
-            mMovieAdapter.clear();
+            mMovieUrls.clear();
+            mMovieAdapter.notifyDataSetChanged();
             mMovies.clear();
         }
 
@@ -185,8 +192,12 @@ public class MainActivityFragment extends BaseFragment {
     // How-to use Picasso with ArrayAdapter from Big Nerd Ranch
     // https://www.bignerdranch.com/blog/solving-the-android-image-loading-problem-volley-vs-picasso/
     private class CustomImageAdapter extends ArrayAdapter<String> {
+// Comment out unnecessary Override
+//        private ArrayList<String> items;
+//
         public CustomImageAdapter(ArrayList<String> urls) {
             super(getActivity(), 0, urls);
+//            this.items = urls;
         }
 
         @Override
@@ -207,6 +218,11 @@ public class MainActivityFragment extends BaseFragment {
 
             return convertView;
         }
+//        @Override
+//        public int getCount() { return items.size();}
+//        @Override
+//        public String getItem(int position){ return items.get(position); }
+//
     }
 
     public class FetchMoviesTask extends AsyncTask<String, Void, ArrayList<Movie>> {
@@ -332,11 +348,12 @@ public class MainActivityFragment extends BaseFragment {
         @Override
         protected void onPostExecute(ArrayList<Movie> movies) {
             if (movies != null) {
-                mMovieAdapter.clear(); // Must clear adapter before adding new
+                mMovieUrls.clear();
                 for(Movie aMovie : movies) {
                     // Store movie poster URL into Adapter
-                    mMovieAdapter.add(aMovie.getPosterUrl());
+                    mMovieUrls.add(aMovie.getPosterUrl());
                 }
+                mMovieAdapter.notifyDataSetChanged();
             }
         }
     }
