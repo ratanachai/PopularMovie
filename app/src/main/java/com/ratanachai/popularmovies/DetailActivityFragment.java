@@ -58,7 +58,7 @@ public class DetailActivityFragment extends BaseFragment {
     public interface Callback {
         // All activity that contain this fragment must implement this Callback
         // (MainActivity for tablet and DetailActivity for phone)
-        void onMovieRemovedFromFavorite();
+        void onAddRemoveMovieFromFavorite(boolean needReFetch);
     }
     public DetailActivityFragment() {setHasOptionsMenu(true);}
 
@@ -208,7 +208,12 @@ public class DetailActivityFragment extends BaseFragment {
                         // Save the Movie and its Videos
                         long movieRowId = saveMovieOffline(mMovieInfo);
                         saveVideosOffline(mVideos, movieRowId);
-                        if ( isSortByFavorite(getCurrentSortBy(getActivity())) ) needReFetch = false;
+
+                        // In case of Favorite Movie Criteria ..
+                        // MainFragment will need to refetch movies if movie added
+                        if ( isSortByFavorite(getCurrentSortBy(getActivity())) ) {
+                            ((Callback) getActivity()).onAddRemoveMovieFromFavorite(false);
+                        }
                     }
                     else{
                         fav_movie_ids.remove(tmdb_id);
@@ -218,7 +223,7 @@ public class DetailActivityFragment extends BaseFragment {
                         // In case of Favorite Movie Criteria ..
                         // MainFragment will need to refetch movies if movie removed
                         if ( isSortByFavorite(getCurrentSortBy(getActivity())) ) {
-                            ((Callback) getActivity()).onMovieRemovedFromFavorite();
+                            ((Callback) getActivity()).onAddRemoveMovieFromFavorite(true);
                         }
                     }
                     // Save new Set into SharedPref

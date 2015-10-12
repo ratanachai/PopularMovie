@@ -10,9 +10,9 @@ import android.view.MenuItem;
 public class DetailActivity extends ActionBarActivity implements DetailActivityFragment.Callback {
 
     @Override
-    public void onMovieRemovedFromFavorite() {
+    public void onAddRemoveMovieFromFavorite(boolean needReFetch) {
         // For one pane Activity, tell MasterView to refetch Grid on Create
-        BaseFragment.needReFetch = true;
+        BaseFragment.needReFetch = needReFetch;
     }
 
     @Override

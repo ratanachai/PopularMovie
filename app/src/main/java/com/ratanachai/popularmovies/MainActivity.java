@@ -14,7 +14,7 @@ public class MainActivity extends ActionBarActivity
     private static final String DETAILFRAGMENT_TAG = "DFTAG";
 
     @Override
-    public void onMovieRemovedFromFavorite(){
+    public void onAddRemoveMovieFromFavorite(boolean needReFetch){
         MainActivityFragment mainFragment = (MainActivityFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.fragment);
         mainFragment.updateMoviesGrid();
