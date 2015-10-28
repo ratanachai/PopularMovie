@@ -1,5 +1,6 @@
 package com.ratanachai.popularmovies;
 
+import android.app.ProgressDialog;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
@@ -41,6 +42,7 @@ public class MainActivityFragment extends BaseFragment {
     private CustomImageAdapter mMovieAdapter;
     private ArrayList<Movie> mMovies = new ArrayList<Movie>();
     private String mSortMode = "";
+    private ProgressDialog mProgress;
 
     /**
      * A callback interface that all activities containing this fragment must implement.
@@ -177,6 +179,11 @@ public class MainActivityFragment extends BaseFragment {
             Log.d(LOG_TAG, "== Getting Movies from the Internet");
 
             // Get Movie from Internet
+            mProgress = new ProgressDialog(getActivity());
+            mProgress.setMessage("Downloading from TMDB");
+            mProgress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            mProgress.show();
+
             FetchMoviesTask fetchMoviesTask = new FetchMoviesTask();
             fetchMoviesTask.execute(sort_by);
 
@@ -358,6 +365,7 @@ public class MainActivityFragment extends BaseFragment {
                     mMovieUrls.add(aMovie.getPosterUrl());
                 }
                 mMovieAdapter.notifyDataSetChanged();
+                mProgress.hide();
             }
         }
     }
