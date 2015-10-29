@@ -1,7 +1,7 @@
 package com.ratanachai.popularmovies;
 
 import android.app.ProgressDialog;
-import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -93,11 +93,13 @@ public class MainActivityFragment extends BaseFragment {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         GridView gridView = (GridView) rootView.findViewById(R.id.gridview_movies);
 
-        // Set more Number of columns in Landscape mode
-        if( (getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
-                & !isTablet(getActivity())){
-            gridView.setNumColumns(5);
-        }
+        /** Set Number of Columns in different devices **
+            - Default Portrait = 2 columns; Default Land = 5 columns;
+            - Small Tablet (Part and Land) = 2 columns; (sw600dp-land = 2)
+            - Large Tablet Port = 2 columns; Large Tab Land = 3 columns (sw800dp-land = 3) */
+        Resources res = getActivity().getResources();
+        gridView.setNumColumns(res.getInteger(R.integer.num_columns));
+
         gridView.setAdapter(mMovieAdapter);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
