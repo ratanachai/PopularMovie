@@ -100,6 +100,10 @@ public class MainActivityFragment extends BaseFragment {
         Resources res = getActivity().getResources();
         gridView.setNumColumns(res.getInteger(R.integer.num_columns));
 
+        // Set empty grid
+        View emptyView = rootView.findViewById(R.id.gridview_movies_empty);
+        gridView.setEmptyView(emptyView);
+
         gridView.setAdapter(mMovieAdapter);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
