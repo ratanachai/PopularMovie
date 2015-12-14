@@ -61,7 +61,6 @@ public class DetailActivityFragment extends BaseFragment {
         // (MainActivity for tablet and DetailActivity for phone)
         void onAddRemoveMovieFromFavorite(boolean needReFetch);
     }
-    public DetailActivityFragment() {setHasOptionsMenu(true);}
 
     long saveMovieOffline(String[] movieInfo){
 
@@ -195,6 +194,7 @@ public class DetailActivityFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.v(LOG_TAG, "=== onCreateView");
+        setHasOptionsMenu(true);
 
         mRootview = inflater.inflate(R.layout.fragment_detail, container, false);
 
