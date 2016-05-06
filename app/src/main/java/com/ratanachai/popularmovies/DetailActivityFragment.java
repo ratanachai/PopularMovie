@@ -1,5 +1,6 @@
 package com.ratanachai.popularmovies;
 
+import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -7,6 +8,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -55,6 +57,7 @@ public class DetailActivityFragment extends BaseFragment {
     private View mRootview;
     private boolean mAddVideosAndReviews = false;
     private ShareActionProvider mShareActionProvider;
+    private Typeface lobster;
 
     public interface Callback {
         // All activity that contain this fragment must implement this Callback
@@ -157,6 +160,12 @@ public class DetailActivityFragment extends BaseFragment {
     }
 
     @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        lobster = Typeface.createFromAsset(getActivity().getAssets(), "Lobster-Regular.ttf");
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState){
         Log.v(LOG_TAG, "=== onCreate");
         super.onCreate(savedInstanceState);
@@ -201,7 +210,9 @@ public class DetailActivityFragment extends BaseFragment {
         if (getArguments() != null) {
 
             // Set all TextView and Poster
-            ((TextView) mRootview.findViewById(R.id.movie_title)).setText(mMovieInfo[1]);
+            TextView movieTitleTv = (TextView) mRootview.findViewById(R.id.movie_title);
+            movieTitleTv.setTypeface(lobster);
+            movieTitleTv.setText(mMovieInfo[1]);
             ((TextView) mRootview.findViewById(R.id.movie_overview)).setText(mMovieInfo[3]);
             ((TextView) mRootview.findViewById(R.id.movie_rating)).append(" " + mMovieInfo[4] + "/10");
             ((TextView) mRootview.findViewById(R.id.movie_release)).append(" " + mMovieInfo[5]);
@@ -669,5 +680,6 @@ public class DetailActivityFragment extends BaseFragment {
                 addReviewsTextView(reviews);
             }
         }
+
     }
 }
