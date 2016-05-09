@@ -44,6 +44,8 @@ public class MainActivityFragment extends BaseFragment {
     private String mFetchedSortBy = ""; // Sort Mode that has been Fetched
     private ProgressDialog mProgress;
 
+    // For Endless Scrolling
+
     /** A callback interface that all activities containing this fragment must implement.
      *  This mechanism allows activities to be notified of item selections.
      *  DetailFragmentCallback for when an item has been selected. */
@@ -51,10 +53,8 @@ public class MainActivityFragment extends BaseFragment {
         void onItemSelected(String[] movieInfo);
     }
 
-    public MainActivityFragment() {}
-
     public void updateMoviesGrid() {
-        getMovies();
+        getMoviesFromDb();
     }
 
     @Override
@@ -70,7 +70,7 @@ public class MainActivityFragment extends BaseFragment {
         // Fetch Movies or Restore from savedInstanceState
         // http://stackoverflow.com/questions/12503836/how-to-save-custom-arraylist-on-android-screen-rotate
         if (savedInstanceState == null || !savedInstanceState.containsKey("movies")) {
-            getMovies();
+            getMovies(); //Nothing to restore so getMovies
         }else {
             mFetchedSortBy = savedInstanceState.getString("sort_mode");
             mMovies = savedInstanceState.getParcelableArrayList("movies");
@@ -107,14 +107,16 @@ public class MainActivityFragment extends BaseFragment {
         super.onStart();
         Log.d(LOG_TAG, "== onStart()");
 
-        String newSortMode = getPrefSortBy(getActivity());
-        getActivity().setTitle(getString(R.string.app_name) + " - " + getCurrentSortByLabel(newSortMode));
+        String newSortBy = getPrefSortBy(getActivity());
+        getActivity().setTitle(getString(R.string.app_name) + " - " + getCurrentSortByLabel(newSortBy));
 
-        // Force Re-Fetch If needReFetch OR Sort Criteria changed (New differs from fetched)
-        if( needReFetch || (!mFetchedSortBy.isEmpty() && newSortMode != null && !newSortMode.equals(mFetchedSortBy)) )
+        // Force Re-Fetch If needReFetch OR SortBy changed (New differs from fetched)
+        if( needReFetch || hasSortByChanged(newSortBy) )
             getMovies();
     }
-
+    private boolean hasSortByChanged(String newSortBy){
+        return !mFetchedSortBy.isEmpty() && newSortBy != null && !newSortBy.equals(mFetchedSortBy);
+    }
     @Override
     public void onSaveInstanceState(Bundle outState){
         super.onSaveInstanceState(outState);
@@ -141,34 +143,11 @@ public class MainActivityFragment extends BaseFragment {
 
         if(isSortByFavorite(sortBy)) {
             Log.d(LOG_TAG, "== Getting Favorite Movies from DB");
-
-            // Populate mMovies from DB:
-            // Get Movie from Database, then Put into ArrayList of Movies
-            mMovies.clear(); // Must clear the list before adding new
-            Cursor cur = getActivity().getContentResolver().query(MovieEntry.CONTENT_URI,
-                    Movie.MOVIE_COLUMNS, null, null, MovieEntry._ID + " DESC");
-            while(cur.moveToNext()) {
-                Movie movieObj = new Movie(cur.getString(Movie.COL_TMDB_MOVIE_ID),
-                        cur.getString(Movie.COL_TITLE), cur.getString(Movie.COL_POSTER_PATH),
-                        cur.getString(Movie.COL_OVERVIEW), cur.getString(Movie.COL_USER_RATING),
-                        cur.getString(Movie.COL_RELEASE_DATE));
-                mMovies.add(movieObj);
-            }
-            cur.close();
-            populatePoster(); // Populate Grid of Posters
-            needReFetch = false; //Reset flag after fetched
+            getMoviesFromDb();
 
         }else if(Utility.isNetworkAvailable(getActivity())) {
             Log.d(LOG_TAG, "== Getting Movies from the Internet");
-
-            mProgress = new ProgressDialog(getActivity());
-            mProgress.setMessage("Downloading from TMDB");
-            mProgress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            mProgress.show();
-
-            // Get Movie from Internet
-            FetchMoviesTask fetchMoviesTask = new FetchMoviesTask();
-            fetchMoviesTask.execute(sortBy);
+            getMoviesFromInternet(sortBy);
 
         }else{
             Toast toast = Toast.makeText(getActivity(), "No network connection. " +
@@ -182,6 +161,34 @@ public class MainActivityFragment extends BaseFragment {
         }
 
         mFetchedSortBy = sortBy; //Update FetchedSortBy
+    }
+
+    private void getMoviesFromDb() {
+        // Populate mMovies from DB: Get Movie from Database, then Put into ArrayList of Movies
+        mMovies.clear(); // Must clear the list before adding new
+        Cursor cur = getActivity().getContentResolver().query(MovieEntry.CONTENT_URI,
+                Movie.MOVIE_COLUMNS, null, null, MovieEntry._ID + " DESC");
+        while(cur.moveToNext()) {
+            Movie movieObj = new Movie(cur.getString(Movie.COL_TMDB_MOVIE_ID),
+                    cur.getString(Movie.COL_TITLE), cur.getString(Movie.COL_POSTER_PATH),
+                    cur.getString(Movie.COL_OVERVIEW), cur.getString(Movie.COL_USER_RATING),
+                    cur.getString(Movie.COL_RELEASE_DATE));
+            mMovies.add(movieObj);
+        }
+        cur.close();
+        populatePoster(); // Populate Grid of Posters
+        needReFetch = false; //Reset flag after fetched
+    }
+
+    private void getMoviesFromInternet(String sortBy) {
+        mProgress = new ProgressDialog(getActivity());
+        mProgress.setMessage("Downloading from TMDB");
+        mProgress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        mProgress.show();
+
+        // Get Movie from Internet
+        FetchMoviesTask fetchMoviesTask = new FetchMoviesTask();
+        fetchMoviesTask.execute(sortBy);
     }
 
     private void populatePoster() {
