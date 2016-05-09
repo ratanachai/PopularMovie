@@ -7,7 +7,7 @@ import com.ratanachai.popularmovies.data.MovieContract.MovieEntry;
 public class Movie implements Parcelable{
     private String id;
     private String title;
-    private String posterUrl;
+    private String posterPath;
     private String overview;
     private String userRating;
     private String releaseDate;
@@ -34,16 +34,16 @@ public class Movie implements Parcelable{
     public Movie(String id, String title, String poster, String overview, String userRating, String releaseDate){
         this.id = id;
         this.title = title;
-        this.posterUrl = poster;
+        this.posterPath = poster;
         this.overview = overview;
         this.userRating = userRating;
         this.releaseDate = releaseDate;
     }
-    public String getPosterUrl(){
-        return posterUrl;
+    public String getPosterPath(){
+        return posterPath;
     }
     public String[] getAll(){
-        String[] all = {id, title, posterUrl, overview, userRating, releaseDate};
+        String[] all = {id, title, posterPath, overview, userRating, releaseDate};
         return all;
     }
 
@@ -53,7 +53,7 @@ public class Movie implements Parcelable{
     private Movie(Parcel in){
         id = in.readString();
         title = in.readString();
-        posterUrl = in.readString();
+        posterPath = in.readString();
         overview = in.readString();
         userRating = in.readString();
         releaseDate = in.readString();
@@ -64,7 +64,7 @@ public class Movie implements Parcelable{
     public void writeToParcel(Parcel out, int flags){
         out.writeString(id);
         out.writeString(title);
-        out.writeString(posterUrl);
+        out.writeString(posterPath);
         out.writeString(overview);
         out.writeString(userRating);
         out.writeString(releaseDate);

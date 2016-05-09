@@ -39,7 +39,7 @@ public class MainActivityFragment extends BaseFragment {
     public static final String LOG_TAG = MainActivityFragment.class.getSimpleName();
 
     private CustomImageAdapter mMovieAdapter; // Adapter for Grid of Poster Image
-    private ArrayList<String> mMovieUrls; // URLs used to populate the grid
+    private ArrayList<String> mMoviePosterPaths; // URLs used to populate the grid
     private ArrayList<Movie> mMovies = new ArrayList<>(); // of Movie objects
     private String mFetchedSortBy = ""; // Sort Mode that has been Fetched
     private ProgressDialog mProgress;
@@ -64,8 +64,8 @@ public class MainActivityFragment extends BaseFragment {
         setHasOptionsMenu(true); //For this fragment to handle menu events.
 
         // Create MovieAdapter every times
-        mMovieUrls = new ArrayList<>();
-        mMovieAdapter = new CustomImageAdapter(mMovieUrls);
+        mMoviePosterPaths = new ArrayList<>();
+        mMovieAdapter = new CustomImageAdapter(mMoviePosterPaths);
 
         // Fetch Movies or Restore from savedInstanceState
         // http://stackoverflow.com/questions/12503836/how-to-save-custom-arraylist-on-android-screen-rotate
@@ -142,11 +142,11 @@ public class MainActivityFragment extends BaseFragment {
         if(isSortByFavorite(sortBy)) {
             Log.d(LOG_TAG, "== Getting Favorite Movies from DB");
 
-            // Get Movie from Database, then Put into ArrayList of Movies, Populate Grid of Posters
+            // Populate mMovies from DB:
+            // Get Movie from Database, then Put into ArrayList of Movies
+            mMovies.clear(); // Must clear the list before adding new
             Cursor cur = getActivity().getContentResolver().query(MovieEntry.CONTENT_URI,
                     Movie.MOVIE_COLUMNS, null, null, MovieEntry._ID + " DESC");
-
-            mMovies.clear(); // Must clear the list before adding new
             while(cur.moveToNext()) {
                 Movie movieObj = new Movie(cur.getString(Movie.COL_TMDB_MOVIE_ID),
                         cur.getString(Movie.COL_TITLE), cur.getString(Movie.COL_POSTER_PATH),
@@ -154,18 +154,19 @@ public class MainActivityFragment extends BaseFragment {
                         cur.getString(Movie.COL_RELEASE_DATE));
                 mMovies.add(movieObj);
             }
-            populatePoster();
+            cur.close();
+            populatePoster(); // Populate Grid of Posters
             needReFetch = false; //Reset flag after fetched
 
         }else if(Utility.isNetworkAvailable(getActivity())) {
             Log.d(LOG_TAG, "== Getting Movies from the Internet");
 
-            // Get Movie from Internet
             mProgress = new ProgressDialog(getActivity());
             mProgress.setMessage("Downloading from TMDB");
             mProgress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             mProgress.show();
 
+            // Get Movie from Internet
             FetchMoviesTask fetchMoviesTask = new FetchMoviesTask();
             fetchMoviesTask.execute(sortBy);
 
@@ -174,18 +175,19 @@ public class MainActivityFragment extends BaseFragment {
                     "Please Switch to Favorite Movie list.", Toast.LENGTH_LONG);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
-            mMovieUrls.clear();
-            mMovieAdapter.notifyDataSetChanged();
+
             mMovies.clear();
+            mMoviePosterPaths.clear();
+            mMovieAdapter.notifyDataSetChanged();
         }
 
-        mFetchedSortBy = sortBy; //Remember current SortMode
+        mFetchedSortBy = sortBy; //Update FetchedSortBy
     }
 
     private void populatePoster() {
-        mMovieUrls.clear();
+        mMoviePosterPaths.clear();
         for(Movie aMovie : mMovies) {
-            mMovieUrls.add(aMovie.getPosterUrl());
+            mMoviePosterPaths.add(aMovie.getPosterPath());
         }
         mMovieAdapter.notifyDataSetChanged();
     }
@@ -193,7 +195,8 @@ public class MainActivityFragment extends BaseFragment {
     // How-to use Picasso with ArrayAdapter from Big Nerd Ranch
     // https://www.bignerdranch.com/blog/solving-the-android-image-loading-problem-volley-vs-picasso/
     private class CustomImageAdapter extends ArrayAdapter<String> {
-// Comment out unnecessary Override
+
+        // Comment out unnecessary Override
 //        private ArrayList<String> items;
 //
         public CustomImageAdapter(ArrayList<String> urls) {
@@ -203,16 +206,15 @@ public class MainActivityFragment extends BaseFragment {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-
-            if (convertView == null) {
+            if (convertView == null)
                 convertView = getActivity().getLayoutInflater()
                         .inflate(R.layout.grid_item_movie, parent, false);
-            }
 
+            // Adjust its bound to max while Preserve the aspect ratio of Image
             ImageView imageView = (ImageView)convertView;
-            imageView.setAdjustViewBounds(true); //Adjust its bound to max while Preserve the aspect ratio of Image
+            imageView.setAdjustViewBounds(true);
 
-            // Download Image from TMDB
+            // Download Image from TMDB using mMoviePosterPath
             Picasso.with(getActivity())
                     .load("http://image.tmdb.org/t/p/w185" + getItem(position))
                     .into(imageView);
@@ -231,8 +233,7 @@ public class MainActivityFragment extends BaseFragment {
         private final String LOG_TAG = FetchMoviesTask.class.getSimpleName();
 
         /** Takes the JSON string and converts it into an Object hierarchy. */
-        private ArrayList<Movie> getMoviesFromJson(String moviesJsonStr)
-                throws JSONException {
+        private ArrayList<Movie> getMoviesFromJson(String moviesJsonStr) throws JSONException {
 
             // These are the names of the JSON objects that need to be extracted.
             final String TMDB_MOVIES = "results";
@@ -246,19 +247,16 @@ public class MainActivityFragment extends BaseFragment {
             JSONObject moviesJson = new JSONObject(moviesJsonStr);
             JSONArray moviesArray = moviesJson.getJSONArray(TMDB_MOVIES);
 
+            // Populate mMovies from JSON:
             // Create a Movie object then add to ArrayList of Movies
             mMovies.clear(); // Must clear the list before adding new
             for(int i = 0; i < moviesArray.length(); i++){
                 JSONObject aMovie = moviesArray.getJSONObject(i);
-                Movie movieObj = new Movie(aMovie.getString(TMDB_MOVIE_ID),
-                                            aMovie.getString(TMDB_ORIGINAL_TITLE),
-                                            aMovie.getString(TMDB_POSTER_PATH),
-                                            aMovie.getString(TMDB_OVERVIEW),
-                                            aMovie.getString(TMDB_USER_RATING),
-                                            aMovie.getString(TMDB_RELEASE));
+                Movie movieObj = new Movie(aMovie.getString(TMDB_MOVIE_ID), aMovie.getString(TMDB_ORIGINAL_TITLE),
+                        aMovie.getString(TMDB_POSTER_PATH), aMovie.getString(TMDB_OVERVIEW),
+                        aMovie.getString(TMDB_USER_RATING), aMovie.getString(TMDB_RELEASE));
                 mMovies.add(movieObj);
             }
-
             return mMovies;
         }
 
@@ -341,9 +339,7 @@ public class MainActivityFragment extends BaseFragment {
                 Log.e(LOG_TAG, e.getMessage(), e);
                 e.printStackTrace();
             }
-
-            // This will only happen if there was an error getting or parsing the forecast.
-            return null;
+            return null; // This will only happen if there was an error getting or parsing
         }
 
         @Override
