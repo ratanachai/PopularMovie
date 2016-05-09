@@ -1,7 +1,7 @@
 package com.ratanachai.popularmovies;
 
 import android.app.ProgressDialog;
-import android.content.res.Resources;
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -38,26 +38,23 @@ import java.util.ArrayList;
 public class MainActivityFragment extends BaseFragment {
     public static final String LOG_TAG = MainActivityFragment.class.getSimpleName();
 
-    private ArrayList<String> mMovieUrls;
-    private CustomImageAdapter mMovieAdapter;
-    private ArrayList<Movie> mMovies = new ArrayList<Movie>();
-    private String mSortMode = "";
+    private CustomImageAdapter mMovieAdapter; // Adapter for Grid of Poster Image
+    private ArrayList<String> mMovieUrls; // URLs used to populate the grid
+    private ArrayList<Movie> mMovies = new ArrayList<>(); // of Movie objects
+    private String mFetchedSortBy = ""; // Sort Mode that has been Fetched
     private ProgressDialog mProgress;
 
-    /**
-     * A callback interface that all activities containing this fragment must implement.
-     * This mechanism allows activities to be notified of item selections.
-     */
+    /** A callback interface that all activities containing this fragment must implement.
+     *  This mechanism allows activities to be notified of item selections.
+     *  DetailFragmentCallback for when an item has been selected. */
     public interface Callback {
-        // DetailFragmentCallback for when an item has been selected.
         void onItemSelected(String[] movieInfo);
     }
 
-    public MainActivityFragment() {
-    }
+    public MainActivityFragment() {}
 
     public void updateMoviesGrid() {
-        getMoviesFromInternetOrDb();
+        getMovies();
     }
 
     @Override
@@ -70,68 +67,59 @@ public class MainActivityFragment extends BaseFragment {
         mMovieUrls = new ArrayList<>();
         mMovieAdapter = new CustomImageAdapter(mMovieUrls);
 
-        /** Fetch Movies or Restore from savedInstanceState */
+        // Fetch Movies or Restore from savedInstanceState
         // http://stackoverflow.com/questions/12503836/how-to-save-custom-arraylist-on-android-screen-rotate
         if (savedInstanceState == null || !savedInstanceState.containsKey("movies")) {
-            getMoviesFromInternetOrDb();
-
+            getMovies();
         }else {
-            mSortMode = savedInstanceState.getString("sort_mode");
+            mFetchedSortBy = savedInstanceState.getString("sort_mode");
             mMovies = savedInstanceState.getParcelableArrayList("movies");
-            mMovieUrls.clear();
-            for (Movie aMovie : mMovies) {
-                // Store movie poster URL into Adapter
-                mMovieUrls.add(aMovie.getPosterUrl());
-            }
-            mMovieAdapter.notifyDataSetChanged();
+            populatePoster();
         }
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.d(LOG_TAG, "== onCreateView()");
-        // Inflate fragment main into Root View, and get gridView
+        final Context c = getActivity();
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        GridView gridView = (GridView) rootView.findViewById(R.id.gridview_movies);
-
         /** Set Number of Columns in different devices **
-            - Default Portrait = 2 columns; Default Land = 5 columns;
-            - Small Tablet (Part and Land) = 2 columns; (sw600dp-land = 2)
-            - Large Tablet Port = 2 columns; Large Tab Land = 3 columns (sw800dp-land = 3) */
-        Resources res = getActivity().getResources();
-        gridView.setNumColumns(res.getInteger(R.integer.num_columns));
+         - Default Portrait = 2 columns; Default Land = 5 columns;
+         - Small Tablet (Part and Land) = 2 columns; (sw600dp-land = 2)
+         - Large Tablet Port = 2 columns; Large Tab Land = 3 columns (sw800dp-land = 3) */
+        GridView gridView = (GridView) rootView.findViewById(R.id.gridview_movies);
+        gridView.setNumColumns(c.getResources().getInteger(R.integer.num_columns));
 
-        // Set empty grid
+        // Set EmptyView, Adapter, OnItemClickListener
         View emptyView = rootView.findViewById(R.id.gridview_movies_empty);
         gridView.setEmptyView(emptyView);
-
         gridView.setAdapter(mMovieAdapter);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                ((Callback) getActivity()).onItemSelected(mMovies.get(position).getAll());
-            }
+                ((Callback) c).onItemSelected(mMovies.get(position).getAll()); }
         });
 
         return rootView;
     }
     @Override
     public void onStart(){
-        Log.d(LOG_TAG, "== onStart()");
-        String sort_by = getCurrentSortBy(getActivity());
-        getActivity().setTitle(getString(R.string.app_name) + " - " + getCurrentSortByLabel(sort_by));
-
-        // Force Re-Fetch If needReFetch OR Sort Criteria changed
-        if( needReFetch ||
-                (!mSortMode.isEmpty() && sort_by != null && !sort_by.equals(mSortMode)) )
-            getMoviesFromInternetOrDb();
-
         super.onStart();
+        Log.d(LOG_TAG, "== onStart()");
+
+        String newSortMode = getPrefSortBy(getActivity());
+        getActivity().setTitle(getString(R.string.app_name) + " - " + getCurrentSortByLabel(newSortMode));
+
+        // Force Re-Fetch If needReFetch OR Sort Criteria changed (New differs from fetched)
+        if( needReFetch || (!mFetchedSortBy.isEmpty() && newSortMode != null && !newSortMode.equals(mFetchedSortBy)) )
+            getMovies();
     }
+
     @Override
     public void onSaveInstanceState(Bundle outState){
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList("movies", mMovies);
-        outState.putString("sort_mode", mSortMode);
+        outState.putString("sort_mode", mFetchedSortBy);
     }
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -140,45 +128,33 @@ public class MainActivityFragment extends BaseFragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-
         if (id == R.id.action_refresh) {
-            // Force Fetch Movies data
-            getMoviesFromInternetOrDb();
+            getMovies(); // Force Fetch Movies data
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void getMoviesFromInternetOrDb(){
+    private void getMovies(){
         Log.d(LOG_TAG, "== fetchMovieInfo()");
-        String sort_by = getCurrentSortBy(getActivity());
+        String sortBy = getPrefSortBy(getActivity());
 
-        if(isSortByFavorite(sort_by)) {
+        if(isSortByFavorite(sortBy)) {
             Log.d(LOG_TAG, "== Getting Favorite Movies from DB");
 
-            // Get Movie from Database
-            String sortOrder = MovieEntry._ID + " DESC";
+            // Get Movie from Database, then Put into ArrayList of Movies, Populate Grid of Posters
             Cursor cur = getActivity().getContentResolver().query(MovieEntry.CONTENT_URI,
-                    Movie.MOVIE_COLUMNS, null, null, sortOrder);
+                    Movie.MOVIE_COLUMNS, null, null, MovieEntry._ID + " DESC");
 
-            // Populate ArrayList of Movies
             mMovies.clear(); // Must clear the list before adding new
             while(cur.moveToNext()) {
                 Movie movieObj = new Movie(cur.getString(Movie.COL_TMDB_MOVIE_ID),
-                        cur.getString(Movie.COL_TITLE),
-                        cur.getString(Movie.COL_POSTER_PATH),
-                        cur.getString(Movie.COL_OVERVIEW),
-                        cur.getString(Movie.COL_USER_RATING),
+                        cur.getString(Movie.COL_TITLE), cur.getString(Movie.COL_POSTER_PATH),
+                        cur.getString(Movie.COL_OVERVIEW), cur.getString(Movie.COL_USER_RATING),
                         cur.getString(Movie.COL_RELEASE_DATE));
                 mMovies.add(movieObj);
             }
-            // Populate Movie Poster to ArrayAdapter
-            mMovieUrls.clear();
-            for(Movie aMovie : mMovies) {
-                mMovieUrls.add(aMovie.getPosterUrl());
-            }
-            mMovieAdapter.notifyDataSetChanged();
-
+            populatePoster();
             needReFetch = false; //Reset flag after fetched
 
         }else if(Utility.isNetworkAvailable(getActivity())) {
@@ -191,7 +167,7 @@ public class MainActivityFragment extends BaseFragment {
             mProgress.show();
 
             FetchMoviesTask fetchMoviesTask = new FetchMoviesTask();
-            fetchMoviesTask.execute(sort_by);
+            fetchMoviesTask.execute(sortBy);
 
         }else{
             Toast toast = Toast.makeText(getActivity(), "No network connection. " +
@@ -203,7 +179,15 @@ public class MainActivityFragment extends BaseFragment {
             mMovies.clear();
         }
 
-        mSortMode = sort_by; //Remember current SortMode
+        mFetchedSortBy = sortBy; //Remember current SortMode
+    }
+
+    private void populatePoster() {
+        mMovieUrls.clear();
+        for(Movie aMovie : mMovies) {
+            mMovieUrls.add(aMovie.getPosterUrl());
+        }
+        mMovieAdapter.notifyDataSetChanged();
     }
 
     // How-to use Picasso with ArrayAdapter from Big Nerd Ranch
@@ -365,12 +349,7 @@ public class MainActivityFragment extends BaseFragment {
         @Override
         protected void onPostExecute(ArrayList<Movie> movies) {
             if (movies != null) {
-                mMovieUrls.clear();
-                for(Movie aMovie : movies) {
-                    // Store movie poster URL into Adapter
-                    mMovieUrls.add(aMovie.getPosterUrl());
-                }
-                mMovieAdapter.notifyDataSetChanged();
+                populatePoster();
                 mProgress.hide();
             }
         }

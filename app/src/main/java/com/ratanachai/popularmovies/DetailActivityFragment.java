@@ -246,13 +246,13 @@ public class DetailActivityFragment extends BaseFragment {
 
                         // In case of Favorite Movie Criteria ..
                         // MainFragment will need to refetch movies if movie added
-                        if ( isSortByFavorite(getCurrentSortBy(getActivity())) ) {
+                        if ( isSortByFavorite(getPrefSortBy(getActivity())) ) {
                             ((Callback) getActivity()).onAddRemoveMovieFromFavorite(false);
                         }
 
                         saveVideosOffline(movieRowId);
                         saveReviewOffline(movieRowId);
-                        if ( isSortByFavorite(getCurrentSortBy(getActivity())) ) needReFetch = false;
+                        if ( isSortByFavorite(getPrefSortBy(getActivity())) ) needReFetch = false;
 
                     }
                     else{
@@ -262,7 +262,7 @@ public class DetailActivityFragment extends BaseFragment {
 
                         // In case of Favorite Movie Criteria ..
                         // MainFragment will need to refetch movies if movie removed
-                        if ( isSortByFavorite(getCurrentSortBy(getActivity())) ) {
+                        if ( isSortByFavorite(getPrefSortBy(getActivity())) ) {
                             ((Callback) getActivity()).onAddRemoveMovieFromFavorite(true);
                         }
                     }
@@ -326,7 +326,7 @@ public class DetailActivityFragment extends BaseFragment {
     /** Code for Movie Video (Trailer) ---------------------------------------------------------- */
     private void getVideosFromInternetOrDb(String tmdb_movie_id){
 
-        String sort_by = getCurrentSortBy(getActivity());
+        String sort_by = getPrefSortBy(getActivity());
 
         // Get Videos from Database
         if(isSortByFavorite(sort_by)) {
@@ -519,7 +519,7 @@ public class DetailActivityFragment extends BaseFragment {
 
     /** Code for Movie Review ------------------------------------------------------------------- */
     private void getReviewsFromInternetOrDb(String tmdb_movie_id){
-        String sort_by = getCurrentSortBy(getActivity());
+        String sort_by = getPrefSortBy(getActivity());
 
         // Get from Database
         if(isSortByFavorite(sort_by)) {

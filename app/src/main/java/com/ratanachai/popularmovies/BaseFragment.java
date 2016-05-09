@@ -23,7 +23,7 @@ public class BaseFragment extends Fragment {
     }
 
     // Get Sort_by settings from Pref
-    protected String getCurrentSortBy(Context context){
+    protected String getPrefSortBy(Context context){
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_default));
     }
