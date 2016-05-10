@@ -45,6 +45,7 @@ public class MainActivityFragment extends BaseFragment {
     private ProgressDialog mProgress;
 
     // For Endless Scrolling
+    private int page = 1;
 
     /** A callback interface that all activities containing this fragment must implement.
      *  This mechanism allows activities to be notified of item selections.
@@ -70,11 +71,11 @@ public class MainActivityFragment extends BaseFragment {
         // Fetch Movies or Restore from savedInstanceState
         // http://stackoverflow.com/questions/12503836/how-to-save-custom-arraylist-on-android-screen-rotate
         if (savedInstanceState == null || !savedInstanceState.containsKey("movies")) {
-            getMovies(); //Nothing to restore so getMovies
+            getMovies(page); //Nothing to restore so getMovies
         }else {
             mFetchedSortBy = savedInstanceState.getString("sort_mode");
             mMovies = savedInstanceState.getParcelableArrayList("movies");
-            populatePoster();
+            populatePoster(mMovies);
         }
     }
 
@@ -94,6 +95,15 @@ public class MainActivityFragment extends BaseFragment {
         View emptyView = rootView.findViewById(R.id.gridview_movies_empty);
         gridView.setEmptyView(emptyView);
         gridView.setAdapter(mMovieAdapter);
+        gridView.setOnScrollListener(new MyScrollListener() {
+            @Override
+            public boolean onLoadMore(int page, int totalItemsCount) {
+                getMovies(page);
+                return true;
+            }
+        });
+
+        // See MainActivity's onItemSelected()
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -102,6 +112,7 @@ public class MainActivityFragment extends BaseFragment {
 
         return rootView;
     }
+
     @Override
     public void onStart(){
         super.onStart();
@@ -111,8 +122,13 @@ public class MainActivityFragment extends BaseFragment {
         getActivity().setTitle(getString(R.string.app_name) + " - " + getCurrentSortByLabel(newSortBy));
 
         // Force Re-Fetch If needReFetch OR SortBy changed (New differs from fetched)
-        if( needReFetch || hasSortByChanged(newSortBy) )
-            getMovies();
+        if( needReFetch || hasSortByChanged(newSortBy) ){
+            mMovies.clear();
+            mMoviePosterPaths.clear();
+            mMovieAdapter.notifyDataSetChanged();
+            getMovies(page);
+        }
+
     }
     private boolean hasSortByChanged(String newSortBy){
         return !mFetchedSortBy.isEmpty() && newSortBy != null && !newSortBy.equals(mFetchedSortBy);
@@ -131,14 +147,13 @@ public class MainActivityFragment extends BaseFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_refresh) {
-            getMovies(); // Force Fetch Movies data
+            getMovies(page); // Force Fetch Movies data
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void getMovies(){
-        Log.d(LOG_TAG, "== fetchMovieInfo()");
+    private void getMovies(int page){
         String sortBy = getPrefSortBy(getActivity());
 
         if(isSortByFavorite(sortBy)) {
@@ -147,7 +162,7 @@ public class MainActivityFragment extends BaseFragment {
 
         }else if(Utility.isNetworkAvailable(getActivity())) {
             Log.d(LOG_TAG, "== Getting Movies from the Internet");
-            getMoviesFromInternet(sortBy);
+            getMoviesFromInternet(sortBy, page);
 
         }else{
             Toast toast = Toast.makeText(getActivity(), "No network connection. " +
@@ -164,8 +179,11 @@ public class MainActivityFragment extends BaseFragment {
     }
 
     private void getMoviesFromDb() {
+        // Clear All
+        mMovies.clear();
+        mMoviePosterPaths.clear();
+
         // Populate mMovies from DB: Get Movie from Database, then Put into ArrayList of Movies
-        mMovies.clear(); // Must clear the list before adding new
         Cursor cur = getActivity().getContentResolver().query(MovieEntry.CONTENT_URI,
                 Movie.MOVIE_COLUMNS, null, null, MovieEntry._ID + " DESC");
         while(cur.moveToNext()) {
@@ -176,11 +194,11 @@ public class MainActivityFragment extends BaseFragment {
             mMovies.add(movieObj);
         }
         cur.close();
-        populatePoster(); // Populate Grid of Posters
+        populatePoster(mMovies); // Populate Grid of Posters
         needReFetch = false; //Reset flag after fetched
     }
 
-    private void getMoviesFromInternet(String sortBy) {
+    private void getMoviesFromInternet(String sortBy, int page) {
         mProgress = new ProgressDialog(getActivity());
         mProgress.setMessage("Downloading from TMDB");
         mProgress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -188,12 +206,11 @@ public class MainActivityFragment extends BaseFragment {
 
         // Get Movie from Internet
         FetchMoviesTask fetchMoviesTask = new FetchMoviesTask();
-        fetchMoviesTask.execute(sortBy);
+        fetchMoviesTask.execute(sortBy, String.valueOf(page));
     }
 
-    private void populatePoster() {
-        mMoviePosterPaths.clear();
-        for(Movie aMovie : mMovies) {
+    private void populatePoster(ArrayList<Movie> movies) {
+        for(Movie aMovie : movies) {
             mMoviePosterPaths.add(aMovie.getPosterPath());
         }
         mMovieAdapter.notifyDataSetChanged();
@@ -250,21 +267,22 @@ public class MainActivityFragment extends BaseFragment {
             final String TMDB_OVERVIEW = "overview";
             final String TMDB_USER_RATING = "vote_average";
             final String TMDB_RELEASE = "release_date";
-
             JSONObject moviesJson = new JSONObject(moviesJsonStr);
             JSONArray moviesArray = moviesJson.getJSONArray(TMDB_MOVIES);
 
             // Populate mMovies from JSON:
             // Create a Movie object then add to ArrayList of Movies
-            mMovies.clear(); // Must clear the list before adding new
+//            mMovies.clear(); // Must clear the list before adding new
+            ArrayList<Movie> movies = new ArrayList<>();
             for(int i = 0; i < moviesArray.length(); i++){
                 JSONObject aMovie = moviesArray.getJSONObject(i);
                 Movie movieObj = new Movie(aMovie.getString(TMDB_MOVIE_ID), aMovie.getString(TMDB_ORIGINAL_TITLE),
                         aMovie.getString(TMDB_POSTER_PATH), aMovie.getString(TMDB_OVERVIEW),
                         aMovie.getString(TMDB_USER_RATING), aMovie.getString(TMDB_RELEASE));
-                mMovies.add(movieObj);
+                movies.add(movieObj);
             }
-            return mMovies;
+            mMovies.addAll(movies);
+            return movies;
         }
 
         @Override
@@ -284,16 +302,17 @@ public class MainActivityFragment extends BaseFragment {
                 // Construct the URL for TMDB query
                 // http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=<api_key>
                 final String BASE_URL = "http://api.themoviedb.org/3/discover/movie?";
+                final String PAGE = "page";
                 final String SORT_PARAM = "sort_by";
                 final String API_KEY_PARAM = "api_key";
 
                 Uri builtUri = Uri.parse(BASE_URL).buildUpon()
+                        .appendQueryParameter(PAGE, params[1])
                         .appendQueryParameter(SORT_PARAM, sort_by)
                         .appendQueryParameter(API_KEY_PARAM, api_key)
                         .build();
-
                 URL url = new URL(builtUri.toString());
-
+                Log.v(LOG_TAG, "Fetch: "+builtUri.toString());
                 // Create the request to TMDB, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
@@ -352,7 +371,7 @@ public class MainActivityFragment extends BaseFragment {
         @Override
         protected void onPostExecute(ArrayList<Movie> movies) {
             if (movies != null) {
-                populatePoster();
+                populatePoster(movies);
                 mProgress.hide();
             }
         }
