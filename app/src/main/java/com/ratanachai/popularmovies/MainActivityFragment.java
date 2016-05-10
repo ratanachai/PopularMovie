@@ -128,11 +128,24 @@ public class MainActivityFragment extends BaseFragment {
             mMovieAdapter.notifyDataSetChanged();
             getMovies(page);
         }
+    }
 
-    }
-    private boolean hasSortByChanged(String newSortBy){
-        return !mFetchedSortBy.isEmpty() && newSortBy != null && !newSortBy.equals(mFetchedSortBy);
-    }
+//    @Override
+//    public void onDestroy() {
+//        super.onDestroy();
+//        if(mProgress!= null)
+//            mProgress.dismiss();
+//    }
+//
+//    @Override
+//    public void onPause() {
+//        super.onPause();
+//        if(mProgress!= null) {
+//            mProgress.dismiss();
+//            mProgress = null;
+//        }
+//    }
+
     @Override
     public void onSaveInstanceState(Bundle outState){
         super.onSaveInstanceState(outState);
@@ -151,6 +164,10 @@ public class MainActivityFragment extends BaseFragment {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private boolean hasSortByChanged(String newSortBy){
+        return !mFetchedSortBy.isEmpty() && newSortBy != null && !newSortBy.equals(mFetchedSortBy);
     }
 
     private void getMovies(int page){
@@ -203,6 +220,7 @@ public class MainActivityFragment extends BaseFragment {
         mProgress.setMessage("Downloading from TMDB");
         mProgress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         mProgress.show();
+        // TODO: Fix "E/WindowManager: android.view.WindowLeaked" when rotatage screen after 1st start
 
         // Get Movie from Internet
         FetchMoviesTask fetchMoviesTask = new FetchMoviesTask();
@@ -267,6 +285,7 @@ public class MainActivityFragment extends BaseFragment {
             final String TMDB_OVERVIEW = "overview";
             final String TMDB_USER_RATING = "vote_average";
             final String TMDB_RELEASE = "release_date";
+
             JSONObject moviesJson = new JSONObject(moviesJsonStr);
             JSONArray moviesArray = moviesJson.getJSONArray(TMDB_MOVIES);
 
@@ -295,7 +314,6 @@ public class MainActivityFragment extends BaseFragment {
 
             // Will contain the raw JSON response as a string.
             String moviesJsonStr = null;
-            String sort_by = params[0] +".desc";
             String api_key = getString(R.string.api_key);
 
             try {
@@ -304,13 +322,19 @@ public class MainActivityFragment extends BaseFragment {
                 final String BASE_URL = "http://api.themoviedb.org/3/discover/movie?";
                 final String PAGE = "page";
                 final String SORT_PARAM = "sort_by";
+                final String VOTE_COUNT_THREASHOLD = "vote_count.gte";
                 final String API_KEY_PARAM = "api_key";
 
-                Uri builtUri = Uri.parse(BASE_URL).buildUpon()
+
+                Uri.Builder ub = Uri.parse(BASE_URL).buildUpon()
                         .appendQueryParameter(PAGE, params[1])
-                        .appendQueryParameter(SORT_PARAM, sort_by)
-                        .appendQueryParameter(API_KEY_PARAM, api_key)
-                        .build();
+                        .appendQueryParameter(SORT_PARAM, params[0]+".desc")
+                        .appendQueryParameter(API_KEY_PARAM, api_key);
+
+                if (params[0].equals(getString(R.string.pref_sort_rating)))
+                    ub.appendQueryParameter(VOTE_COUNT_THREASHOLD, "500");
+
+                Uri builtUri = ub.build();
                 URL url = new URL(builtUri.toString());
                 Log.v(LOG_TAG, "Fetch: "+builtUri.toString());
                 // Create the request to TMDB, and open the connection
