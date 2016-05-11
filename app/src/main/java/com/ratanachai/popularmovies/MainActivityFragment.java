@@ -44,6 +44,7 @@ public class MainActivityFragment extends BaseFragment {
     private String mFetchedSortBy = ""; // Sort Mode that has been Fetched
     private ProgressDialog mProgress;
     private int page = 1; // For Endless Scrolling
+    private String mSortBy = "";
 
     /** A callback interface that all activities containing this fragment must implement.
      *  This mechanism allows activities to be notified of item selections.
@@ -61,6 +62,7 @@ public class MainActivityFragment extends BaseFragment {
         Log.d(LOG_TAG, "== onCreate()");
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true); //For this fragment to handle menu events.
+        mSortBy = getSortBy();
 
         // Create MovieAdapter every times
         mMoviePosterPaths = new ArrayList<>();
@@ -115,18 +117,23 @@ public class MainActivityFragment extends BaseFragment {
     public void onStart(){
         super.onStart();
         Log.d(LOG_TAG, "== onStart()");
-
-//        String newSortBy = getPrefSortBy(getActivity());
-        String newSortBy = getArguments().getString("SortBy");
 //        getActivity().setTitle(getString(R.string.app_name) + " - " + getCurrentSortByLabel(newSortBy));
         getActivity().setTitle(getString(R.string.app_name));
         // Force Re-Fetch If needReFetch OR SortBy changed (New differs from fetched)
-        if( needReFetch || hasSortByChanged(newSortBy) ){
+        mSortBy = getSortBy();
+        if( needReFetch || hasSortByChanged(mSortBy) ){
             mMovies.clear();
             mMoviePosterPaths.clear();
             mMovieAdapter.notifyDataSetChanged();
             getMovies(page);
         }
+    }
+
+    private String getSortBy() {
+        if (getArguments() != null)
+            return getArguments().getString("SortBy");
+        else
+            return getPrefSortBy(getActivity());
     }
 
 //    @Override
@@ -170,16 +177,14 @@ public class MainActivityFragment extends BaseFragment {
     }
 
     private void getMovies(int page){
-//        String sortBy = getPrefSortBy(getActivity());
-        String sortBy = getArguments().getString("SortBy");
 
-        if(isSortByFavorite(sortBy)) {
+        if(isSortByFavorite(mSortBy)) {
             Log.d(LOG_TAG, "== Getting Favorite Movies from DB");
             getMoviesFromDb();
 
         }else if(Utility.isNetworkAvailable(getActivity())) {
             Log.d(LOG_TAG, "== Getting Movies from the Internet");
-            getMoviesFromInternet(sortBy, page);
+            getMoviesFromInternet(mSortBy, page);
 
         }else{
             Toast toast = Toast.makeText(getActivity(), "No network connection. " +
@@ -192,7 +197,7 @@ public class MainActivityFragment extends BaseFragment {
             mMovieAdapter.notifyDataSetChanged();
         }
 
-        mFetchedSortBy = sortBy; //Update FetchedSortBy
+        mFetchedSortBy = mSortBy; //Update FetchedSortBy
     }
 
     private void getMoviesFromDb() {
