@@ -53,8 +53,7 @@ public class MainActivity extends AppCompatActivity
             // Set up the action bar.
             final ActionBar actionBar = getSupportActionBar();
 
-            // Specify that the Home/Up button should not be enabled, since there is no hierarchical
-            // parent.
+            // Specify that the Home/Up button should not be enabled, since there is no hierarchical parent.
             actionBar.setHomeButtonEnabled(false);
 
             // Specify that we will be displaying tabs in the action bar.
@@ -68,8 +67,7 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void onPageSelected(int position) {
                     // When swiping between different app sections, select the corresponding tab.
-                    // We can also use ActionBar.Tab#select() to do this if we have a reference to the
-                    // Tab.
+                    // We can also use ActionBar.Tab#select() to do this if we have a reference to the Tab.
                     actionBar.setSelectedNavigationItem(position);
                 }
             });
@@ -79,10 +77,9 @@ public class MainActivity extends AppCompatActivity
                 // Create a tab with text corresponding to the page title defined by the adapter.
                 // Also specify this Activity object, which implements the TabListener interface, as the
                 // listener for when this tab is selected.
-                actionBar.addTab(
-                        actionBar.newTab()
-                                .setText(mAppSectionsPagerAdapter.getPageTitle(i))
-                                .setTabListener(this));
+                actionBar.addTab(actionBar.newTab()
+                                    .setText(mAppSectionsPagerAdapter.getPageTitle(i))
+                                    .setTabListener(this));
             }
         }
     }
@@ -127,36 +124,16 @@ public class MainActivity extends AppCompatActivity
             startActivity(intent);
         }
     }
-//    @Override
-//    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-//    }
-//
-//    @Override
-//    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-//        // When the given tab is selected, switch to the corresponding page in the ViewPager.
-//        mViewPager.setCurrentItem(tab.getPosition());
-//    }
-//
-//    @Override
-//    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-//    }
 
     @Override
     public void onTabSelected(ActionBar.Tab tab, android.support.v4.app.FragmentTransaction ft) {
         // When the given tab is selected, switch to the corresponding page in the ViewPager.
         mViewPager.setCurrentItem(tab.getPosition());
-
     }
-
     @Override
-    public void onTabUnselected(ActionBar.Tab tab, android.support.v4.app.FragmentTransaction ft) {
-
-    }
-
+    public void onTabUnselected(ActionBar.Tab tab, android.support.v4.app.FragmentTransaction ft) {}
     @Override
-    public void onTabReselected(ActionBar.Tab tab, android.support.v4.app.FragmentTransaction ft) {
-
-    }
+    public void onTabReselected(ActionBar.Tab tab, android.support.v4.app.FragmentTransaction ft) {}
 
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to one of the primary
@@ -172,18 +149,23 @@ public class MainActivity extends AppCompatActivity
         public Fragment getItem(int i) {
             switch (i) {
                 case 0:
-                    // The first section of the app is the most interesting -- it offers
-                    // a launchpad into the other demonstrations in this example application.
-                    return new MainActivityFragment();
-
-                default:
-
-                    // The other sections of the app are dummy placeholders.
-                    Fragment fragment = new DummySectionFragment();
+                    Fragment f = new MainActivityFragment();
                     Bundle args = new Bundle();
-                    args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, i + 1);
-                    fragment.setArguments(args);
-                    return fragment;
+                    args.putString("SortBy", "popularity");
+                    f.setArguments(args);
+                    return f;
+                case 1:
+                    Fragment f1 = new MainActivityFragment();
+                    Bundle args1 = new Bundle();
+                    args1.putString("SortBy", "vote_average");
+                    f1.setArguments(args1);
+                    return f1;
+                default:
+                    Fragment f2 = new MainActivityFragment();
+                    Bundle args2 = new Bundle();
+                    args2.putString("SortBy", "favorite");
+                    f2.setArguments(args2);
+                return f2;
             }
         }
 
@@ -193,8 +175,12 @@ public class MainActivity extends AppCompatActivity
         }
 
         @Override
-        public CharSequence getPageTitle(int position) {
-            return "Section " + (position + 1);
+        public CharSequence getPageTitle(int i) {
+            switch (i) {
+                case 0: return "Hot";
+                case 1: return "Highest Vote";
+                default: return "Favorite";
+            }
         }
     }
 

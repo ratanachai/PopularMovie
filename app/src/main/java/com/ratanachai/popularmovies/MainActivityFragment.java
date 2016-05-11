@@ -43,9 +43,7 @@ public class MainActivityFragment extends BaseFragment {
     private ArrayList<Movie> mMovies = new ArrayList<>(); // of Movie objects
     private String mFetchedSortBy = ""; // Sort Mode that has been Fetched
     private ProgressDialog mProgress;
-
-    // For Endless Scrolling
-    private int page = 1;
+    private int page = 1; // For Endless Scrolling
 
     /** A callback interface that all activities containing this fragment must implement.
      *  This mechanism allows activities to be notified of item selections.
@@ -118,9 +116,10 @@ public class MainActivityFragment extends BaseFragment {
         super.onStart();
         Log.d(LOG_TAG, "== onStart()");
 
-        String newSortBy = getPrefSortBy(getActivity());
-        getActivity().setTitle(getString(R.string.app_name) + " - " + getCurrentSortByLabel(newSortBy));
-
+//        String newSortBy = getPrefSortBy(getActivity());
+        String newSortBy = getArguments().getString("SortBy");
+//        getActivity().setTitle(getString(R.string.app_name) + " - " + getCurrentSortByLabel(newSortBy));
+        getActivity().setTitle(getString(R.string.app_name));
         // Force Re-Fetch If needReFetch OR SortBy changed (New differs from fetched)
         if( needReFetch || hasSortByChanged(newSortBy) ){
             mMovies.clear();
@@ -171,7 +170,8 @@ public class MainActivityFragment extends BaseFragment {
     }
 
     private void getMovies(int page){
-        String sortBy = getPrefSortBy(getActivity());
+//        String sortBy = getPrefSortBy(getActivity());
+        String sortBy = getArguments().getString("SortBy");
 
         if(isSortByFavorite(sortBy)) {
             Log.d(LOG_TAG, "== Getting Favorite Movies from DB");

@@ -41,5 +41,6 @@
     <!-- No movies from TMDB -->
     <string name="empty_movies_grid">No Movies Information Available</string>
     <string name="dummy_section_text">Section %1d is just a dummy section.</string>
+
 </resources>
 
