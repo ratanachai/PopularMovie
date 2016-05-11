@@ -1,6 +1,5 @@
 package com.ratanachai.popularmovies;
 
-import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -8,7 +7,6 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -57,7 +55,7 @@ public class DetailActivityFragment extends BaseFragment {
     private View mRootview;
     private boolean mAddVideosAndReviews = false;
     private ShareActionProvider mShareActionProvider;
-    private Typeface lobster;
+//    private Typeface lobster;
 
     public interface Callback {
         // All activity that contain this fragment must implement this Callback
@@ -65,11 +63,11 @@ public class DetailActivityFragment extends BaseFragment {
         void onAddRemoveMovieFromFavorite(boolean needReFetch);
     }
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        lobster = Typeface.createFromAsset(getActivity().getAssets(), "Lobster-Regular.ttf");
-    }
+//    @Override
+//    public void onAttach(Activity activity) {
+//        super.onAttach(activity);
+//        lobster = Typeface.createFromAsset(getActivity().getAssets(), "Lobster-Regular.ttf");
+//    }
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -110,82 +108,78 @@ public class DetailActivityFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.v(LOG_TAG, "=== onCreateView");
         setHasOptionsMenu(true);
-
         mRootview = inflater.inflate(R.layout.fragment_detail, container, false);
 
-        if (getArguments() != null) {
+        if (getArguments() == null) return mRootview; //Early Exit
 
-            // Set all TextView and Poster
-            TextView movieTitleTv = (TextView) mRootview.findViewById(R.id.movie_title);
-            movieTitleTv.setTypeface(lobster);
-            movieTitleTv.setText(mMovieInfo[1]);
-            ((TextView) mRootview.findViewById(R.id.movie_overview)).setText(mMovieInfo[3]);
-            ((TextView) mRootview.findViewById(R.id.movie_rating)).append(" " + mMovieInfo[4] + "/10");
-            ((TextView) mRootview.findViewById(R.id.movie_release)).append(" " + mMovieInfo[5]);
-            Picasso.with(getActivity())
-                    .load("http://image.tmdb.org/t/p/w185" + mMovieInfo[2])
-                    .fit().centerInside()
-                    .into((ImageView) mRootview.findViewById(R.id.movie_poster));
+        // Set all TextView and Poster
+        TextView movieTitleTv = (TextView) mRootview.findViewById(R.id.movie_title);
+        // movieTitleTv.setTypeface(lobster);
+        movieTitleTv.setText(mMovieInfo[1]);
+        ((TextView) mRootview.findViewById(R.id.movie_overview)).setText(mMovieInfo[3]);
+        ((TextView) mRootview.findViewById(R.id.movie_rating)).append(" " + mMovieInfo[4] + "/10");
+        ((TextView) mRootview.findViewById(R.id.movie_release)).append(" " + mMovieInfo[5]);
+        Picasso.with(getActivity())
+                .load("http://image.tmdb.org/t/p/w185" + mMovieInfo[2])
+                .fit().centerInside()
+                .into((ImageView) mRootview.findViewById(R.id.movie_poster));
 
-            // Set Listener: Add/Remove TMDB_MOV_ID on checked/unchecked
-            ToggleButton favToggle = (ToggleButton) mRootview.findViewById(R.id.favorite_toggle);
-            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            final String key = getString(R.string.pref_movie_ids_key);
-            final Set<String> outSet = prefs.getStringSet(key, new HashSet<String>());
-            final String tmdb_id = mMovieInfo[0];
+        // Set Listener: Add/Remove TMDB_MOV_ID on checked/unchecked
+        ToggleButton favToggle = (ToggleButton) mRootview.findViewById(R.id.favorite_toggle);
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        final String key = getString(R.string.pref_movie_ids_key);
+        final Set<String> outSet = prefs.getStringSet(key, new HashSet<String>());
+        final String tmdb_id = mMovieInfo[0];
 
-            // Toggle ON if current movie is in the Favorite Movie Set
-            if(outSet.contains(tmdb_id)) favToggle.setChecked(true);
+        // Toggle ON if current movie is in the Favorite Movie Set
+        if(outSet.contains(tmdb_id)) favToggle.setChecked(true);
 
-            // Set OnCheckChanged
-            favToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+        // Set OnCheckChanged
+        favToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
 
-                    SharedPreferences.Editor editor = prefs.edit();
-                    Set<String> fav_movie_ids = new HashSet<String>(outSet);
-                    // Add/Remove to SharedPref and Database
-                    if (isChecked) {
-                        fav_movie_ids.add(tmdb_id);
-                        // Save the Movie, its Videos and Reviews
-                        long movieRowId = saveMovieOffline(mMovieInfo);
+                SharedPreferences.Editor editor = prefs.edit();
+                Set<String> fav_movie_ids = new HashSet<String>(outSet);
+                // Add/Remove to SharedPref and Database
+                if (isChecked) {
+                    fav_movie_ids.add(tmdb_id);
+                    // Save the Movie, its Videos and Reviews
+                    long movieRowId = saveMovieOffline(mMovieInfo);
 
-                        // In case of Favorite Movie Criteria ..
-                        // MainFragment will need to refetch movies if movie added
-                        if ( isSortByFavorite(getPrefSortBy(getActivity())) ) {
-                            ((Callback) getActivity()).onAddRemoveMovieFromFavorite(false);
-                        }
+                    // In case of Favorite Movie Criteria ..
+                    // MainFragment will need to refetch movies if movie added
+                    if ( isSortByFavorite(getPrefSortBy(getActivity())) )
+                        ((Callback) getActivity()).onAddRemoveMovieFromFavorite(false);
 
-                        saveVideosOffline(movieRowId);
-                        saveReviewOffline(movieRowId);
-                        if ( isSortByFavorite(getPrefSortBy(getActivity())) ) needReFetch = false;
-
-                    }
-                    else{
-                        fav_movie_ids.remove(tmdb_id);
-                        // Delete the Movie, its videos will be DELETE CASCADE via Foreign key constrain
-                        removeOfflineMovie(tmdb_id);
-
-                        // In case of Favorite Movie Criteria ..
-                        // MainFragment will need to refetch movies if movie removed
-                        if ( isSortByFavorite(getPrefSortBy(getActivity())) ) {
-                            ((Callback) getActivity()).onAddRemoveMovieFromFavorite(true);
-                        }
-                    }
-                    // Save new Set into SharedPref
-                    editor.putStringSet(key, fav_movie_ids);
-                    editor.commit();
-
-                    // Pull out from SharedPref again to check
-                    Log.d(LOG_TAG + "==After==", prefs.getStringSet(key, new HashSet<String>()).toString());
+                    saveVideosOffline(movieRowId);
+                    saveReviewOffline(movieRowId);
+                    if ( isSortByFavorite(getPrefSortBy(getActivity())) )
+                        needReFetch = false;
                 }
-            });
-            // Restore Trailer Videos and Reviews (First time added via OnPostExecute)
-            if (mAddVideosAndReviews) {
-                addVideosTextView(mVideos);
-                addReviewsTextView(mReviews);
+                else{
+                    fav_movie_ids.remove(tmdb_id);
+                    // Delete the Movie, its videos will be DELETE CASCADE via Foreign key constrain
+                    removeOfflineMovie(tmdb_id);
+
+                    // In case of Favorite Movie Criteria ..
+                    // MainFragment will need to refetch movies if movie removed
+                    if ( isSortByFavorite(getPrefSortBy(getActivity())) )
+                        ((Callback) getActivity()).onAddRemoveMovieFromFavorite(true);
+                }
+                // Save new Set into SharedPref
+                editor.putStringSet(key, fav_movie_ids);
+                editor.commit();
+
+                // Pull out from SharedPref again to check
+                Log.d(LOG_TAG + "==After==", prefs.getStringSet(key, new HashSet<String>()).toString());
             }
-        } // end if getArguments() != null
+        });
+        // Restore Trailer Videos and Reviews (First time added via OnPostExecute)
+        if (mAddVideosAndReviews) {
+            addVideosTextView(mVideos);
+            addReviewsTextView(mReviews);
+        }
         return mRootview;
     }
     @Override
