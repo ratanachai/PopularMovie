@@ -119,8 +119,7 @@ public class MainActivity extends AppCompatActivity
                     .replace(R.id.movie_detail_container, fragment, DETAILFRAGMENT_TAG)
                     .commit();
         } else {
-            Intent intent = new Intent(this, DetailActivity.class)
-                    .putExtra("strings", movieInfo);
+            Intent intent = new Intent(this, DetailActivity.class).putExtra("strings", movieInfo);
             startActivity(intent);
         }
     }
@@ -179,7 +178,7 @@ public class MainActivity extends AppCompatActivity
             switch (i) {
                 case 0: return "Hot";
                 case 1: return "Highest Vote";
-                default: return "Favorite";
+                default: return "Watchlist";
             }
         }
     }

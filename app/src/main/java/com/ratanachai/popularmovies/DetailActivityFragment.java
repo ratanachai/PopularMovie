@@ -65,15 +65,14 @@ public class DetailActivityFragment extends BaseFragment {
         void onAddRemoveMovieFromFavorite(boolean needReFetch);
     }
 
+    /** SAVE MOVIE into Favorite List */
     long saveMovieOffline(String[] movieInfo){
 
-        /** SAVE MOVIE */
         // QUERY to check before INSERT
         long rowId;
         ContentResolver cr = getActivity().getContentResolver();
-        Cursor movieCursor = cr.query(MovieEntry.CONTENT_URI,
-                Movie.MOVIE_COLUMNS, MovieEntry.COLUMN_TMDB_MOVIE_ID + " = ? ",
-                new String[]{movieInfo[0]}, null);
+        Cursor movieCursor = cr.query(MovieEntry.CONTENT_URI, Movie.MOVIE_COLUMNS,
+                MovieEntry.COLUMN_TMDB_MOVIE_ID + " = ? ", new String[]{movieInfo[0]}, null);
         if (movieCursor.getCount() == 0) {
 
             // Prepare ContentValues, then INSERT
@@ -85,8 +84,7 @@ public class DetailActivityFragment extends BaseFragment {
             movieValues.put(MovieEntry.COLUMN_USER_RATING, movieInfo[4]);
             movieValues.put(MovieEntry.COLUMN_RELEASE_DATE, movieInfo[5]);
             Uri movieUri = cr.insert(MovieEntry.CONTENT_URI, movieValues);
-            Toast.makeText(getActivity(), "Movie is saved for Offline view",
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "The Movie is added to your Watchlist", Toast.LENGTH_SHORT).show();
             rowId = ContentUris.parseId(movieUri);
 
         }else{
