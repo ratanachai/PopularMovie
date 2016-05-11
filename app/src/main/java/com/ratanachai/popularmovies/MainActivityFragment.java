@@ -95,13 +95,15 @@ public class MainActivityFragment extends BaseFragment {
         View emptyView = rootView.findViewById(R.id.gridview_movies_empty);
         gridView.setEmptyView(emptyView);
         gridView.setAdapter(mMovieAdapter);
-        gridView.setOnScrollListener(new MyScrollListener() {
-            @Override
-            public boolean onLoadMore(int page, int totalItemsCount) {
-                getMovies(page);
-                return true;
-            }
-        });
+        if( !mSortBy.equals("favorite") ) {
+            gridView.setOnScrollListener(new MyScrollListener() {
+                @Override
+                public boolean onLoadMore(int page, int totalItemsCount) {
+                    getMovies(page);
+                    return true;
+                }
+            });
+        }
 
         // See MainActivity's onItemSelected()
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -188,7 +190,7 @@ public class MainActivityFragment extends BaseFragment {
 
         }else{
             Toast toast = Toast.makeText(getActivity(), "No network connection. " +
-                    "Please Switch to Favorite Movie list.", Toast.LENGTH_LONG);
+                    "Please Switch to your Watchlist.", Toast.LENGTH_LONG);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
 
