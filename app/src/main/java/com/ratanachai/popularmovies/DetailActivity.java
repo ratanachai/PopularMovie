@@ -20,8 +20,8 @@ public class DetailActivity extends AppCompatActivity implements DetailActivityF
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
         if(savedInstanceState == null){
-            // Pass data into fragment
             Bundle args = new Bundle();
+            // Pass what been passed on from MainActivity in Intent Extra to Fragment via args
             args.putStringArray(DetailActivityFragment.MOVIE_INFO, getIntent().getStringArrayExtra("strings"));
             args.putString("SortBy", getIntent().getStringExtra("SortBy"));
             DetailActivityFragment fragment = new DetailActivityFragment();

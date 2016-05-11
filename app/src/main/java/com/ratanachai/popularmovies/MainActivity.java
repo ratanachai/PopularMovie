@@ -112,6 +112,7 @@ public class MainActivity extends AppCompatActivity
         if (mTwoPane) {
             Bundle args = new Bundle();
             args.putStringArray(DetailActivityFragment.MOVIE_INFO, movieInfo);
+            args.putString("SortBy", sortBy);
             DetailActivityFragment fragment = new DetailActivityFragment();
             fragment.setArguments(args);
 
