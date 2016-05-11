@@ -90,8 +90,9 @@ public class MainActivityFragment extends BaseFragment {
         gridView.setNumColumns(c.getResources().getInteger(R.integer.num_columns));
 
         // Set EmptyView, Adapter, OnItemClickListener
-        View emptyView = rootView.findViewById(R.id.gridview_movies_empty);
-        gridView.setEmptyView(emptyView);
+        // TODO: How to deal with Flash of emptyView before poster is loaded.
+//        View emptyView = rootView.findViewById(R.id.gridview_movies_empty);
+//        gridView.setEmptyView(emptyView);
         gridView.setAdapter(mMovieAdapter);
         if( !mSortBy.equals("favorite") ) {
             gridView.setOnScrollListener(new MyScrollListener() {
@@ -232,8 +233,9 @@ public class MainActivityFragment extends BaseFragment {
         mMovieAdapter.notifyDataSetChanged();
     }
 
-    // How-to use Picasso with ArrayAdapter from Big Nerd Ranch
-    // https://www.bignerdranch.com/blog/solving-the-android-image-loading-problem-volley-vs-picasso/
+    /** How-to use Picasso with ArrayAdapter from Big Nerd Ranch
+        https://www.bignerdranch.com/blog/solving-the-android-image-loading-problem-volley-vs-picasso/
+     */
     private class CustomImageAdapter extends ArrayAdapter<String> {
 
         // Comment out unnecessary Override
@@ -251,7 +253,7 @@ public class MainActivityFragment extends BaseFragment {
                         .inflate(R.layout.grid_item_movie, parent, false);
 
             // Adjust its bound to max while Preserve the aspect ratio of Image
-            ImageView imageView = (ImageView)convertView;
+            ImageView imageView = (ImageView)convertView.findViewById(R.id.grid_item_movie);
             imageView.setAdjustViewBounds(true);
 
             // Download Image from TMDB using mMoviePosterPath

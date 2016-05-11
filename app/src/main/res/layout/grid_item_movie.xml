@@ -1,7 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/grid_item_movie"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/background_light"
-    />
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="match_parent" android:layout_width="match_parent"
+    tools:layout_height="wrap_content" tools:layout_width="wrap_content">
+    <ImageView android:id="@+id/grid_item_movie"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout_width="wrap_content"
+        tools:layout_height="wrap_content"
+        android:background="@android:color/background_light"
+        tools:src="@drawable/poster" />
+    <TextView android:id="@+id/movie_release_year"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingRight="@dimen/abc_list_item_padding_horizontal_material"
+        android:paddingTop="@dimen/abc_action_bar_icon_vertical_padding_material"
+        android:backgroundTint="@color/abc_background_cache_hint_selector_material_dark"
+        android:layout_gravity="top|right"
+        android:text="2016"
+        android:textAlignment="gravity"
+        android:visibility="invisible"
+        />
+
+</FrameLayout>

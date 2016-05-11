@@ -39,7 +39,7 @@
         nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
         officia deserunt mollit anim id est laborum</string>
     <!-- No movies from TMDB -->
-    <string name="empty_movies_grid">No Network Connection. Movies Information Not Available</string>
+    <string name="empty_movies_grid">No Network connection. Movies Info Not Available</string>
     <string name="dummy_section_text">Section %1d is just a dummy section.</string>
 
 </resources>
