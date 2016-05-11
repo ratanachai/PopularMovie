@@ -44,13 +44,11 @@ public class MainActivityFragment extends BaseFragment {
     private String mFetchedSortBy = ""; // Sort Mode that has been Fetched
     private ProgressDialog mProgress;
     private int page = 1; // For Endless Scrolling
-    private String mSortBy = "";
 
     /** A callback interface that all activities containing this fragment must implement.
-     *  This mechanism allows activities to be notified of item selections.
-     *  DetailFragmentCallback for when an item has been selected. */
+     *  This mechanism allows activities to be notified of item selections. */
     public interface Callback {
-        void onItemSelected(String[] movieInfo);
+        void onItemSelected(String[] movieInfo, String sortBy);
     }
 
     public void updateMoviesGrid() {
@@ -109,7 +107,7 @@ public class MainActivityFragment extends BaseFragment {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                ((Callback) c).onItemSelected(mMovies.get(position).getAll()); }
+                ((Callback) c).onItemSelected(mMovies.get(position).getAll(), mSortBy); }
         });
 
         return rootView;
@@ -129,13 +127,6 @@ public class MainActivityFragment extends BaseFragment {
             mMovieAdapter.notifyDataSetChanged();
             getMovies(page);
         }
-    }
-
-    private String getSortBy() {
-        if (getArguments() != null)
-            return getArguments().getString("SortBy");
-        else
-            return getPrefSortBy(getActivity());
     }
 
 //    @Override

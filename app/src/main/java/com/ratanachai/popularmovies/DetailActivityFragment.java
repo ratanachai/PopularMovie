@@ -73,6 +73,7 @@ public class DetailActivityFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState){
         Log.v(LOG_TAG, "=== onCreate");
         super.onCreate(savedInstanceState);
+        mSortBy = getSortBy();
 
         // Get data passed from Activity
         Bundle arguments = getArguments();
@@ -149,12 +150,12 @@ public class DetailActivityFragment extends BaseFragment {
 
                     // In case of Favorite Movie Criteria ..
                     // MainFragment will need to refetch movies if movie added
-                    if ( isSortByFavorite(getPrefSortBy(getActivity())) )
+                    if ( isSortByFavorite(mSortBy) )
                         ((Callback) getActivity()).onAddRemoveMovieFromFavorite(false);
 
                     saveVideosOffline(movieRowId);
                     saveReviewOffline(movieRowId);
-                    if ( isSortByFavorite(getPrefSortBy(getActivity())) )
+                    if ( isSortByFavorite(mSortBy) )
                         needReFetch = false;
                 }
                 else{
@@ -164,7 +165,7 @@ public class DetailActivityFragment extends BaseFragment {
 
                     // In case of Favorite Movie Criteria ..
                     // MainFragment will need to refetch movies if movie removed
-                    if ( isSortByFavorite(getPrefSortBy(getActivity())) )
+                    if ( isSortByFavorite(mSortBy) )
                         ((Callback) getActivity()).onAddRemoveMovieFromFavorite(true);
                 }
                 // Save new Set into SharedPref
@@ -318,10 +319,8 @@ public class DetailActivityFragment extends BaseFragment {
     /** Code for Movie Video (Trailer) ---------------------------------------------------------- */
     private void getVideosFromInternetOrDb(String tmdb_movie_id){
 
-        String sort_by = getPrefSortBy(getActivity());
-
         // Get Videos from Database
-        if(isSortByFavorite(sort_by)) {
+        if(isSortByFavorite(mSortBy)) {
             ContentResolver cr = getActivity().getContentResolver();
             long movieRowId = getMovieRowId(tmdb_movie_id);
 
@@ -511,10 +510,9 @@ public class DetailActivityFragment extends BaseFragment {
 
     /** Code for Movie Review ------------------------------------------------------------------- */
     private void getReviewsFromInternetOrDb(String tmdb_movie_id){
-        String sort_by = getPrefSortBy(getActivity());
 
         // Get from Database
-        if(isSortByFavorite(sort_by)) {
+        if(isSortByFavorite(mSortBy)) {
             ContentResolver cr = getActivity().getContentResolver();
             long movieRowId = getMovieRowId(tmdb_movie_id);
 

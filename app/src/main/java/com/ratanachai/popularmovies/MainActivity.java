@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onItemSelected(String[] movieInfo) {
+    public void onItemSelected(String[] movieInfo, String sortBy) {
         if (mTwoPane) {
             Bundle args = new Bundle();
             args.putStringArray(DetailActivityFragment.MOVIE_INFO, movieInfo);
@@ -119,7 +119,9 @@ public class MainActivity extends AppCompatActivity
                     .replace(R.id.movie_detail_container, fragment, DETAILFRAGMENT_TAG)
                     .commit();
         } else {
-            Intent intent = new Intent(this, DetailActivity.class).putExtra("strings", movieInfo);
+            Intent intent = new Intent(this, DetailActivity.class)
+                    .putExtra("strings", movieInfo)
+                    .putExtra("SortBy", sortBy);
             startActivity(intent);
         }
     }

@@ -15,6 +15,7 @@ import java.util.Arrays;
 public class BaseFragment extends Fragment {
     // a flag for Detail to tell Main fragment that Star is removed, so Movie list need to be reFetch.
     protected static boolean needReFetch = false;
+    protected String mSortBy = "";
 
     public static boolean isTablet(Context context) {
         return (context.getResources().getConfiguration().screenLayout
@@ -33,5 +34,11 @@ public class BaseFragment extends Fragment {
     protected String getCurrentSortByLabel(String sort_by){
         int index = Arrays.asList(getResources().getStringArray(R.array.pref_sort_values)).indexOf(sort_by);
         return getResources().getStringArray(R.array.pref_sort_options)[index];
+    }
+    protected String getSortBy() {
+        if (getArguments() != null)
+            return getArguments().getString("SortBy");
+        else
+            return getPrefSortBy(getActivity());
     }
 }
