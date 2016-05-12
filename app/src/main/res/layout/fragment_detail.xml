@@ -1,61 +1,34 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent" android:layout_height="match_parent" >
 
     <LinearLayout android:orientation="vertical"
         android:paddingLeft="0dp" android:paddingRight="0dp" android:paddingTop="0dp" android:paddingBottom="0dp"
         android:layout_margin="0dp"
-        android:layout_width="match_parent" android:layout_height="wrap_content">
-        <LinearLayout android:orientation="horizontal"
-            android:background="@drawable/title_background"
-            android:layout_width="match_parent" android:layout_height="wrap_content">
-            <TextView android:id="@+id/movie_title"
-                android:text="@string/please_select_movie"
-                android:textSize="@dimen/abc_text_size_headline_material"
-                android:textStyle="bold"
-                android:textColor="#ffffffff"
-                android:paddingTop="@dimen/activity_vertical_margin"
-                android:paddingBottom="@dimen/activity_vertical_margin"
-                android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin"
-                android:layout_weight="1" android:layout_width="0dp" android:layout_height="wrap_content" />
-            <ToggleButton android:id="@+id/favorite_toggle"
-                android:textOff="" android:textOn=""
-                android:background="@drawable/ic_toggle"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_width="36dp" android:layout_height="36dp" />
-        </LinearLayout>
-        <LinearLayout android:orientation="horizontal"
-            android:padding="@dimen/activity_vertical_margin"
-            android:layout_width="match_parent" android:layout_height="300dp">
-            <ImageView android:id="@+id/movie_poster"
-                android:src="@drawable/poster"
-                android:layout_weight="4"
-                android:layout_width="0dp" android:layout_height="match_parent"/>
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_weight="3"
-                android:gravity="top"
-                android:layout_gravity="top"
-                android:paddingTop="0dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_width="0dp" android:layout_height="wrap_content">
-                <TextView android:id="@+id/movie_rating"
-                    android:text="@string/movie_rating_label"
-                    android:textSize="@dimen/abc_text_size_medium_material"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="@dimen/activity_vertical_margin"
-                    android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-                <TextView android:id="@+id/movie_release"
-                    android:text="@string/movie_release_label"
-                    android:textSize="@dimen/abc_text_size_medium_material"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="@dimen/activity_vertical_margin"
-                    android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-            </LinearLayout>
-        </LinearLayout>
-        
+        android:layout_width="match_parent" android:layout_height="match_parent">
+        <ImageView android:id="@+id/movie_poster"
+            android:src="@drawable/poster"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"/>
+        <ToggleButton android:id="@+id/favorite_toggle"
+            android:textOff="" android:textOn=""
+            android:background="@drawable/ic_toggle"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_width="36dp" android:layout_height="36dp" />
+
+        <TextView android:id="@+id/movie_rating"
+            android:text="@string/movie_rating_label"
+            android:textSize="@dimen/abc_text_size_medium_material"
+            android:textStyle="bold"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+        <TextView android:id="@+id/movie_release"
+            android:text="@string/movie_release_label"
+            android:textSize="@dimen/abc_text_size_medium_material"
+            android:textStyle="bold"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"/>
         <TextView
             android:id="@+id/movie_overview"
             android:text="@string/please_select_movie_desc"
