@@ -121,8 +121,7 @@ public class DetailActivityFragment extends BaseFragment {
         ((TextView) mRootview.findViewById(R.id.movie_release)).append(" " + mMovieInfo[5]);
         Picasso.with(getActivity()).load("http://image.tmdb.org/t/p/w500" + mMovieInfo[2])
                 .fit()
-//                .centerCrop()
-//                .centerInside()
+                .centerCrop()
                 .into((ImageView) mRootview.findViewById(R.id.movie_poster));
 
         // Set Listener: Add/Remove TMDB_MOV_ID on checked/unchecked
