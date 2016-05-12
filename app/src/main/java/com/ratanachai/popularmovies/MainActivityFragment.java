@@ -258,7 +258,7 @@ public class MainActivityFragment extends BaseFragment {
 
             // Download Image from TMDB using mMoviePosterPath
             Picasso.with(getActivity())
-                    .load("http://image.tmdb.org/t/p/w185" + getItem(position))
+                    .load("http://image.tmdb.org/t/p/w500" + getItem(position))
                     .into(imageView);
 
             return convertView;
