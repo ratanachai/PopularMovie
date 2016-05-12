@@ -116,6 +116,7 @@ public class DetailActivityFragment extends BaseFragment {
         // Set all TextView and Poster
         TextView movieTitleTv = (TextView) mRootview.findViewById(R.id.movie_title);
         // movieTitleTv.setTypeface(lobster);
+        getActivity().setTitle(mMovieInfo[1]);
         movieTitleTv.setText(mMovieInfo[1]);
         ((TextView) mRootview.findViewById(R.id.movie_overview)).setText(mMovieInfo[3]);
         ((TextView) mRootview.findViewById(R.id.movie_rating)).append(" " + mMovieInfo[4] + "/10");
