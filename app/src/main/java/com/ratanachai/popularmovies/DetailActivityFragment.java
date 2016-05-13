@@ -119,9 +119,9 @@ public class DetailActivityFragment extends BaseFragment {
         getActivity().setTitle(mMovieInfo[1]);
         ((TextView) mRootview.findViewById(R.id.movie_title)).setText(mMovieInfo[1]);
         ((TextView) mRootview.findViewById(R.id.movie_overview)).setText(mMovieInfo[3]);
-//        ((TextView) mRootview.findViewById(R.id.movie_rating_bar).append(" " + mMovieInfo[4] + "/10");
+        ((TextView) mRootview.findViewById(R.id.movie_rating)).setText(mMovieInfo[4]);
         RatingBar ratingBar = (RatingBar)mRootview.findViewById(R.id.movie_rating_bar);
-        ratingBar.setRating(Float.parseFloat(mMovieInfo[4])/2);
+        ratingBar.setRating(Float.parseFloat(mMovieInfo[4]));
         ((TextView) mRootview.findViewById(R.id.movie_release)).append(" " + mMovieInfo[5]);
         Picasso.with(getActivity()).load("http://image.tmdb.org/t/p/w500" + mMovieInfo[2])
                 .fit()
