@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
@@ -20,12 +21,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.ratanachai.popularmovies.data.MovieContract.MovieEntry;
 import com.ratanachai.popularmovies.data.MovieContract.ReviewEntry;
@@ -129,24 +128,22 @@ public class DetailActivityFragment extends BaseFragment {
                 .into((ImageView) mRootview.findViewById(R.id.movie_poster));
 
         // Set Listener: Add/Remove TMDB_MOV_ID on checked/unchecked
-        ToggleButton favToggle = (ToggleButton) mRootview.findViewById(R.id.favorite_toggle);
+        FloatingActionButton favButton = (FloatingActionButton) mRootview.findViewById(R.id.favorite_toggle);
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         final String key = getString(R.string.pref_movie_ids_key);
-        final Set<String> outSet = prefs.getStringSet(key, new HashSet<String>());
         final String tmdb_id = mMovieInfo[0];
 
-        // Toggle ON if current movie is in the Favorite Movie Set
-        if(outSet.contains(tmdb_id)) favToggle.setChecked(true);
 
         // Set OnCheckChanged
-        favToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        favButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-
-                SharedPreferences.Editor editor = prefs.edit();
+            public void onClick(View v) {
+                final Set<String> outSet = prefs.getStringSet(key, new HashSet<String>());
+                final Boolean alreadyAdded = outSet.contains(tmdb_id) ? true : false;
                 Set<String> fav_movie_ids = new HashSet<String>(outSet);
+
                 // Add/Remove to SharedPref and Database
-                if (isChecked) {
+                if(!alreadyAdded) {
                     fav_movie_ids.add(tmdb_id);
                     // Save the Movie, its Videos and Reviews
                     long movieRowId = saveMovieOffline(mMovieInfo);
@@ -172,13 +169,16 @@ public class DetailActivityFragment extends BaseFragment {
                         ((Callback) getActivity()).onAddRemoveMovieFromFavorite(true);
                 }
                 // Save new Set into SharedPref
+                SharedPreferences.Editor editor = prefs.edit();
                 editor.putStringSet(key, fav_movie_ids);
-                editor.commit();
+                editor.apply();
 
                 // Pull out from SharedPref again to check
                 Log.d(LOG_TAG + "==After==", prefs.getStringSet(key, new HashSet<String>()).toString());
+
             }
         });
+
         // Restore Trailer Videos and Reviews (First time added via OnPostExecute)
         if (mAddVideosAndReviews) {
             addVideosTextView(mVideos);
