@@ -2,36 +2,54 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent" android:layout_height="match_parent" >
     <ImageView android:id="@+id/movie_poster"
-        android:src="@drawable/poster"
-        android:layout_width="match_parent"
-        android:layout_height="600dp"/>
-    <ScrollView android:layout_width="match_parent" android:layout_height="match_parent"
-        android:background="@android:color/transparent">
+        tools:src="@drawable/poster" tools:scaleType="centerCrop"
+        android:layout_width="match_parent" android:layout_height="match_parent"/>
+    <ScrollView android:background="@android:color/transparent"
+        android:layout_width="match_parent" android:layout_height="match_parent">
+
         <LinearLayout android:orientation="vertical"
             android:paddingTop="300dp" android:background="@android:color/transparent"
             android:layout_width="match_parent" android:layout_height="match_parent">
-            <LinearLayout android:orientation="vertical" android:background="@android:color/white"
-                android:layout_width="match_parent" android:layout_height="match_parent"
-                android:layout_margin="16dp" android:padding="16dp">
 
-                <TextView android:id="@+id/movie_rating"
-                    android:text="@string/movie_rating_label"
-                    android:textSize="@dimen/abc_text_size_medium_material"
-                    android:textStyle="bold"
+            <!-- White Surface -->
+            <LinearLayout android:orientation="vertical" android:background="@android:color/white"
+                android:layout_margin="16dp" android:padding="16dp"
+                android:layout_width="match_parent" android:layout_height="match_parent">
+
+                <TextView android:id="@+id/movie_title" android:text="@string/please_select_movie"
+                    android:textSize="@dimen/abc_text_size_headline_material" android:textStyle="bold"
                     android:layout_marginBottom="@dimen/activity_vertical_margin"
+                    android:layout_width="match_parent" android:layout_height="wrap_content" />
+
+                <!--<TextView android:id="@+id/movie_tagline" tools:text="cool tagline goes here"-->
+                    <!--android:textSize="@dimen/abc_text_size_medium_material"-->
+                    <!--android:layout_width="match_parent" android:layout_height="wrap_content" />-->
+
+                <RatingBar android:id="@+id/movie_rating_bar" style="?android:attr/ratingBarStyleSmall"
+                    android:numStars="5" android:stepSize="0.1" android:progressTint="@color/pink_500"
+                    android:secondaryProgressTint="@color/pink_500"
+                    android:rating="3.5"
                     android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+
+                <!--<TextView android:id="@+id/movie_rating"-->
+                    <!--android:text="@string/movie_rating_label"-->
+                    <!--android:textSize="@dimen/abc_text_size_medium_material"-->
+                    <!--android:textStyle="bold"-->
+                    <!--android:layout_marginBottom="@dimen/activity_vertical_margin"-->
+                    <!--android:layout_width="wrap_content" android:layout_height="wrap_content"/>-->
+
                 <TextView android:id="@+id/movie_release"
                     android:text="@string/movie_release_label"
                     android:textSize="@dimen/abc_text_size_medium_material"
                     android:textStyle="bold"
                     android:layout_marginBottom="@dimen/activity_vertical_margin"
                     android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-                <TextView
-                    android:id="@+id/movie_overview"
-                    android:text="@string/please_select_movie_desc"
+
+                <TextView android:id="@+id/movie_overview" android:text="@string/please_select_movie_desc"
                     android:textSize="@dimen/abc_text_size_small_material"
-                    android:padding="@dimen/activity_vertical_margin"
                     android:layout_width="match_parent" android:layout_height="wrap_content" />
+
+
                 <LinearLayout android:orientation="vertical" android:id="@+id/movie_trailers_container"
                     android:padding="@dimen/activity_vertical_margin"
                     android:layout_width="match_parent" android:layout_height="wrap_content">
