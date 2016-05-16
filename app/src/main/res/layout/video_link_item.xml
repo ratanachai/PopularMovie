@@ -1,5 +1,25 @@
-<TextView android:id="@+id/movie_trailer_item"
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:text="@string/movie_trailer_placeholder"
-    android:padding="@dimen/activity_vertical_margin"
-    android:layout_width="match_parent" android:layout_height="wrap_content" />
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+
+    <ImageView
+        android:id="@+id/movie_trailers_thumbnail"
+        android:src="@drawable/trailer"
+        tools:src="@drawable/trailer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/movie_trailer_item"
+        android:text="@string/movie_trailer_placeholder"
+        android:padding="@dimen/activity_vertical_margin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left|top"
+        android:layout_marginTop="40dp"
+        android:textColor="@android:color/white" />
+
+</FrameLayout>

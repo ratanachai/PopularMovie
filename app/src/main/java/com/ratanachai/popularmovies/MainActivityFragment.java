@@ -256,7 +256,7 @@ public class MainActivityFragment extends BaseFragment {
             ImageView imageView = (ImageView)convertView.findViewById(R.id.grid_item_movie);
             imageView.setAdjustViewBounds(true);
 
-            // Download Image from TMDB using mMoviePosterPath (92, 154, 185, 342, 500, 780)
+            // Download Image from TMDB using mMoviePosterPath (Width: 92, 154, 185, 342, 500, 780)
             Picasso.with(getActivity())
                     .load("http://image.tmdb.org/t/p/w342" + getItem(position))
                     .placeholder(R.drawable.film)

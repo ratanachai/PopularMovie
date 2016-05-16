@@ -181,7 +181,7 @@ public class DetailActivityFragment extends BaseFragment {
 
         // Restore Trailer Videos and Reviews (First time added via OnPostExecute)
         if (mAddVideosAndReviews) {
-            addVideosTextView(mVideos);
+            addTrailers(mVideos);
             addReviewsTextView(mReviews);
         }
         return mRootview;
@@ -347,21 +347,29 @@ public class DetailActivityFragment extends BaseFragment {
             Log.v(LOG_TAG, "== No Network, Not in offline mode: will not try to fetch videos");
         }
     }
-    private void addVideosTextView(ArrayList<Video> videos) {
+    
+    private void addTrailers(ArrayList<Video> videos) {
 
         ViewGroup containerView = (ViewGroup) mRootview.findViewById(R.id.movie_trailers_container);
         for (int i=0; i < videos.size(); i++) {
 
             // Get TextView from Item layout
             View v = getLayoutInflater(null).inflate(R.layout.video_link_item, null);
-            TextView videoTextView = (TextView) v.findViewById(R.id.movie_trailer_item);
+            TextView tv = (TextView) v.findViewById(R.id.movie_trailer_item);
+            ImageView iv = (ImageView) v.findViewById(R.id.movie_trailers_thumbnail);
 
-            // Set text and tag on TextView (Tag to be used in onClick
-            videoTextView.setText(videos.get(i).getName());
-            videoTextView.setTag(videos.get(i).getKey());
+            // Set text and tag on Text/Image View (Tag to be used in onClick)
+            tv.setText(videos.get(i).getName());
+            iv.setTag(videos.get(i).getKey());
+
+            // Download Image from Youtube
+            Picasso.with(getActivity())
+                    .load("http://img.youtube.com/vi/" + iv.getTag() + "/0.jpg")
+                    .placeholder(R.drawable.film)
+                    .into(iv);
 
             // Setup OnItemClick to launch Youtube App with the video
-            videoTextView.setOnClickListener(new View.OnClickListener() {
+            iv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     try {
@@ -376,7 +384,7 @@ public class DetailActivityFragment extends BaseFragment {
                 }
             });
             // Add the Video TextView into DetailActivityFragment
-            containerView.addView(videoTextView);
+            containerView.addView(v);
         }
     }
 
@@ -499,7 +507,7 @@ public class DetailActivityFragment extends BaseFragment {
         @Override
         protected void onPostExecute(ArrayList<Video> videos) {
             if (videos != null) {
-                addVideosTextView(videos);
+                addTrailers(videos);
 
                 // Update ShareIntent IF onCreateOptionsMenu already happened and there's some videos
                 if (mShareActionProvider != null & !mVideos.isEmpty()) {
