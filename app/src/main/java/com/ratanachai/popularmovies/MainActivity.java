@@ -110,21 +110,31 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onItemSelected(String[] movieInfo, String sortBy) {
         if (mTwoPane) {
-            Bundle args = new Bundle();
-            args.putStringArray(DetailActivityFragment.MOVIE_INFO, movieInfo);
-            args.putString("SortBy", sortBy);
-            DetailActivityFragment fragment = new DetailActivityFragment();
-            fragment.setArguments(args);
-
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.movie_detail_container, fragment, DETAILFRAGMENT_TAG)
-                    .commit();
+            replaceDetailFragment(movieInfo, sortBy);
         } else {
             Intent intent = new Intent(this, DetailActivity.class)
                     .putExtra("strings", movieInfo)
                     .putExtra("SortBy", sortBy);
             startActivity(intent);
         }
+    }
+
+    @Override
+    public void onMoviesReady(String[] movieInfo, String sortBy) {
+        if (mTwoPane)
+            replaceDetailFragment(movieInfo, sortBy);
+    }
+
+    private void replaceDetailFragment(String[] movieInfo, String sortBy) {
+        Bundle args = new Bundle();
+        args.putStringArray(DetailActivityFragment.MOVIE_INFO, movieInfo);
+        args.putString("SortBy", sortBy);
+        DetailActivityFragment fragment = new DetailActivityFragment();
+        fragment.setArguments(args);
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.movie_detail_container, fragment, DETAILFRAGMENT_TAG)
+                .commit();
     }
 
     @Override

@@ -49,6 +49,7 @@ public class MainActivityFragment extends BaseFragment {
      *  This mechanism allows activities to be notified of item selections. */
     public interface Callback {
         void onItemSelected(String[] movieInfo, String sortBy);
+        void onMoviesReady(String[] movieInfo, String sortBy);
     }
 
     public void updateMoviesGrid() {
@@ -212,6 +213,11 @@ public class MainActivityFragment extends BaseFragment {
         cur.close();
         populatePoster(mMovies); // Populate Grid of Posters
         needReFetch = false; //Reset flag after fetched
+
+        // Auto load the first movie into Tablet right pane
+        if(mMovies.size() > 0)
+            ((Callback) getActivity()).onMoviesReady(mMovies.get(0).getAll(), mSortBy);
+
     }
 
     private void getMoviesFromInternet(String sortBy, int page) {
@@ -398,6 +404,9 @@ public class MainActivityFragment extends BaseFragment {
             if (movies != null) {
                 populatePoster(movies);
                 mProgress.hide();
+                // Auto load the first movie into Tablet right pane
+                if(mMovies.size() > 0)
+                    ((Callback) getActivity()).onMoviesReady(mMovies.get(0).getAll(), mSortBy);
             }
         }
     }
