@@ -21,6 +21,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -55,6 +57,8 @@ public class DetailActivityFragment extends BaseFragment {
     private View mRootview;
     private boolean mAddVideosAndReviews = false;
     private ShareActionProvider mShareActionProvider;
+    private TrailerAdapter mTrailerAdapter;
+
 //    private Typeface lobster;
 
     public interface Callback {
@@ -96,6 +100,10 @@ public class DetailActivityFragment extends BaseFragment {
                 mAddVideosAndReviews = true;
             }
         }
+
+        // Create Adapter
+        mTrailerAdapter = new TrailerAdapter(mVideos);
+
     }
 
     @Override
@@ -113,8 +121,7 @@ public class DetailActivityFragment extends BaseFragment {
 
         if (getArguments() == null) return mRootview; //Early Exit
 
-        // Set all TextView and Poster
-        // movieTitleTv.setTypeface(lobster);
+        // Set all TextView and Background Poster
         getActivity().setTitle(mMovieInfo[1]);
         ((TextView) mRootview.findViewById(R.id.movie_title)).setText(mMovieInfo[1]);
         ((TextView) mRootview.findViewById(R.id.movie_overview)).setText(mMovieInfo[3]);
@@ -132,7 +139,6 @@ public class DetailActivityFragment extends BaseFragment {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         final String key = getString(R.string.pref_movie_ids_key);
         final String tmdb_id = mMovieInfo[0];
-
 
         // Set OnCheckChanged
         favButton.setOnClickListener(new View.OnClickListener() {
@@ -179,9 +185,12 @@ public class DetailActivityFragment extends BaseFragment {
             }
         });
 
+        GridView gv = (GridView) mRootview.findViewById(R.id.gridview_trailers);
+        gv.setAdapter(mTrailerAdapter);
+
         // Restore Trailer Videos and Reviews (First time added via OnPostExecute)
         if (mAddVideosAndReviews) {
-            addTrailers(mVideos);
+            mTrailerAdapter.notifyDataSetChanged();
             addReviewsTextView(mReviews);
         }
         return mRootview;
@@ -347,46 +356,6 @@ public class DetailActivityFragment extends BaseFragment {
             Log.v(LOG_TAG, "== No Network, Not in offline mode: will not try to fetch videos");
         }
     }
-    
-    private void addTrailers(ArrayList<Video> videos) {
-
-        ViewGroup containerView = (ViewGroup) mRootview.findViewById(R.id.movie_trailers_container);
-        for (int i=0; i < videos.size(); i++) {
-
-            // Get TextView from Item layout
-            View v = getLayoutInflater(null).inflate(R.layout.video_link_item, null);
-            TextView tv = (TextView) v.findViewById(R.id.movie_trailer_item);
-            ImageView iv = (ImageView) v.findViewById(R.id.movie_trailers_thumbnail);
-
-            // Set text and tag on Text/Image View (Tag to be used in onClick)
-            tv.setText(videos.get(i).getName());
-            iv.setTag(videos.get(i).getKey());
-
-            // Download Image from Youtube
-            Picasso.with(getActivity())
-                    .load("http://img.youtube.com/vi/" + iv.getTag() + "/0.jpg")
-                    .placeholder(R.drawable.film)
-                    .into(iv);
-
-            // Setup OnItemClick to launch Youtube App with the video
-            iv.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    try {
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(
-                                "vnd.youtube:" + v.getTag()));
-                        startActivity(intent);
-                    } catch (ActivityNotFoundException e) {
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(
-                                "http://www.youtube.com/watch?v=" + v.getTag()));
-                        startActivity(intent);
-                    }
-                }
-            });
-            // Add the Video TextView into DetailActivityFragment
-            containerView.addView(v);
-        }
-    }
 
     public class FetchVideosTask extends AsyncTask<String, Void, ArrayList<Video>> {
 
@@ -507,14 +476,64 @@ public class DetailActivityFragment extends BaseFragment {
         @Override
         protected void onPostExecute(ArrayList<Video> videos) {
             if (videos != null) {
-                addTrailers(videos);
-
+                mTrailerAdapter.notifyDataSetChanged();
                 // Update ShareIntent IF onCreateOptionsMenu already happened and there's some videos
                 if (mShareActionProvider != null & !mVideos.isEmpty()) {
                     Log.v(LOG_TAG, "=== onPostExec() Updating intent with " + videos.get(0).getYoutubeUrl());
                     mShareActionProvider.setShareIntent(createShareVideoLinkIntent(videos.get(0).getYoutubeUrl()));
                 }
             }
+        }
+    }
+
+    /** How-to use Picasso with ArrayAdapter from Big Nerd Ranch
+     https://www.bignerdranch.com/blog/solving-the-android-image-loading-problem-volley-vs-picasso/
+     */
+    private class TrailerAdapter extends ArrayAdapter<Video> {
+
+        public TrailerAdapter(ArrayList<Video> videos) {
+            super(getActivity(), 0, videos);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+
+            if (convertView == null)
+                convertView = getActivity().getLayoutInflater()
+                        .inflate(R.layout.grid_item_trailer, parent, false);
+
+            // Set TextView
+            TextView tv = (TextView) convertView.findViewById(R.id.movie_trailer_title);
+            tv.setText(getItem(position).getName());
+
+            // Adjust its bound to max while Preserve the aspect ratio of Image
+            ImageView iv = (ImageView)convertView.findViewById(R.id.movie_trailers_thumbnail);
+            iv.setAdjustViewBounds(true);
+
+            // Download Image from Youtube
+            Picasso.with(getActivity())
+                    .load("http://img.youtube.com/vi/" + getItem(position).getKey() + "/0.jpg")
+                    .placeholder(R.drawable.film)
+                    .into(iv);
+
+            // Setup OnItemClick to launch Youtube App with the video
+            iv.setTag(getItem(position).getKey());
+            iv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(
+                                "vnd.youtube:" + v.getTag()));
+                        startActivity(intent);
+                    } catch (ActivityNotFoundException e) {
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(
+                                "http://www.youtube.com/watch?v=" + v.getTag()));
+                        startActivity(intent);
+                    }
+                }
+            });
+
+            return convertView;
         }
     }
 
@@ -682,4 +701,5 @@ public class DetailActivityFragment extends BaseFragment {
         }
 
     }
+
 }

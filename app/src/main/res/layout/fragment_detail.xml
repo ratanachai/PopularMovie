@@ -134,6 +134,13 @@
                         android:background="@android:color/darker_gray"
                         android:layout_width="match_parent"
                         android:layout_height="1dp" />
+                    <GridView
+                        android:id="@+id/gridview_trailers"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:numColumns="auto_fit"
+                        android:gravity="center"
+                        />
 
                 </LinearLayout>
                 <LinearLayout
