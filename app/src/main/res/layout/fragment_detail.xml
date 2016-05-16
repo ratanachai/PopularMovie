@@ -160,7 +160,7 @@
     </ScrollView>
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/favorite_toggle"
-        android:src="@drawable/heart"
+        android:src="@drawable/ic_heart"
         app:backgroundTint="@color/pink_500"
         android:layout_gravity="end|bottom"
         app:fabSize="normal"
