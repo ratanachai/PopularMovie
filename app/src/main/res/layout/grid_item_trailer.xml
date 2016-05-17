@@ -2,9 +2,10 @@
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="160dp"
-    android:layout_height="120dp">
+    android:layout_width="150dp"
+    android:layout_height="112dp">
 
+    <!--Original Thumbnail size = 480x360-->
     <ImageView
         android:id="@+id/movie_trailers_thumbnail"
         tools:src="@drawable/trailer"
@@ -12,7 +13,6 @@
         android:layout_margin="0dp"
         android:layout_gravity="top|left"
         android:scaleType="centerInside"
-        android:background="@color/accent_material_dark"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
         />
