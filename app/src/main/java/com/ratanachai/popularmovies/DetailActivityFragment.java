@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -117,6 +118,7 @@ public class DetailActivityFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.v(LOG_TAG, "=== onCreateView");
         setHasOptionsMenu(true);
+        final Context c = getActivity();
         mRootview = inflater.inflate(R.layout.fragment_detail, container, false);
 
         if (getArguments() == null) return mRootview; //Early Exit
@@ -129,14 +131,14 @@ public class DetailActivityFragment extends BaseFragment {
         RatingBar ratingBar = (RatingBar)mRootview.findViewById(R.id.movie_rating_bar);
         ratingBar.setRating(Float.parseFloat(mMovieInfo[4]));
         ((TextView) mRootview.findViewById(R.id.movie_release)).append(" " + mMovieInfo[5]);
-        Picasso.with(getActivity()).load("http://image.tmdb.org/t/p/w500" + mMovieInfo[2])
+        Picasso.with(c).load("http://image.tmdb.org/t/p/w500" + mMovieInfo[2])
                 .fit()
                 .centerCrop()
                 .into((ImageView) mRootview.findViewById(R.id.movie_poster));
 
         // Set Listener: Add/Remove TMDB_MOV_ID on checked/unchecked
         FloatingActionButton favButton = (FloatingActionButton) mRootview.findViewById(R.id.favorite_toggle);
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
         final String key = getString(R.string.pref_movie_ids_key);
         final String tmdb_id = mMovieInfo[0];
 
@@ -157,7 +159,7 @@ public class DetailActivityFragment extends BaseFragment {
                     // In case of Favorite Movie Criteria ..
                     // MainFragment will need to refetch movies if movie added
                     if ( isSortByFavorite(mSortBy) )
-                        ((Callback) getActivity()).onAddRemoveMovieFromFavorite(false);
+                        ((Callback) c).onAddRemoveMovieFromFavorite(false);
 
                     saveVideosOffline(movieRowId);
                     saveReviewOffline(movieRowId);
@@ -172,7 +174,7 @@ public class DetailActivityFragment extends BaseFragment {
                     // In case of Favorite Movie Criteria ..
                     // MainFragment will need to refetch movies if movie removed
                     if ( isSortByFavorite(mSortBy) )
-                        ((Callback) getActivity()).onAddRemoveMovieFromFavorite(true);
+                        ((Callback) c).onAddRemoveMovieFromFavorite(true);
                 }
                 // Save new Set into SharedPref
                 SharedPreferences.Editor editor = prefs.edit();
@@ -186,6 +188,7 @@ public class DetailActivityFragment extends BaseFragment {
         });
 
         GridView gv = (GridView) mRootview.findViewById(R.id.gridview_trailers);
+        gv.setNumColumns(c.getResources().getInteger(R.integer.num_columns));
         gv.setAdapter(mTrailerAdapter);
 
         // Restore Trailer Videos and Reviews (First time added via OnPostExecute)

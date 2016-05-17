@@ -84,7 +84,7 @@ public class MainActivityFragment extends BaseFragment {
         final Context c = getActivity();
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         /** Set Number of Columns in different devices **
-         - Default Portrait = 2 columns; Default Land = 5 columns;
+         - Default Portrait = 2 columns; Default Land = 4 columns;
          - Small Tablet (Part and Land) = 2 columns; (sw600dp-land = 2)
          - Large Tablet Port = 2 columns; Large Tab Land = 3 columns (sw800dp-land = 3) */
         GridView gridView = (GridView) rootView.findViewById(R.id.gridview_movies);
