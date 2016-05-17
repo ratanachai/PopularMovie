@@ -188,7 +188,7 @@ public class DetailActivityFragment extends BaseFragment {
         });
 
         GridView gv = (GridView) mRootview.findViewById(R.id.gridview_trailers);
-        gv.setNumColumns(c.getResources().getInteger(R.integer.num_columns));
+        gv.setNumColumns(c.getResources().getInteger(R.integer.trailer_num_columns));
         gv.setAdapter(mTrailerAdapter);
 
         // Restore Trailer Videos and Reviews (First time added via OnPostExecute)

@@ -116,51 +116,60 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
+                <View
+                    android:background="@android:color/darker_gray"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp" />
+
                 <LinearLayout
                     android:id="@+id/movie_trailers_container"
                     android:orientation="vertical"
+                    android:paddingBottom="16dp"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="match_parent">
+
 
                     <TextView
                         android:id="@+id/movie_trailers_label"
                         android:text="@string/movie_trailers_label"
                         android:textSize="@dimen/abc_text_size_medium_material"
                         android:textStyle="bold"
-                        android:paddingBottom="5dp"
+                        android:paddingTop="6dp"
+                        android:paddingBottom="6dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
-                    <View
-                        android:background="@android:color/darker_gray"
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp" />
-                    <GridView
+
+                    <com.ratanachai.popularmovies.MyGridView
                         android:id="@+id/gridview_trailers"
+                        android:stretchMode="columnWidth"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:numColumns="auto_fit"
+                        android:layout_height="wrap_content"
                         android:gravity="center"
                         />
-
                 </LinearLayout>
+
+                <View
+                    android:background="@android:color/darker_gray"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp" />
+
                 <LinearLayout
                     android:id="@+id/movie_reviews_container"
                     android:orientation="vertical"
+                    android:paddingBottom="16dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
+
                     <TextView
                         android:id="@+id/movie_reviews_label"
                         android:text="@string/movie_reviews_label"
                         android:textSize="@dimen/abc_text_size_medium_material"
                         android:textStyle="bold"
-                        android:paddingBottom="5dp"
+                        android:paddingTop="6dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
-                    <View
-                        android:background="@android:color/darker_gray"
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp" />
                 </LinearLayout>
+
             </LinearLayout>
             </android.support.v7.widget.CardView>
         </LinearLayout>
