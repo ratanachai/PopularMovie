@@ -6,7 +6,7 @@
     <string name="action_settings">ตั้งค่า</string>
     <string name="action_refresh">รีเฟรช</string>
 
-    <string name="pref_sort_label">แสดงภาพยนต์...</string>
+    <string name="pref_sort_label">แสดงภาพยนต์ตาม...</string>
     <string name="pref_sort_popularity_label">ความนิยม</string>
     <string name="pref_sort_rating_label">คะแนนโหวต</string>
     <string name="pref_favorite_label">รายการโปรด</string>
@@ -20,9 +20,9 @@
     <string name="empty_movies_grid">ไม่มีข้อมูลภาพยนต์</string>
 
     <!-- Toast messages -->
-    <string name="remove_from_watchlist_success">ลบภาพยนต์จาก Watchlist</string>
-    <string name="remove_from_watchlist_fail">ไม่สามารถลบภาพยนต์จาก Watchlist ได้</string>
-    <string name="no_network">ไม่มีเน็ตเวิร์ค กรุณาเปลี่ยนไป Watchlist</string>
+    <string name="remove_from_fav_success">ลบภาพยนต์จากรายการโปรด</string>
+    <string name="remove_from_fav_fail">ไม่สามารถลบภาพยนต์จากรายการโปรด</string>
+    <string name="no_network">ไม่มีเน็ตเวิร์ค กรุณาเปลี่ยนไปรายการโปรด</string>
     <string name="downloading_from_tmdb">กำลังโหลดข้อมูลจาก TMDB</string>
 
     <!-- a11y -->
@@ -31,7 +31,7 @@
     <string name="movie_rating">ได้คะแนนโหวต<xliff:g id="rating">%1$s</xliff:g> จาก 10</string>
     <string name="movie_release_date">วันกำหนดฉาย <xliff:g id="date">%1$s</xliff:g></string>
     <string name="movie_trailer">ตัวอย่างหนัง <xliff:g id="title">%1$s</xliff:g></string>
-    <string name="add_to_watchlist">เพิ่มภาพยนต์เข้า Watchlist</string>
+    <string name="add_to_fav">เพิ่มภาพยนต์เข้ารายการโปรด</string>
     <string name="movie_review">รีวิวภาพยนต์โดย<xliff:g id="author">%1$s</xliff:g>: <xliff:g>%2$s</xliff:g></string>
     <string name="movie_overview_placeholder">กรุณาเรื่องภาพยนต์เพื่อดูข้อมูลและภาพยนต์ตัวอย่าง (เทรลเลอร์)</string>
     <string name="movie_title_placeholder">กรุณาเลือกภาพยนต์</string>

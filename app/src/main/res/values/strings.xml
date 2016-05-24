@@ -39,17 +39,17 @@
     <string name="empty_movies_grid">No Network connection. Movies Info Not Available</string>
 
     <!-- Toast messages -->
-    <string name="remove_from_watchlist_success">Movie is removed from Watchlist</string>
-    <string name="remove_from_watchlist_fail">No movie removed from Watchlist</string>
-    <string name="no_network">No network connection. Please Switch to your Watchlist.</string>
-    <string name="downloading_from_tmdb">Downloading from TMDB</string>
+    <string name="remove_from_fav_success">Movie is removed from Favorite.</string>
+    <string name="remove_from_fav_fail">No movie removed from Favorite.</string>
+    <string name="no_network">No network connection. Please Switch to your Favorite.</string>
+    <string name="downloading_from_tmdb">Downloading from TMDB.</string>
     <!-- a11y -->
     <string name="movie_title">Movie title <xliff:g id="title">%1$s</xliff:g></string>
     <string name="movie_overview">Movie overview <xliff:g id="overview">%1$s</xliff:g></string>
     <string name="movie_rating">Average User Rating of <xliff:g id="rating">%1$s</xliff:g> from 10</string>
     <string name="movie_release_date">Movie release date <xliff:g id="date">%1$s</xliff:g></string>
     <string name="movie_trailer">Movie Trailer <xliff:g id="title">%1$s</xliff:g></string>
-    <string name="add_to_watchlist">Add to Watchlist</string>
+    <string name="add_to_fav">Add to Favorite</string>
     <string name="movie_review">Movie Review by <xliff:g id="author">%1$s</xliff:g>: <xliff:g>%2$s</xliff:g></string>
 
 </resources>

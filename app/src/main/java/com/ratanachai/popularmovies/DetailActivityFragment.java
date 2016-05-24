@@ -156,7 +156,7 @@ public class DetailActivityFragment extends BaseFragment {
 
         // Set Listener: Add/Remove TMDB_MOV_ID on checked/unchecked
         FloatingActionButton favButton = (FloatingActionButton) mRootview.findViewById(R.id.favorite_toggle);
-        favButton.setContentDescription(getString(R.string.add_to_watchlist));
+        favButton.setContentDescription(getString(R.string.add_to_fav));
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
         final String key = getString(R.string.pref_movie_ids_key);
         final String tmdb_id = mMovieInfo[0];
@@ -268,7 +268,7 @@ public class DetailActivityFragment extends BaseFragment {
             movieValues.put(MovieEntry.COLUMN_USER_RATING, movieInfo[4]);
             movieValues.put(MovieEntry.COLUMN_RELEASE_DATE, movieInfo[5]);
             Uri movieUri = cr.insert(MovieEntry.CONTENT_URI, movieValues);
-            Toast.makeText(getActivity(), getString(R.string.add_to_watchlist), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), getString(R.string.add_to_fav), Toast.LENGTH_SHORT).show();
             rowId = ContentUris.parseId(movieUri);
 
         }else{
@@ -336,9 +336,9 @@ public class DetailActivityFragment extends BaseFragment {
                 MovieEntry.COLUMN_TMDB_MOVIE_ID + " = ?", new String[]{tmdbMovieId});
 
         if (rowsDeleted != 0)
-            Toast.makeText(getActivity(), getString(R.string.remove_from_watchlist_success), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), getString(R.string.remove_from_fav_success), Toast.LENGTH_SHORT).show();
         else
-            Toast.makeText(getActivity(), getString(R.string.remove_from_watchlist_fail), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), getString(R.string.remove_from_fav_fail), Toast.LENGTH_SHORT).show();
     }
 
     private long getMovieRowId(String tmdb_movie_id){
