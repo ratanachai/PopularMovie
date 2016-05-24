@@ -44,6 +44,12 @@
     <string name="empty_movies_grid">No Network connection. Movies Info Not Available</string>
     <string name="dummy_section_text">Section %1d is just a dummy section.</string>
 
+    <!-- Toast messages -->
+    <string name="remove_from_watchlist_success">Movie is removed from Watchlist</string>
+    <string name="remove_from_watchlist_fail">No movie removed from Watchlist</string>
+    <string name="add_to_watchlist_success">The Movie is added to your Watchlist</string>
+    <string name="no_network">No network connection. Please Switch to your Watchlist.</string>
+    <string name="downloading_from_tmdb">Downloading from TMDB</string>
     <!-- a11y -->
     <string name="movie_title">Movie title <xliff:g id="title">%1$s</xliff:g></string>
     <string name="movie_overview">Movie overview <xliff:g id="overview">%1$s</xliff:g></string>

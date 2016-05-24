@@ -268,7 +268,7 @@ public class DetailActivityFragment extends BaseFragment {
             movieValues.put(MovieEntry.COLUMN_USER_RATING, movieInfo[4]);
             movieValues.put(MovieEntry.COLUMN_RELEASE_DATE, movieInfo[5]);
             Uri movieUri = cr.insert(MovieEntry.CONTENT_URI, movieValues);
-            Toast.makeText(getActivity(), "The Movie is added to your Watchlist", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), getString(R.string.add_to_watchlist), Toast.LENGTH_SHORT).show();
             rowId = ContentUris.parseId(movieUri);
 
         }else{
@@ -336,9 +336,9 @@ public class DetailActivityFragment extends BaseFragment {
                 MovieEntry.COLUMN_TMDB_MOVIE_ID + " = ?", new String[]{tmdbMovieId});
 
         if (rowsDeleted != 0)
-            Toast.makeText(getActivity(), "Movie is removed from Watchlist", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), getString(R.string.remove_from_watchlist_success), Toast.LENGTH_SHORT).show();
         else
-            Toast.makeText(getActivity(), "No movie removed from Watchlist", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), getString(R.string.remove_from_watchlist_fail), Toast.LENGTH_SHORT).show();
     }
 
     private long getMovieRowId(String tmdb_movie_id){

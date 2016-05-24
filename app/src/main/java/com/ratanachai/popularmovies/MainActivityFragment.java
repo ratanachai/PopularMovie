@@ -181,8 +181,7 @@ public class MainActivityFragment extends BaseFragment {
             getMoviesFromInternet(mSortBy, page);
 
         }else{
-            Toast toast = Toast.makeText(getActivity(), "No network connection. " +
-                    "Please Switch to your Watchlist.", Toast.LENGTH_LONG);
+            Toast toast = Toast.makeText(getActivity(), getString(R.string.no_network), Toast.LENGTH_LONG);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
 
@@ -219,7 +218,7 @@ public class MainActivityFragment extends BaseFragment {
 
     private void getMoviesFromInternet(String sortBy, int page) {
         mProgress = new ProgressDialog(getActivity());
-        mProgress.setMessage("Downloading from TMDB");
+        mProgress.setMessage(getString(R.string.downloading_from_tmdb));
         mProgress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         mProgress.show();
         // TODO: Fix "E/WindowManager: android.view.WindowLeaked" when rotatage screen after 1st start
