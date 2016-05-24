@@ -50,5 +50,7 @@
     <string name="movie_rating">Average User Rating of <xliff:g id="rating">%1$s</xliff:g> from 10</string>
     <string name="movie_release_date">Movie release date <xliff:g id="date">%1$s</xliff:g></string>
     <string name="movie_trailer">Movie Trailer <xliff:g id="title">%1$s</xliff:g></string>
+    <string name="add_to_watchlist">Add to Watchlist</string>
+    <string name="movie_review">Movie Review by <xliff:g id="author">%1$s</xliff:g>: <xliff:g>%2$s</xliff:g></string>
 </resources>
 

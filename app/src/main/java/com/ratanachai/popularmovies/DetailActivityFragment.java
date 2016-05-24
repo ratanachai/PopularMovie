@@ -156,6 +156,7 @@ public class DetailActivityFragment extends BaseFragment {
 
         // Set Listener: Add/Remove TMDB_MOV_ID on checked/unchecked
         FloatingActionButton favButton = (FloatingActionButton) mRootview.findViewById(R.id.favorite_toggle);
+        favButton.setContentDescription(getString(R.string.add_to_watchlist));
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
         final String key = getString(R.string.pref_movie_ids_key);
         final String tmdb_id = mMovieInfo[0];
@@ -603,6 +604,8 @@ public class DetailActivityFragment extends BaseFragment {
             TextView reviewContent = (TextView) v.findViewById(R.id.movie_review_content);
             reviewAuthor.setText(reviews.get(i).getAuthor());
             reviewContent.setText(reviews.get(i).getContent());
+            reviewContent.setContentDescription(getString(R.string.movie_review,
+                    reviewAuthor.getText(), reviewContent.getText()));
             containerView.addView(rootView);
 
         }
