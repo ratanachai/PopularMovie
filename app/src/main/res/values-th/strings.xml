@@ -1,0 +1,41 @@
+<resources xmlns:xliff="http://schemas.android.com/apk/res-auto">
+    <string name="app_name">หาหนังดัง</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="title_activity_detail">Movie Detail</string>
+
+    <string name="action_settings">ตั้งค่า</string>
+    <string name="action_refresh">รีเฟรช</string>
+
+    <string name="pref_sort_label">Sort by</string>
+    <string name="pref_sort_popularity_label">Popularity</string>
+    <string name="pref_sort_rating_label">Rating</string>
+    <string name="pref_favorite_label">Favorite</string>
+    <string name="pref_reset_label">Reset Favorite (Clear Preference/Database)</string>
+
+    <string name="movie_trailer_placeholder">Official Trailer #N</string>
+    <string name="movie_trailers_label">Trailers: </string>
+    <string name="movie_reviews_label">Reviews: </string>
+
+
+    <!-- No movies from TMDB -->
+    <string name="empty_movies_grid">ไม่มีข้อมูลภาพยนต์</string>
+
+    <!-- Toast messages -->
+    <string name="remove_from_watchlist_success">ลบภาพยนต์ออกจาก Watchlist สำเร็จ</string>
+    <string name="remove_from_watchlist_fail">ไม่สามารถลบภาพยนต์จาก Watchlist ได้</string>
+    <string name="add_to_watchlist_success">เพิ่มภาพยนต์เข้า Watchlist สำเร็จ</string>
+    <string name="no_network">ไม่มีเน็ตเวิร์ค กรุณาเปลี่ยนไป Watchlist</string>
+    <string name="downloading_from_tmdb">กำลังโหลดข้อมูลจาก TMDB</string>
+
+    <!-- a11y -->
+    <string name="movie_title">ชื่อเรื่อง<xliff:g id="title">%1$s</xliff:g></string>
+    <string name="movie_overview">เนื้อเรื่องย่อ<xliff:g id="overview">%1$s</xliff:g></string>
+    <string name="movie_rating">ได้คะแนนโหวต<xliff:g id="rating">%1$s</xliff:g> จาก 10</string>
+    <string name="movie_release_date">วันกำหนดฉาย <xliff:g id="date">%1$s</xliff:g></string>
+    <string name="movie_trailer">ตัวอย่างหนัง <xliff:g id="title">%1$s</xliff:g></string>
+    <string name="add_to_watchlist">เพิ่มเข้า Watchlist</string>
+    <string name="movie_review">รีวิวภาพยนต์โดย<xliff:g id="author">%1$s</xliff:g>: <xliff:g>%2$s</xliff:g></string>
+    <string name="movie_overview_placeholder">กรุณาเรื่องภาพยนต์เพื่อดูข้อมูลและภาพยนต์ตัวอย่าง (เทรลเลอร์)</string>
+    <string name="movie_title_placeholder">กรุณาเลือกภาพยนต์</string>
+</resources>
+

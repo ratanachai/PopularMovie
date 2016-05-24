@@ -1,46 +1,41 @@
 <resources xmlns:xliff="http://schemas.android.com/apk/res-auto">
     <string name="app_name">Top Movie Finder</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="title_activity_detail">Movie Detail</string>
+
     <string name="action_settings">Settings</string>
     <string name="action_refresh">Refresh</string>
-    <string name="title_activity_settings">Settings</string>
-    <string name="pref_sort_key">sort</string>
+
+    <string name="pref_sort_key" translatable="false">sort</string>
     <string name="pref_sort_label">Sort by</string>
-    <string name="pref_sort_default">popularity</string>
-    <string name="pref_sort_popularity">popularity</string>
+    <string name="pref_sort_default" translatable="false">popularity</string>
+    <string name="pref_sort_popularity" translatable="false">popularity</string>
     <string name="pref_sort_popularity_label">Popularity</string>
-    <string name="pref_sort_rating">vote_average</string>
+    <string name="pref_sort_rating" translatable="false">vote_average</string>
     <string name="pref_sort_rating_label">Rating</string>
-    <string name="pref_favorite">favorite</string>
+    <string name="pref_favorite" translatable="false">favorite</string>
     <string name="pref_favorite_label">Favorite</string>
-    <string name="pref_movie_ids_key">fav_movie_ids</string>
+    <string name="pref_movie_ids_key" translatable="false">fav_movie_ids</string>
     <string name="pref_reset_label">Reset Favorite (Clear Preference/Database)</string>
-    <string name="pref_reset">reset</string>
-    <string name="title_activity_detail">Movie Detail</string>
-    <string name="please_select_movie">Please Select a Movie</string>
-    <string name="please_select_movie_desc">Please Select a Movie to view Movie Detail with Video
-    Trailer and User Review</string>
+    <string name="pref_reset" translatable="false">reset</string>
 
-    <string name="movie_overview_placeholder">Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-        sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-        nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
-        officia deserunt mollit anim id est laborum</string>
 
-    <string name="movie_trailer_placeholder">Official Trailer #N</string>
-    <string name="movie_rating_label">User Rating: </string>
-    <string name="movie_release_label">Release Date: </string>
+    <!-- Movie Label and place holder -->
     <string name="movie_trailers_label">Trailers: </string>
     <string name="movie_reviews_label">Reviews: </string>
-    <string name="movie_review_author">Author</string>
-    <string name="movie_review_content">Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+    <string name="movie_title_placeholder">Please Select a Movie</string>
+    <string name="movie_overview_placeholder">Please Select a Movie to view Movie Detail with Video
+    Trailer and User Review</string>
+    <string name="movie_trailer_placeholder">Official Trailer #N</string>
+    <string name="movie_review_author_placeholder" translatable="false">Author</string>
+    <string name="movie_review_content_placeholder" translatable="false">Lorem ipsum dolor sit amet, consectetur adipiscing elit,
         sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
         quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
         Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
         nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
         officia deserunt mollit anim id est laborum</string>
 
-    <!-- No movies from TMDB -->
+    <!-- Empty view for GridView -->
     <string name="empty_movies_grid">No Network connection. Movies Info Not Available</string>
 
     <!-- Toast messages -->
