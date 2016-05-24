@@ -26,7 +26,7 @@
     <string name="movie_title_placeholder">Please Select a Movie</string>
     <string name="movie_overview_placeholder">Please Select a Movie to view Movie Detail with Video
     Trailer and User Review</string>
-    <string name="movie_trailer_placeholder">Official Trailer #N</string>
+    <string name="movie_trailer_placeholder">Official Trailer #1</string>
     <string name="movie_review_author_placeholder" translatable="false">Author</string>
     <string name="movie_review_content_placeholder" translatable="false">Lorem ipsum dolor sit amet, consectetur adipiscing elit,
         sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
@@ -41,7 +41,6 @@
     <!-- Toast messages -->
     <string name="remove_from_watchlist_success">Movie is removed from Watchlist</string>
     <string name="remove_from_watchlist_fail">No movie removed from Watchlist</string>
-    <string name="add_to_watchlist_success">The Movie is added to your Watchlist</string>
     <string name="no_network">No network connection. Please Switch to your Watchlist.</string>
     <string name="downloading_from_tmdb">Downloading from TMDB</string>
     <!-- a11y -->
