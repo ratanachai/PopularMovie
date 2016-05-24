@@ -244,11 +244,9 @@ public class MainActivityFragment extends BaseFragment {
                         .inflate(R.layout.grid_item_movie, parent, false);
 
             Movie movie = getItem(position);
-            // Adjust its bound to max while Preserve the aspect ratio of Image
-            ImageView imageView = (ImageView)convertView.findViewById(R.id.grid_item_movie);
-            imageView.setAdjustViewBounds(true);
 
             // Download Image from TMDB using mMoviePosterPath (Width: 92, 154, 185, 342, 500, 780)
+            ImageView imageView = (ImageView)convertView.findViewById(R.id.grid_item_movie);
             Picasso.with(getActivity())
                     .load("http://image.tmdb.org/t/p/w342" + movie.getPosterPath())
                     .placeholder(R.drawable.film)

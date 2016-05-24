@@ -529,11 +529,8 @@ public class DetailActivityFragment extends BaseFragment {
             TextView tv = (TextView) convertView.findViewById(R.id.movie_trailer_title);
             tv.setText(getItem(position).getName());
 
-            // Adjust its bound to max while Preserve the aspect ratio of Image
-            ImageView iv = (ImageView)convertView.findViewById(R.id.movie_trailers_thumbnail);
-            iv.setAdjustViewBounds(true);
-
             // Download Image from Youtube
+            ImageView iv = (ImageView)convertView.findViewById(R.id.movie_trailers_thumbnail);
             Picasso.with(getActivity())
                     .load("http://img.youtube.com/vi/" + getItem(position).getKey() + "/0.jpg")
                     .placeholder(R.drawable.film)
