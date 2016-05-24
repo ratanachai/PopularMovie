@@ -7,10 +7,10 @@
     <string name="action_refresh">รีเฟรช</string>
 
     <string name="pref_sort_label">แสดงภาพยนต์...</string>
-    <string name="pref_sort_popularity_label">คะแนนความนิยม</string>
+    <string name="pref_sort_popularity_label">ความนิยม</string>
     <string name="pref_sort_rating_label">คะแนนโหวต</string>
-    <string name="pref_favorite_label">ภาพยนต์ที่บันทึกไว้</string>
-    <string name="pref_reset_label">เริ่มต้นใหม่ (ล้างฐานข้อมูลและรายการภาพยนต์ที่บันทึกไว้)</string>
+    <string name="pref_favorite_label">รายการโปรด</string>
+    <string name="pref_reset_label">ล้างรายการโปรด (ล้างฐานข้อมูลและรายการภาพยนต์ที่บันทึกไว้)</string>
 
     <string name="movie_trailer_placeholder">ภาพยนต์ตัวอย่างที่1</string>
     <string name="movie_trailers_label">ภาพยนต์ตัวอย่าง</string>

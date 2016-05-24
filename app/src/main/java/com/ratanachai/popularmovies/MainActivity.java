@@ -1,5 +1,6 @@
 package com.ratanachai.popularmovies;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -44,7 +45,7 @@ public class MainActivity extends AppCompatActivity
             mTwoPane = false;
 
             // Create the adapter that will return a fragment for each of the three primary sections
-            mAppSectionsPagerAdapter = new AppSectionsPagerAdapter(getSupportFragmentManager());
+            mAppSectionsPagerAdapter = new AppSectionsPagerAdapter(getSupportFragmentManager(), this);
 
             // Set up the action bar.
             final ActionBar actionBar = getSupportActionBar();
@@ -149,8 +150,10 @@ public class MainActivity extends AppCompatActivity
      */
     public static class AppSectionsPagerAdapter extends FragmentPagerAdapter {
 
-        public AppSectionsPagerAdapter(FragmentManager fm) {
+        Context mContext;
+        public AppSectionsPagerAdapter(FragmentManager fm, Context context) {
             super(fm);
+            mContext = context;
         }
 
         @Override
@@ -184,10 +187,11 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         public CharSequence getPageTitle(int i) {
+
             switch (i) {
-                case 0: return "Hot";
-                case 1: return "Highest Vote";
-                default: return "Watchlist";
+                case 0: return mContext.getString(R.string.pref_sort_popularity_label);
+                case 1: return mContext.getString(R.string.pref_sort_rating_label);
+                default: return mContext.getString(R.string.pref_favorite_label);
             }
         }
     }

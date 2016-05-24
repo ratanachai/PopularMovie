@@ -12,7 +12,7 @@
     <string name="pref_sort_popularity" translatable="false">popularity</string>
     <string name="pref_sort_popularity_label">Popularity</string>
     <string name="pref_sort_rating" translatable="false">vote_average</string>
-    <string name="pref_sort_rating_label">Rating</string>
+    <string name="pref_sort_rating_label">Highest Vote</string>
     <string name="pref_favorite" translatable="false">favorite</string>
     <string name="pref_favorite_label">Favorite</string>
     <string name="pref_movie_ids_key" translatable="false">fav_movie_ids</string>
@@ -51,5 +51,6 @@
     <string name="movie_trailer">Movie Trailer <xliff:g id="title">%1$s</xliff:g></string>
     <string name="add_to_watchlist">Add to Watchlist</string>
     <string name="movie_review">Movie Review by <xliff:g id="author">%1$s</xliff:g>: <xliff:g>%2$s</xliff:g></string>
+
 </resources>
 
