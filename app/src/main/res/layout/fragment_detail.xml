@@ -10,6 +10,7 @@
         android:id="@+id/movie_poster"
         tools:src="@drawable/poster"
         tools:scaleType="centerCrop"
+        android:importantForAccessibility="no"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
@@ -68,6 +69,7 @@
                         android:rating="7.22"
                         tools:rating="7.22"
                         android:layout_marginTop="1dp"
+                        android:importantForAccessibility="no"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"/>
 
@@ -94,6 +96,7 @@
                         android:layout_toEndOf="@+id/movie_rating"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:importantForAccessibility="no"
                         />
                 </RelativeLayout>
                 <TextView

@@ -123,18 +123,36 @@ public class DetailActivityFragment extends BaseFragment {
 
         if (getArguments() == null) return mRootview; //Early Exit
 
-        // Set all TextView and Background Poster
+        // Set Activity Title & Movie Title TextView
         getActivity().setTitle(mMovieInfo[1]);
-        ((TextView) mRootview.findViewById(R.id.movie_title)).setText(mMovieInfo[1]);
-        ((TextView) mRootview.findViewById(R.id.movie_overview)).setText(mMovieInfo[3]);
-        ((TextView) mRootview.findViewById(R.id.movie_rating)).setText(mMovieInfo[4]);
+        TextView titleTv = (TextView) mRootview.findViewById(R.id.movie_title);
+        titleTv.setText(mMovieInfo[1]);
+        titleTv.setContentDescription(getString(R.string.movie_title, mMovieInfo[1]));
+
+        // Set Movie Overview TextView
+        TextView overviewTv = (TextView) mRootview.findViewById(R.id.movie_overview);
+        overviewTv.setText(mMovieInfo[3]);
+        overviewTv.setContentDescription(getString(R.string.movie_overview, mMovieInfo[3]));
+
+        // Set Movie Rating (User Vote average) TextView and RatingBar
+        TextView ratingTv = (TextView) mRootview.findViewById(R.id.movie_rating);
+        ratingTv.setText(mMovieInfo[4]);
+        ratingTv.setContentDescription(getString(R.string.movie_rating, mMovieInfo[4]));
+
         RatingBar ratingBar = (RatingBar)mRootview.findViewById(R.id.movie_rating_bar);
         ratingBar.setRating(Float.parseFloat(mMovieInfo[4]));
-        ((TextView) mRootview.findViewById(R.id.movie_release)).append(" " + mMovieInfo[5]);
+
+        // Set Movie Release date
+        TextView releaseDateTv = (TextView) mRootview.findViewById(R.id.movie_release);
+        releaseDateTv.append(" " + mMovieInfo[5]);
+        releaseDateTv.setContentDescription(getString(R.string.movie_release_date, mMovieInfo[5]));
+
+        // Set Background Poster
+        ImageView iv = (ImageView) mRootview.findViewById(R.id.movie_poster);
         Picasso.with(c).load("http://image.tmdb.org/t/p/w500" + mMovieInfo[2])
                 .fit()
                 .centerCrop()
-                .into((ImageView) mRootview.findViewById(R.id.movie_poster));
+                .into(iv);
 
         // Set Listener: Add/Remove TMDB_MOV_ID on checked/unchecked
         FloatingActionButton favButton = (FloatingActionButton) mRootview.findViewById(R.id.favorite_toggle);
@@ -187,6 +205,7 @@ public class DetailActivityFragment extends BaseFragment {
             }
         });
 
+        // Set Movie Trailer
         GridView gv = (GridView) mRootview.findViewById(R.id.gridview_trailers);
         gv.setNumColumns(c.getResources().getInteger(R.integer.trailer_num_columns));
         gv.setAdapter(mTrailerAdapter);
@@ -316,9 +335,9 @@ public class DetailActivityFragment extends BaseFragment {
                 MovieEntry.COLUMN_TMDB_MOVIE_ID + " = ?", new String[]{tmdbMovieId});
 
         if (rowsDeleted != 0)
-            Toast.makeText(getActivity(), "Movie is removed from Offline view", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Movie is removed from Watchlist", Toast.LENGTH_SHORT).show();
         else
-            Toast.makeText(getActivity(), "No movie removed from Offline view", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "No movie removed from Watchlist", Toast.LENGTH_SHORT).show();
     }
 
     private long getMovieRowId(String tmdb_movie_id){
@@ -535,6 +554,9 @@ public class DetailActivityFragment extends BaseFragment {
                     }
                 }
             });
+
+            // a11y for ImageView
+            iv.setContentDescription(getString(R.string.movie_trailer, getItem(position).getName()));
 
             return convertView;
         }
