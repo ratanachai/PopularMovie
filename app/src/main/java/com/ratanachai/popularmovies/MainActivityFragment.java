@@ -34,6 +34,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class MainActivityFragment extends BaseFragment {
     public static final String LOG_TAG = MainActivityFragment.class.getSimpleName();
@@ -223,9 +224,10 @@ public class MainActivityFragment extends BaseFragment {
         mProgress.show();
         // TODO: Fix "E/WindowManager: android.view.WindowLeaked" when rotatage screen after 1st start
 
-        // Get Movie from Internet
+        // Determine which language, then Get Movie from the TMDB API
+        String lang = Locale.getDefault().getLanguage().equals("th") ? "th" : "en";
         FetchMoviesTask fetchMoviesTask = new FetchMoviesTask();
-        fetchMoviesTask.execute(sortBy, String.valueOf(page));
+        fetchMoviesTask.execute(sortBy, String.valueOf(page), lang);
     }
 
     /** How-to use Picasso with ArrayAdapter from Big Nerd Ranch
@@ -310,8 +312,9 @@ public class MainActivityFragment extends BaseFragment {
 
             try {
                 // Construct the URL for TMDB query
-                // http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=<api_key>
+                // http://api.themoviedb.org/3/discover/movie?lang=en&sort_by=popularity.desc&api_key=<api_key>
                 final String BASE_URL = "http://api.themoviedb.org/3/discover/movie?";
+                final String LANG = "language";
                 final String PAGE = "page";
                 final String SORT_PARAM = "sort_by";
                 final String VOTE_COUNT_THREASHOLD = "vote_count.gte";
@@ -319,6 +322,7 @@ public class MainActivityFragment extends BaseFragment {
 
 
                 Uri.Builder ub = Uri.parse(BASE_URL).buildUpon()
+                        .appendQueryParameter(LANG, params[2])
                         .appendQueryParameter(PAGE, params[1])
                         .appendQueryParameter(SORT_PARAM, params[0]+".desc")
                         .appendQueryParameter(API_KEY_PARAM, api_key);
