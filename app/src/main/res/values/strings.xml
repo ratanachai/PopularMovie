@@ -42,7 +42,6 @@
 
     <!-- No movies from TMDB -->
     <string name="empty_movies_grid">No Network connection. Movies Info Not Available</string>
-    <string name="dummy_section_text">Section %1d is just a dummy section.</string>
 
     <!-- Toast messages -->
     <string name="remove_from_watchlist_success">Movie is removed from Watchlist</string>
