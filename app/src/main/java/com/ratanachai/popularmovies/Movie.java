@@ -42,6 +42,9 @@ public class Movie implements Parcelable{
     public String getPosterPath(){
         return posterPath;
     }
+    public String getTitle(){
+        return title;
+    }
     public String[] getAll(){
         String[] all = {id, title, posterPath, overview, userRating, releaseDate};
         return all;

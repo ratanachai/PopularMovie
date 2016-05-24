@@ -20,7 +20,7 @@
         android:paddingTop="@dimen/abc_action_bar_icon_vertical_padding_material"
         android:backgroundTint="@color/abc_background_cache_hint_selector_material_dark"
         android:layout_gravity="top|right"
-        android:text="2016"
+        tools:text="2016"
         android:textAlignment="gravity"
         android:visibility="invisible"
         />

@@ -38,8 +38,7 @@ import java.util.ArrayList;
 public class MainActivityFragment extends BaseFragment {
     public static final String LOG_TAG = MainActivityFragment.class.getSimpleName();
 
-    private CustomImageAdapter mMovieAdapter; // Adapter for Grid of Poster Image
-    private ArrayList<String> mMoviePosterPaths; // URLs used to populate the grid
+    private MovieAdapter mMovieAdapter; // Adapter for Grid of Poster Image
     private ArrayList<Movie> mMovies = new ArrayList<>(); // of Movie objects
     private String mFetchedSortBy = ""; // Sort Mode that has been Fetched
     private ProgressDialog mProgress;
@@ -64,8 +63,8 @@ public class MainActivityFragment extends BaseFragment {
         mSortBy = getSortBy();
 
         // Create MovieAdapter every times
-        mMoviePosterPaths = new ArrayList<>();
-        mMovieAdapter = new CustomImageAdapter(mMoviePosterPaths);
+        mMovies = new ArrayList<>();
+        mMovieAdapter = new MovieAdapter(mMovies);
 
         // Fetch Movies or Restore from savedInstanceState
         // http://stackoverflow.com/questions/12503836/how-to-save-custom-arraylist-on-android-screen-rotate
@@ -74,7 +73,8 @@ public class MainActivityFragment extends BaseFragment {
         }else {
             mFetchedSortBy = savedInstanceState.getString("sort_mode");
             mMovies = savedInstanceState.getParcelableArrayList("movies");
-            populatePoster(mMovies);
+            mMovieAdapter = new MovieAdapter(mMovies);
+            mMovieAdapter.notifyDataSetChanged();
         }
     }
 
@@ -125,7 +125,6 @@ public class MainActivityFragment extends BaseFragment {
         mSortBy = getSortBy();
         if( needReFetch || hasSortByChanged(mSortBy) ){
             mMovies.clear();
-            mMoviePosterPaths.clear();
             mMovieAdapter.notifyDataSetChanged();
             getMovies(page);
         }
@@ -188,7 +187,6 @@ public class MainActivityFragment extends BaseFragment {
             toast.show();
 
             mMovies.clear();
-            mMoviePosterPaths.clear();
             mMovieAdapter.notifyDataSetChanged();
         }
 
@@ -198,7 +196,6 @@ public class MainActivityFragment extends BaseFragment {
     private void getMoviesFromDb() {
         // Clear All
         mMovies.clear();
-        mMoviePosterPaths.clear();
 
         // Populate mMovies from DB: Get Movie from Database, then Put into ArrayList of Movies
         Cursor cur = getActivity().getContentResolver().query(MovieEntry.CONTENT_URI,
@@ -211,7 +208,7 @@ public class MainActivityFragment extends BaseFragment {
             mMovies.add(movieObj);
         }
         cur.close();
-        populatePoster(mMovies); // Populate Grid of Posters
+        mMovieAdapter.notifyDataSetChanged();
         needReFetch = false; //Reset flag after fetched
 
         // Auto load the first movie into Tablet right pane
@@ -232,24 +229,13 @@ public class MainActivityFragment extends BaseFragment {
         fetchMoviesTask.execute(sortBy, String.valueOf(page));
     }
 
-    private void populatePoster(ArrayList<Movie> movies) {
-        for(Movie aMovie : movies) {
-            mMoviePosterPaths.add(aMovie.getPosterPath());
-        }
-        mMovieAdapter.notifyDataSetChanged();
-    }
-
     /** How-to use Picasso with ArrayAdapter from Big Nerd Ranch
         https://www.bignerdranch.com/blog/solving-the-android-image-loading-problem-volley-vs-picasso/
      */
-    private class CustomImageAdapter extends ArrayAdapter<String> {
+    private class MovieAdapter extends ArrayAdapter<Movie> {
 
-        // Comment out unnecessary Override
-//        private ArrayList<String> items;
-//
-        public CustomImageAdapter(ArrayList<String> urls) {
-            super(getActivity(), 0, urls);
-//            this.items = urls;
+        public MovieAdapter(ArrayList<Movie> movies) {
+            super(getActivity(), 0, movies);
         }
 
         @Override
@@ -258,15 +244,17 @@ public class MainActivityFragment extends BaseFragment {
                 convertView = getActivity().getLayoutInflater()
                         .inflate(R.layout.grid_item_movie, parent, false);
 
+            Movie movie = getItem(position);
             // Adjust its bound to max while Preserve the aspect ratio of Image
             ImageView imageView = (ImageView)convertView.findViewById(R.id.grid_item_movie);
             imageView.setAdjustViewBounds(true);
 
             // Download Image from TMDB using mMoviePosterPath (Width: 92, 154, 185, 342, 500, 780)
             Picasso.with(getActivity())
-                    .load("http://image.tmdb.org/t/p/w342" + getItem(position))
+                    .load("http://image.tmdb.org/t/p/w342" + movie.getPosterPath())
                     .placeholder(R.drawable.film)
                     .into(imageView);
+            imageView.setContentDescription(movie.getTitle());
 
             return convertView;
         }
@@ -402,7 +390,7 @@ public class MainActivityFragment extends BaseFragment {
         @Override
         protected void onPostExecute(ArrayList<Movie> movies) {
             if (movies != null) {
-                populatePoster(movies);
+                mMovieAdapter.notifyDataSetChanged();
                 mProgress.hide();
                 // Auto load the first movie into Tablet right pane
                 if(mMovies.size() > 0)
