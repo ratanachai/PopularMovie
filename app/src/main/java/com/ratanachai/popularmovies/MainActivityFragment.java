@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,7 +17,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.ratanachai.popularmovies.data.MovieContract.MovieEntry;
 import com.squareup.picasso.Picasso;
@@ -182,10 +180,7 @@ public class MainActivityFragment extends BaseFragment {
             getMoviesFromInternet(mSortBy, page);
 
         }else{
-            Toast toast = Toast.makeText(getActivity(), getString(R.string.no_network), Toast.LENGTH_LONG);
-            toast.setGravity(Gravity.CENTER, 0, 0);
-            toast.show();
-
+            Utility.networkToast(getActivity());
             mMovies.clear();
             mMovieAdapter.notifyDataSetChanged();
         }

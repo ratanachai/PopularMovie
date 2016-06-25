@@ -371,11 +371,11 @@ public class DetailActivityFragment extends BaseFragment {
 
         // Fetch videos from the Internet in background
         }else if(Utility.isNetworkAvailable(getActivity())) {
-
             FetchVideosTask fetchVideosTask = new FetchVideosTask();
             fetchVideosTask.execute(tmdb_movie_id);
 
         }else{
+            Utility.networkToast(getActivity());
             Log.v(LOG_TAG, "== No Network, Not in offline mode: will not try to fetch videos");
         }
     }
@@ -586,6 +586,7 @@ public class DetailActivityFragment extends BaseFragment {
             fetchReviewsTask.execute(tmdb_movie_id);
 
         }else{
+            Utility.networkToast(getActivity());
             Log.v(LOG_TAG, "== No Network, Not in offline mode: will not try to fetch reviews");
         }
     }
