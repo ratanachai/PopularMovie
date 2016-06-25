@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 
 import java.util.List;
+
 /**
  *  Defines Tables and column names for the app database.
  */
@@ -18,11 +19,6 @@ public class MovieContract {
     public static final String PATH_MOVIE = "movie";
     public static final String PATH_VIDEO = "video";
     public static final String PATH_REVIEW = "review";
-
-    public static long getMovieIdFromUri(Uri uri){
-        List<String> segment = uri.getPathSegments();
-        return Long.parseLong(segment.get(1));
-    }
 
     public static final class MovieEntry implements BaseColumns {
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_MOVIE).build();
@@ -90,6 +86,11 @@ public class MovieContract {
                     .appendPath(Long.toString(movieId))
                     .appendPath("reviews").build();
         }
+    }
+
+    public static long getMovieIdFromUri(Uri uri){
+        List<String> segment = uri.getPathSegments();
+        return Long.parseLong(segment.get(1));
     }
 
 }

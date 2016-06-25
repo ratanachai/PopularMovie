@@ -36,8 +36,7 @@ public class MovieProvider extends ContentProvider {
 
     private MovieDbHelper mOpenHelper;
 
-    // This UriMatcher will match each URI to integer constants defined above.
-    // Test this by uncommenting the testUriMatcher test within TestUriMatcher.
+    // UriMatcher will match each URI to integer constants defined here.
     static final int MOVIES = 11;
     static final int MOVIE = 12;
     static final int VIDEOS = 21;
