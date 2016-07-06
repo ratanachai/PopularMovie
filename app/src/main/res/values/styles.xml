@@ -9,19 +9,12 @@
         <!--<item name="android:actionBarStyle">@style/ThemeActionBar</item>-->
         <!--<item name="windowActionBarOverlay">true</item>-->
     </style>
-    <style name="DetailActivityTheme" parent="AppTheme">
-        <item name="android:windowActionBarOverlay">true</item>
-        <item name="android:actionBarStyle">@style/CustomActionBarTheme</item>
-        <!--For compatibility-->
-        <item name="windowActionBarOverlay">true</item>
-        <item name="actionBarStyle">@style/CustomActionBarTheme</item>
+    <style name="DetailActivityTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/blue_800</item>
+        <item name="colorPrimaryDark">@color/blue_900</item>
+        <item name="colorAccent">@color/pink_500</item>
+        <!-- center text vertically with calendar icon for release date; More space between lines in overview/review -->
         <item name="android:gravity">center_vertical</item>
         <item name="android:lineSpacingExtra">6dp</item>
-    </style>
-    <!-- the theme applied to the application or activity -->
-    <style name="CustomActionBarTheme" parent="Widget.AppCompat.ActionBar.Solid">
-        <item name="android:background">@color/transparent_blue_900</item>
-        <!--For compatibility-->
-        <item name="background">@color/transparent_blue_900</item>
     </style>
 </resources>

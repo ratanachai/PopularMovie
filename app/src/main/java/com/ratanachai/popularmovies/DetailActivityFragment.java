@@ -14,7 +14,9 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ShareActionProvider;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -60,23 +62,14 @@ public class DetailActivityFragment extends BaseFragment {
     private ShareActionProvider mShareActionProvider;
     private TrailerAdapter mTrailerAdapter;
 
-//    private Typeface lobster;
-
     public interface Callback {
         // All activity that contain this fragment must implement this Callback
         // (MainActivity for tablet and DetailActivity for phone)
         void onAddRemoveMovieFromFavorite(boolean needReFetch);
     }
 
-//    @Override
-//    public void onAttach(Activity activity) {
-//        super.onAttach(activity);
-//        lobster = Typeface.createFromAsset(getActivity().getAssets(), "Lobster-Regular.ttf");
-//    }
-
     @Override
     public void onCreate(Bundle savedInstanceState){
-        Log.v(LOG_TAG, "=== onCreate");
         super.onCreate(savedInstanceState);
         mSortBy = getSortBy();
 
@@ -101,10 +94,8 @@ public class DetailActivityFragment extends BaseFragment {
                 mAddVideosAndReviews = true;
             }
         }
-
         // Create Adapter
         mTrailerAdapter = new TrailerAdapter(mVideos);
-
     }
 
     @Override
@@ -120,11 +111,13 @@ public class DetailActivityFragment extends BaseFragment {
         setHasOptionsMenu(true);
         final Context c = getActivity();
         mRootview = inflater.inflate(R.layout.fragment_detail, container, false);
+        Toolbar toolBar = (Toolbar) mRootview.findViewById(R.id.tool_bar);
+        ((AppCompatActivity)getActivity()).setSupportActionBar(toolBar);
 
-        if (getArguments() == null) return mRootview; //Early Exit
+        // Early Exit if no argument from MainActivity
+        if (getArguments() == null) return mRootview;
 
-        // Set Activity Title & Movie Title TextView
-        getActivity().setTitle(mMovieInfo[1]);
+        // Set Movie Title TextView
         TextView titleTv = (TextView) mRootview.findViewById(R.id.movie_title);
         titleTv.setText(mMovieInfo[1]);
         titleTv.setContentDescription(getString(R.string.movie_title, mMovieInfo[1]));
@@ -220,6 +213,7 @@ public class DetailActivityFragment extends BaseFragment {
     }
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu,inflater);
         inflater.inflate(R.menu.menu_detail_fragment, menu);
 
         /** Based on Android ActionBarCompat-ShareActionProvider Sample
