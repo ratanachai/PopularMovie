@@ -182,9 +182,9 @@
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/favorite_toggle"
         android:src="@drawable/ic_heart"
-        app:backgroundTint="@color/pink_500"
         android:layout_gravity="end|bottom"
         app:fabSize="normal"
+        app:backgroundTint="@color/pink_500"
         app:borderWidth="0dp"
         app:elevation="6dp"
         app:pressedTranslationZ="12dp"

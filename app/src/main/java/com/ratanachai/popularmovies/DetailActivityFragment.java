@@ -352,7 +352,8 @@ public class DetailActivityFragment extends BaseFragment {
     }
     /** Code for Movie Video (Trailer) ---------------------------------------------------------- */
     private void getVideosFromInternetOrDb(String tmdb_movie_id){
-
+        //TODO: clean up confusing sort_mode (in setting and in swipeview)
+        // Now swipeview has precedence over setting?
         // Get Videos from Database
         if(isSortByFavorite(mSortBy)) {
             ContentResolver cr = getActivity().getContentResolver();
