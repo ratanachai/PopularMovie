@@ -28,16 +28,8 @@
 
         <!-- White Surface -->
         <android.support.v7.widget.CardView
-            app:cardElevation="2dp"
-            app:cardCornerRadius="2dp"
-            app:contentPadding="16dp"
-            app:cardBackgroundColor="@android:color/white"
-            app:cardUseCompatPadding="true"
-            android:layout_margin="16dp"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <LinearLayout
+            style="@style/CardStyle">
+        <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
@@ -116,74 +108,79 @@
                     android:paddingBottom="16dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
-
-                <View
-                    android:background="@android:color/darker_gray"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp" />
-
-                <LinearLayout
-                    android:id="@+id/movie_trailers_container"
-                    android:orientation="vertical"
-                    android:paddingBottom="16dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <TextView
-                        android:id="@+id/movie_trailers_label"
-                        android:text="@string/movie_trailers_label"
-                        android:textSize="@dimen/abc_text_size_medium_material"
-                        android:textStyle="bold"
-                        android:paddingTop="6dp"
-                        android:paddingBottom="6dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-
-                    <com.ratanachai.popularmovies.MyGridView
-                        android:id="@+id/gridview_trailers"
-                        android:stretchMode="columnWidth"
-                        android:padding="0dp"
-                        android:verticalSpacing="12dp"
-                        android:horizontalSpacing="6dp"
-                        android:gravity="center"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        />
-                </LinearLayout>
-
-                <View
-                    android:background="@android:color/darker_gray"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp" />
-
-                <LinearLayout
-                    android:id="@+id/movie_reviews_container"
-                    android:orientation="vertical"
-                    android:paddingBottom="16dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:id="@+id/movie_reviews_label"
-                        android:text="@string/movie_reviews_label"
-                        android:textSize="@dimen/abc_text_size_medium_material"
-                        android:textStyle="bold"
-                        android:paddingTop="6dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
-
             </LinearLayout>
-            </android.support.v7.widget.CardView>
+        </android.support.v7.widget.CardView>
+
+        <!-- Trailer section-->
+        <android.support.v7.widget.CardView
+            android:id="@+id/movie_trailers_card"
+            android:visibility="gone" tools:visibility="visible"
+            style="@style/CardStyle">
+        <LinearLayout
+            android:id="@+id/movie_trailers_container"
+            android:orientation="vertical"
+            android:paddingBottom="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/movie_trailers_label"
+                android:text="@string/movie_trailers_label"
+                android:textSize="@dimen/abc_text_size_medium_material"
+                android:textStyle="bold"
+                android:paddingTop="6dp"
+                android:paddingBottom="6dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <com.ratanachai.popularmovies.MyGridView
+                android:id="@+id/gridview_trailers"
+                android:stretchMode="columnWidth"
+                android:padding="0dp"
+                android:verticalSpacing="12dp"
+                android:horizontalSpacing="6dp"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+        </LinearLayout>
+        </android.support.v7.widget.CardView>
+
+        <!-- Review section-->
+        <android.support.v7.widget.CardView
+            android:id="@+id/movie_reviews_card"
+            android:visibility="gone" tools:visibility="visible"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            style="@style/CardStyle">
+        <LinearLayout
+            android:id="@+id/movie_reviews_container"
+            android:orientation="vertical"
+            android:paddingBottom="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/movie_reviews_label"
+                android:text="@string/movie_reviews_label"
+                android:textSize="@dimen/abc_text_size_medium_material"
+                android:textStyle="bold"
+                android:paddingTop="6dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        </android.support.v7.widget.CardView>
+
         </LinearLayout>
     </ScrollView>
     <!-- Toolbar as Actionbar -->
     <android.support.v7.widget.Toolbar
         android:id="@+id/tool_bar"
         android:theme="@style/ToolBarStyle"
+        android:paddingRight="8dp"
+        android:paddingEnd="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        />
+         />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/favorite_toggle"

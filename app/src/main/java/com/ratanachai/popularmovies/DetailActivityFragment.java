@@ -208,11 +208,12 @@ public class DetailActivityFragment extends BaseFragment {
 
         // Restore Trailer Videos and Reviews (First time added via OnPostExecute)
         if (mAddVideosAndReviews) {
-            mTrailerAdapter.notifyDataSetChanged();
+            showTrailers();
             addReviewsTextView(mReviews);
         }
         return mRootview;
     }
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu,inflater);
@@ -496,7 +497,7 @@ public class DetailActivityFragment extends BaseFragment {
         @Override
         protected void onPostExecute(ArrayList<Video> videos) {
             if (videos != null) {
-                mTrailerAdapter.notifyDataSetChanged();
+                showTrailers();
                 // Update ShareIntent IF onCreateOptionsMenu already happened and there's some videos
                 if (mShareActionProvider != null & !mVideos.isEmpty()) {
                     Log.v(LOG_TAG, "=== onPostExec() Updating intent with " + videos.get(0).getYoutubeUrl());
@@ -588,8 +589,15 @@ public class DetailActivityFragment extends BaseFragment {
         }
     }
 
-    private void addReviewsTextView(ArrayList<Review> reviews) {
+    private void showTrailers() {
+        mTrailerAdapter.notifyDataSetChanged();
+        if(mTrailerAdapter.getCount() > 0)
+            mRootview.findViewById(R.id.movie_trailers_card).setVisibility(View.VISIBLE);
+    }
 
+    private void addReviewsTextView(ArrayList<Review> reviews) {
+        if (reviews.size() > 0)
+            mRootview.findViewById(R.id.movie_reviews_card).setVisibility(View.VISIBLE);
         ViewGroup containerView = (ViewGroup) mRootview.findViewById(R.id.movie_reviews_container);
         for (int i=0; i < reviews.size(); i++) {
 
