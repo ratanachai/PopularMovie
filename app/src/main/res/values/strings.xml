@@ -21,8 +21,8 @@
 
 
     <!-- Movie Label and place holder -->
-    <string name="movie_trailers_label">Trailers: </string>
-    <string name="movie_reviews_label">Reviews: </string>
+    <string name="movie_trailers_label">TRAILERS</string>
+    <string name="movie_reviews_label">REVIEWS</string>
     <string name="movie_title_placeholder">Please Select a Movie</string>
     <string name="movie_overview_placeholder">Please Select a Movie to view Movie Detail with Video
     Trailer and User Review</string>
