@@ -598,6 +598,7 @@ public class DetailActivityFragment extends BaseFragment {
     private void addReviewsTextView(ArrayList<Review> reviews) {
         if (reviews.size() > 0)
             mRootview.findViewById(R.id.movie_reviews_card).setVisibility(View.VISIBLE);
+
         ViewGroup containerView = (ViewGroup) mRootview.findViewById(R.id.movie_reviews_container);
         for (int i=0; i < reviews.size(); i++) {
 
@@ -610,6 +611,10 @@ public class DetailActivityFragment extends BaseFragment {
             reviewContent.setContentDescription(getString(R.string.movie_review,
                     reviewAuthor.getText(), reviewContent.getText()));
             containerView.addView(rootView);
+
+            // Add separator line if it is not the last item
+            if(i == (reviews.size() - 1))
+                rootView.findViewById(R.id.separator).setVisibility(View.GONE);
 
         }
     }
