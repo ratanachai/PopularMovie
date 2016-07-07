@@ -112,7 +112,9 @@ public class DetailActivityFragment extends BaseFragment {
         final Context c = getActivity();
         mRootview = inflater.inflate(R.layout.fragment_detail, container, false);
         Toolbar toolBar = (Toolbar) mRootview.findViewById(R.id.tool_bar);
+        toolBar.setTitle("");
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolBar);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // Early Exit if no argument from MainActivity
         if (getArguments() == null) return mRootview;

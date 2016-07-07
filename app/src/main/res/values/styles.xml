@@ -17,4 +17,9 @@
         <item name="android:gravity">center_vertical</item>
         <item name="android:lineSpacingExtra">6dp</item>
     </style>
+    <!-- ToolBar -->
+    <style name="ToolBarStyle" parent="Theme.AppCompat">
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="android:textColorSecondary">@android:color/white</item>
+    </style>
 </resources>
