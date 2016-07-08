@@ -24,9 +24,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -211,6 +214,11 @@ public class DetailActivityFragment extends BaseFragment {
             showTrailers();
             addReviewsTextView(mReviews);
         }
+
+        // Set cards moving up animation
+        LinearLayout cards = (LinearLayout) mRootview.findViewById(R.id.movie_info_cards);
+        Animation anim = AnimationUtils.loadAnimation(c, R.anim.move_up);
+        cards.setAnimation(anim);
         return mRootview;
     }
 
