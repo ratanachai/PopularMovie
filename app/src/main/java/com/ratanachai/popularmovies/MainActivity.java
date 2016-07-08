@@ -2,7 +2,9 @@ package com.ratanachai.popularmovies;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -11,6 +13,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 
 public class MainActivity extends AppCompatActivity
@@ -105,14 +108,23 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onItemSelected(String[] movieInfo, String sortBy) {
+    public void onItemSelected(String[] movieInfo, String sortBy, View view) {
         if (mTwoPane) {
             replaceDetailFragment(movieInfo, sortBy);
         } else {
             Intent intent = new Intent(this, DetailActivity.class)
                     .putExtra("strings", movieInfo)
                     .putExtra("SortBy", sortBy);
-            startActivity(intent);
+
+            // Add Shared element activity transition for poster
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                ActivityOptionsCompat options = ActivityOptionsCompat
+                        .makeSceneTransitionAnimation(this, view, "poster_zoom");
+                startActivity(intent, options.toBundle());
+            }else {
+                startActivity(intent);
+            }
+
         }
     }
 

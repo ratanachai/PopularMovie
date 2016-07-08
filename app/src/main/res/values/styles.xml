@@ -6,8 +6,6 @@
         <item name="colorPrimary">@color/blue_800</item>
         <item name="colorPrimaryDark">@color/blue_900</item>
         <item name="colorAccent">@color/pink_500</item>
-        <!--<item name="android:actionBarStyle">@style/ThemeActionBar</item>-->
-        <!--<item name="windowActionBarOverlay">true</item>-->
     </style>
     <style name="DetailActivityTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/blue_800</item>

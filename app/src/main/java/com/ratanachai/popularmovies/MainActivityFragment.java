@@ -46,7 +46,7 @@ public class MainActivityFragment extends BaseFragment {
     /** A callback interface that all activities containing this fragment must implement.
      *  This mechanism allows activities to be notified of item selections. */
     public interface Callback {
-        void onItemSelected(String[] movieInfo, String sortBy);
+        void onItemSelected(String[] movieInfo, String sortBy, View view);
         void onMoviesReady(String[] movieInfo, String sortBy);
     }
 
@@ -108,7 +108,7 @@ public class MainActivityFragment extends BaseFragment {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                ((Callback) c).onItemSelected(mMovies.get(position).getAll(), mSortBy); }
+                ((Callback) c).onItemSelected(mMovies.get(position).getAll(), mSortBy, view); }
         });
 
         return rootView;

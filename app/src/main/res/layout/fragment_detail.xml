@@ -10,6 +10,7 @@
         android:id="@+id/movie_poster"
         tools:src="@drawable/poster"
         tools:scaleType="centerCrop"
+        android:transitionName="poster_zoom"
         android:importantForAccessibility="no"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
