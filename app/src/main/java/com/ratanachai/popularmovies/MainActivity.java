@@ -2,6 +2,8 @@ package com.ratanachai.popularmovies;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -14,6 +16,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 
 
 public class MainActivity extends AppCompatActivity
@@ -118,8 +124,11 @@ public class MainActivity extends AppCompatActivity
 
             // Add Shared element activity transition for poster
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                ImageView imageView = (ImageView) view.findViewById(R.id.grid_item_movie);
+                // Generate Bitmap then save into disk
+                createJpgFromImageView(imageView);
                 ActivityOptionsCompat options = ActivityOptionsCompat
-                        .makeSceneTransitionAnimation(this, view, "poster_zoom");
+                        .makeSceneTransitionAnimation(this, imageView, "poster_zoom");
                 startActivity(intent, options.toBundle());
             }else {
                 startActivity(intent);
@@ -127,7 +136,26 @@ public class MainActivity extends AppCompatActivity
 
         }
     }
+    private String createJpgFromImageView(ImageView imageView){
+        String filename = "InterimPoster";
+        try{
+            // Get bitmap from ImageView
+            BitmapDrawable drawable = (BitmapDrawable)imageView.getDrawable();
+            Bitmap bitmap = drawable.getBitmap();
+            // Convert bitmap to JPG
+            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+            // Write into JPG file
+            FileOutputStream fo = openFileOutput(filename, Context.MODE_PRIVATE);
+            fo.write(bytes.toByteArray());
+            fo.close();
 
+        } catch (Exception e){
+            e.printStackTrace();
+            filename = null;
+        }
+        return filename;
+    }
     @Override
     public void onMoviesReady(String[] movieInfo, String sortBy) {
         if (mTwoPane)

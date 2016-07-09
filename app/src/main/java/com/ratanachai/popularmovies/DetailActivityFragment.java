@@ -8,6 +8,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -44,6 +47,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -147,10 +151,19 @@ public class DetailActivityFragment extends BaseFragment {
 
         // Set Background Poster
         ImageView iv = (ImageView) mRootview.findViewById(R.id.movie_poster);
-        Picasso.with(c).load("http://image.tmdb.org/t/p/w500" + mMovieInfo[2])
-                .fit()
-                .centerCrop()
-                .into(iv);
+        try {
+            // Prepare "InterimPoster" jpeg file to be placeholder image
+            Bitmap bitmap = BitmapFactory.decodeStream(c.openFileInput("InterimPoster"));
+            Picasso.with(c).load("http://image.tmdb.org/t/p/w780" + mMovieInfo[2])
+                    .placeholder(new BitmapDrawable(getResources(), bitmap))
+                    .fit()
+                    .centerCrop()
+                    .noFade()
+                    .into(iv);
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
 
         // Set Listener: Add/Remove TMDB_MOV_ID on checked/unchecked
         FloatingActionButton favButton = (FloatingActionButton) mRootview.findViewById(R.id.favorite_toggle);

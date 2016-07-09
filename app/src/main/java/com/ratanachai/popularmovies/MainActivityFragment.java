@@ -247,6 +247,8 @@ public class MainActivityFragment extends BaseFragment {
             Picasso.with(getActivity())
                     .load("http://image.tmdb.org/t/p/w342" + movie.getPosterPath())
                     .placeholder(R.drawable.film)
+                    .fit()
+                    .centerCrop()
                     .into(imageView);
             imageView.setContentDescription(movie.getTitle());
 
