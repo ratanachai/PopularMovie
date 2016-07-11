@@ -1,10 +1,10 @@
 package com.ratanachai.popularmovies;
 
+import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -118,7 +118,8 @@ public class DetailActivityFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.v(LOG_TAG, "=== onCreateView");
         setHasOptionsMenu(true);
-        final Context c = getActivity();
+        final Activity activity = getActivity();
+
         mRootview = inflater.inflate(R.layout.fragment_detail, container, false);
         Toolbar toolBar = (Toolbar) mRootview.findViewById(R.id.tool_bar);
         toolBar.setTitle("");
@@ -155,7 +156,7 @@ public class DetailActivityFragment extends BaseFragment {
         try {
             // Get/Prepare "InterimPoster" jpeg file to be placeholder image
             final ImageView iv = (ImageView) mRootview.findViewById(R.id.movie_poster);
-            final Bitmap bitmap = BitmapFactory.decodeStream(c.openFileInput("InterimPoster"));
+            final Bitmap bitmap = BitmapFactory.decodeStream(activity.openFileInput("InterimPoster"));
             final Drawable lowResPoster = new BitmapDrawable(getResources(), bitmap);
             iv.setImageDrawable(lowResPoster);
 
@@ -165,7 +166,7 @@ public class DetailActivityFragment extends BaseFragment {
             Runnable runnable = new Runnable() {
                 @Override
                 public void run() {
-                    Picasso.with(c).load("http://image.tmdb.org/t/p/w780" + mMovieInfo[2])
+                    Picasso.with(activity).load("http://image.tmdb.org/t/p/w780" + mMovieInfo[2])
                             // still need placeholder here otherwise will flash of white image
                             .placeholder(lowResPoster)
                             .error(lowResPoster)
@@ -184,7 +185,7 @@ public class DetailActivityFragment extends BaseFragment {
         // Set Listener: Add/Remove TMDB_MOV_ID on checked/unchecked
         FloatingActionButton favButton = (FloatingActionButton) mRootview.findViewById(R.id.favorite_toggle);
         favButton.setContentDescription(getString(R.string.add_to_fav));
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         final String key = getString(R.string.pref_movie_ids_key);
         final String tmdb_id = mMovieInfo[0];
 
@@ -205,7 +206,7 @@ public class DetailActivityFragment extends BaseFragment {
                     // In case of Favorite Movie Criteria ..
                     // MainFragment will need to refetch movies if movie added
                     if ( isSortByFavorite(mSortBy) )
-                        ((Callback) c).onAddRemoveMovieFromFavorite(false);
+                        ((Callback) activity).onAddRemoveMovieFromFavorite(false);
 
                     saveVideosOffline(movieRowId);
                     saveReviewOffline(movieRowId);
@@ -220,7 +221,7 @@ public class DetailActivityFragment extends BaseFragment {
                     // In case of Favorite Movie Criteria ..
                     // MainFragment will need to refetch movies if movie removed
                     if ( isSortByFavorite(mSortBy) )
-                        ((Callback) c).onAddRemoveMovieFromFavorite(true);
+                        ((Callback) activity).onAddRemoveMovieFromFavorite(true);
                 }
                 // Save new Set into SharedPref
                 SharedPreferences.Editor editor = prefs.edit();
@@ -235,7 +236,7 @@ public class DetailActivityFragment extends BaseFragment {
 
         // Set Movie Trailer
         GridView gv = (GridView) mRootview.findViewById(R.id.gridview_trailers);
-        gv.setNumColumns(c.getResources().getInteger(R.integer.trailer_num_columns));
+        gv.setNumColumns(activity.getResources().getInteger(R.integer.trailer_num_columns));
         gv.setAdapter(mTrailerAdapter);
 
         // Restore Trailer Videos and Reviews (First time added via OnPostExecute)
@@ -248,8 +249,11 @@ public class DetailActivityFragment extends BaseFragment {
         LinearLayout cards = (LinearLayout) mRootview.findViewById(R.id.movie_info_cards);
         Animation anim = AnimationUtils.loadAnimation(c, R.anim.move_up);
         cards.setAnimation(anim);
+
         return mRootview;
     }
+
+
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
