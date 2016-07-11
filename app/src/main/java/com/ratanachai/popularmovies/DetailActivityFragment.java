@@ -14,6 +14,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -22,6 +23,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
+import android.transition.Transition;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -29,6 +31,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
@@ -246,9 +249,22 @@ public class DetailActivityFragment extends BaseFragment {
         }
 
         // Set cards moving up animation
-        LinearLayout cards = (LinearLayout) mRootview.findViewById(R.id.movie_info_cards);
-        Animation anim = AnimationUtils.loadAnimation(c, R.anim.move_up);
-        cards.setAnimation(anim);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+            Transition tr = activity.getWindow().getSharedElementEnterTransition();
+            tr.addListener(new Transition.TransitionListener() {
+                @Override
+                public void onTransitionEnd(Transition transition) {
+                    LinearLayout cards = (LinearLayout) mRootview.findViewById(R.id.movie_info_cards);
+                    Animation anim = AnimationUtils.loadAnimation(activity, R.anim.move_up);
+                    anim.setInterpolator(new AccelerateDecelerateInterpolator());
+                    cards.setAnimation(anim);
+                }
+                @Override public void onTransitionStart(Transition transition) {}
+                @Override public void onTransitionCancel(Transition transition) {}
+                @Override public void onTransitionPause(Transition transition) {}
+                @Override public void onTransitionResume(Transition transition) {}
+            });
+        }
 
         return mRootview;
     }
