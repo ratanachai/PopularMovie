@@ -11,9 +11,11 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MenuItemCompat;
@@ -149,17 +151,31 @@ public class DetailActivityFragment extends BaseFragment {
         releaseDateTv.append(" " + mMovieInfo[5]);
         releaseDateTv.setContentDescription(getString(R.string.movie_release_date, mMovieInfo[5]));
 
-        // Set Background Poster
-        ImageView iv = (ImageView) mRootview.findViewById(R.id.movie_poster);
+        // Set Background Poster in Try-catch in case file cannot be open
         try {
-            // Prepare "InterimPoster" jpeg file to be placeholder image
-            Bitmap bitmap = BitmapFactory.decodeStream(c.openFileInput("InterimPoster"));
-            Picasso.with(c).load("http://image.tmdb.org/t/p/w780" + mMovieInfo[2])
-                    .placeholder(new BitmapDrawable(getResources(), bitmap))
-                    .fit()
-                    .centerCrop()
-                    .noFade()
-                    .into(iv);
+            // Get/Prepare "InterimPoster" jpeg file to be placeholder image
+            final ImageView iv = (ImageView) mRootview.findViewById(R.id.movie_poster);
+            final Bitmap bitmap = BitmapFactory.decodeStream(c.openFileInput("InterimPoster"));
+            final Drawable lowResPoster = new BitmapDrawable(getResources(), bitmap);
+            iv.setImageDrawable(lowResPoster);
+
+            // Download higher resolution image with 0.8 sec delay to avoid load complete before
+            // animation finishes (causing some flicker/overflow image problem).
+            Handler handler = new Handler();
+            Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+                    Picasso.with(c).load("http://image.tmdb.org/t/p/w780" + mMovieInfo[2])
+                            // still need placeholder here otherwise will flash of white image
+                            .placeholder(lowResPoster)
+                            .error(lowResPoster)
+                            .fit()
+                            .centerCrop()
+                            .noFade() // without this image replacement will not be smooth
+                            .into(iv);
+                }
+            };
+            handler.postDelayed(runnable, 800);
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
