@@ -624,18 +624,17 @@ public class DetailActivityFragment extends BaseFragment {
         for (int i=0; i < reviews.size(); i++) {
 
             View v = getLayoutInflater(null).inflate(R.layout.review_item, null);
-            View rootView = v.getRootView();
             TextView reviewAuthor = (TextView) v.findViewById(R.id.movie_review_author);
             TextView reviewContent = (TextView) v.findViewById(R.id.movie_review_content);
             reviewAuthor.setText(reviews.get(i).getAuthor());
             reviewContent.setText(reviews.get(i).getContent());
             reviewContent.setContentDescription(getString(R.string.movie_review,
                     reviewAuthor.getText(), reviewContent.getText()));
-            containerView.addView(rootView);
+            containerView.addView(v);
 
             // Add separator line if it is not the last item
             if(i == (reviews.size() - 1))
-                rootView.findViewById(R.id.separator).setVisibility(View.GONE);
+                v.findViewById(R.id.separator).setVisibility(View.GONE);
 
         }
     }
