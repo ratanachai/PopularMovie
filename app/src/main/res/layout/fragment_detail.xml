@@ -22,10 +22,10 @@
         <!-- The whole moving Plane of card (also, to add Top space on top of the surface) -->
         <LinearLayout
             android:id="@+id/movie_info_cards"
-            android:paddingTop="@dimen/cards_distance_from_top"
-            android:background="@android:color/transparent"
             android:orientation="vertical"
-            android:paddingBottom="@dimen/activity_vertical_margin"
+            android:paddingTop="@dimen/cards_distance_from_top" tools:paddingTop="300dp"
+            android:paddingBottom="@dimen/vertical_margin"
+            android:background="@android:color/transparent"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -35,15 +35,13 @@
             android:visibility="invisible" tools:visibility="visible"
             style="@style/CardStyle">
         <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            style="@style/CardContentContainerStyle">
                 <TextView
                     android:id="@+id/movie_title"
                     android:text="@string/movie_title_placeholder"
                     android:textSize="@dimen/abc_text_size_headline_material"
                     android:textStyle="bold"
-                    android:layout_marginBottom="@dimen/activity_vertical_margin"
+                    android:layout_marginBottom="@dimen/vertical_margin"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
@@ -110,7 +108,6 @@
                     android:id="@+id/movie_overview"
                     android:text="@string/movie_overview_placeholder"
                     android:textSize="@dimen/abc_text_size_small_material"
-                    android:paddingBottom="16dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
         </LinearLayout>
@@ -123,11 +120,7 @@
             style="@style/CardStyle">
         <LinearLayout
             android:id="@+id/movie_trailers_container"
-            android:orientation="vertical"
-            android:paddingBottom="16dp"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
+            style="@style/CardContentContainerStyle">
             <TextView
                 android:id="@+id/movie_trailers_label"
                 android:text="@string/movie_trailers_label"
@@ -135,7 +128,7 @@
 
             <com.ratanachai.popularmovies.MyGridView
                 android:id="@+id/gridview_trailers"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:layout_marginTop="@dimen/vertical_margin"
                 android:stretchMode="columnWidth"
                 android:padding="0dp"
                 android:verticalSpacing="12dp"
@@ -154,11 +147,7 @@
             style="@style/CardStyle">
         <LinearLayout
             android:id="@+id/movie_reviews_container"
-            android:orientation="vertical"
-            android:paddingBottom="16dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
+            style="@style/CardContentContainerStyle">
             <TextView
                 android:id="@+id/movie_reviews_label"
                 android:text="@string/movie_reviews_label"

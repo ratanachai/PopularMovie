@@ -15,7 +15,7 @@
     <TextView
         android:id="@+id/movie_trailer_item"
         android:text="@string/movie_trailer_placeholder"
-        android:padding="@dimen/activity_vertical_margin"
+        android:padding="@dimen/vertical_margin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="left|top"

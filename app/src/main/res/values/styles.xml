@@ -24,12 +24,21 @@
     <style name="CardStyle">
         <item name="cardElevation">2dp</item>
         <item name="cardCornerRadius">2dp</item>
-        <item name="contentPadding">@dimen/activity_horizontal_margin</item>
+        <item name="contentPaddingTop">@dimen/vertical_margin</item>
+        <item name="contentPaddingBottom">@dimen/vertical_margin</item>
+        <item name="contentPaddingLeft">@dimen/horizontal_margin</item>
+        <item name="contentPaddingRight">@dimen/horizontal_margin</item>
         <item name="cardBackgroundColor">@android:color/white</item>
         <item name="cardUseCompatPadding">true</item>
-        <item name="android:layout_marginLeft">@dimen/activity_horizontal_margin</item>
-        <item name="android:layout_marginRight">@dimen/activity_horizontal_margin</item>
-        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:layout_marginLeft">@dimen/card_horizontal_margin</item>
+        <item name="android:layout_marginRight">@dimen/card_horizontal_margin</item>
+        <item name="android:layout_marginBottom">@dimen/card_bottom_margin</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+    <style name="CardContentContainerStyle">
+        <item name="android:orientation">vertical</item>
+        <item name="android:paddingBottom">@dimen/card_container_bottom_padding</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
@@ -43,5 +52,4 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
-
 </resources>

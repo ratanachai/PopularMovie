@@ -1,3 +1,5 @@
 <resources>
+    <dimen name="horizontal_margin">32dp</dimen>
     <dimen name="cards_distance_from_top">280dp</dimen>
+    <dimen name="card_horizontal_margin">40dp</dimen>
 </resources>
