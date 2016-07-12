@@ -2,7 +2,7 @@
 <set xmlns:android="http://schemas.android.com/apk/res/android">
     <translate
         android:duration="500"
-        android:fromYDelta="600"
+        android:fromYDelta="@integer/move_up_from"
         android:toYDelta="0"
         />
 </set>

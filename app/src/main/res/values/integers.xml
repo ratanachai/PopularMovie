@@ -2,4 +2,5 @@
 <resources>
     <integer name="num_columns">2</integer>
     <integer name="trailer_num_columns">2</integer>
+    <integer name="move_up_from">450</integer>
 </resources>

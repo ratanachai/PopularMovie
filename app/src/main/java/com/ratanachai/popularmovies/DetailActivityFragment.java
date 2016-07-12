@@ -20,6 +20,7 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.transition.Transition;
@@ -70,8 +71,10 @@ public class DetailActivityFragment extends BaseFragment {
     private ArrayList<Review> mReviews = new ArrayList<>();
     private View mRootview;
     private boolean mAddVideosAndReviews = false;
+    private boolean doneLoadAndMoveUp = false;
     private ShareActionProvider mShareActionProvider;
     private TrailerAdapter mTrailerAdapter;
+
 
     public interface Callback {
         // All activity that contain this fragment must implement this Callback
@@ -122,6 +125,7 @@ public class DetailActivityFragment extends BaseFragment {
         setHasOptionsMenu(true);
         final Activity activity = getActivity();
 
+        // TODO: Refactor
         mRootview = inflater.inflate(R.layout.fragment_detail, container, false);
         Toolbar toolBar = (Toolbar) mRootview.findViewById(R.id.tool_bar);
         toolBar.setTitle("");
@@ -156,7 +160,8 @@ public class DetailActivityFragment extends BaseFragment {
 
         // In Try-catch in case file cannot be open
         final ImageView iv = (ImageView) mRootview.findViewById(R.id.movie_poster);
-        final String highResUri = "http://image.tmdb.org/t/p/w780" + mMovieInfo[2];
+        final CardView overview_card = (CardView) mRootview.findViewById(R.id.movie_overview_card);
+        final String highResUri = "http://image.tmdb.org/t/p/original" + mMovieInfo[2];
         try {
             // Get/Prepare "InterimPoster" jpeg file to be placeholder image
             Bitmap bitmap = BitmapFactory.decodeStream(activity.openFileInput("InterimPoster"));
@@ -170,23 +175,20 @@ public class DetailActivityFragment extends BaseFragment {
                 tr.addListener(new Transition.TransitionListener() {
                     @Override
                     public void onTransitionEnd(Transition transition) {
-                        // Download higher resolution image after transition ends to avoid load complete
-                        // before animation finishes (causing some flicker/overflow image problem).
-                        loadHighResPoster(activity, highResUri, lowResPoster, iv);
-
-                        // Finally Set cards moving up animation
-                        animateCardsMoveUp(activity);
+                        loadHighResMoveUpCards(overview_card, activity, highResUri, lowResPoster, iv);
                     }
                     @Override public void onTransitionStart(Transition transition) {}
                     @Override public void onTransitionCancel(Transition transition) {}
                     @Override public void onTransitionPause(Transition transition) {}
                     @Override public void onTransitionResume(Transition transition) {}
                 });
+                // In case View is recreated without transition from MainActivity (e.g. screen rotated)
+                if (!doneLoadAndMoveUp)
+                    loadHighResMoveUpCards(overview_card, activity, highResUri, lowResPoster, iv);
+
+            // For API<21 (No Transition animation), just repalce with high-res ASAP.
             } else {
-                // For devices without Transition animation (API < 21), just repalce
-                // with high-res whenever it is ready.
-                loadHighResPoster(activity, highResUri, lowResPoster, iv);
-                animateCardsMoveUp(activity);
+                loadHighResMoveUpCards(overview_card, activity, highResUri, lowResPoster, iv);
             }
 
         } catch (FileNotFoundException e) {
@@ -262,6 +264,17 @@ public class DetailActivityFragment extends BaseFragment {
         }
 
         return mRootview;
+    }
+
+    private void loadHighResMoveUpCards(CardView overview_card, Activity activity, String highResUri, Drawable lowResPoster, ImageView iv) {
+        // Download higher resolution image after transition ends to avoid load complete
+        // before animation finishes (causing some flicker/overflow image problem).
+        overview_card.setVisibility(View.VISIBLE);
+        loadHighResPoster(activity, highResUri, lowResPoster, iv);
+
+        // Finally Set cards moving up animation
+        animateCardsMoveUp(activity);
+        doneLoadAndMoveUp = true;
     }
 
     private void loadHighResPoster(Activity activity, String highResUri, Drawable lowResPoster, ImageView iv) {
