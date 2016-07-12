@@ -71,7 +71,6 @@ public class DetailActivityFragment extends BaseFragment {
     private ArrayList<Review> mReviews = new ArrayList<>();
     private View mRootview;
     private boolean mAddVideosAndReviews = false;
-    private boolean doneLoadAndMoveUp = false;
     private ShareActionProvider mShareActionProvider;
     private TrailerAdapter mTrailerAdapter;
 
@@ -182,8 +181,8 @@ public class DetailActivityFragment extends BaseFragment {
                     @Override public void onTransitionPause(Transition transition) {}
                     @Override public void onTransitionResume(Transition transition) {}
                 });
-                // In case View is recreated without transition from MainActivity (e.g. screen rotated)
-                if (!doneLoadAndMoveUp)
+                // In case screen rotated and view is recreated without transition from MainActivity
+                if (savedInstanceState != null)
                     loadHighResMoveUpCards(overview_card, activity, highResUri, lowResPoster, iv);
 
             // For API<21 (No Transition animation), just repalce with high-res ASAP.
@@ -269,12 +268,11 @@ public class DetailActivityFragment extends BaseFragment {
     private void loadHighResMoveUpCards(CardView overview_card, Activity activity, String highResUri, Drawable lowResPoster, ImageView iv) {
         // Download higher resolution image after transition ends to avoid load complete
         // before animation finishes (causing some flicker/overflow image problem).
-        overview_card.setVisibility(View.VISIBLE);
         loadHighResPoster(activity, highResUri, lowResPoster, iv);
 
         // Finally Set cards moving up animation
         animateCardsMoveUp(activity);
-        doneLoadAndMoveUp = true;
+        overview_card.setVisibility(View.VISIBLE);
     }
 
     private void loadHighResPoster(Activity activity, String highResUri, Drawable lowResPoster, ImageView iv) {
