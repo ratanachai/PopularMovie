@@ -122,11 +122,12 @@ public class MainActivity extends AppCompatActivity
                     .putExtra("strings", movieInfo)
                     .putExtra("SortBy", sortBy);
 
+            // Save Low-res poster into disk for a placeholder with/without transition animation
+            ImageView imageView = (ImageView) view.findViewById(R.id.grid_item_movie);
+            createJpgFromImageView(imageView);
+
             // Add Shared element activity transition for poster
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                ImageView imageView = (ImageView) view.findViewById(R.id.grid_item_movie);
-                // Generate Bitmap then save into disk
-                createJpgFromImageView(imageView);
                 ActivityOptionsCompat options = ActivityOptionsCompat
                         .makeSceneTransitionAnimation(this, imageView, "poster_zoom");
                 startActivity(intent, options.toBundle());

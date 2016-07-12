@@ -172,24 +172,21 @@ public class DetailActivityFragment extends BaseFragment {
                     public void onTransitionEnd(Transition transition) {
                         // Download higher resolution image after transition ends to avoid load complete
                         // before animation finishes (causing some flicker/overflow image problem).
-                        Picasso.with(activity).load(highResUri)
-                                // still need placeholder here otherwise will flash of white image
-                                .placeholder(lowResPoster).error(lowResPoster)
-                                .fit().centerCrop()
-                                .noFade() // without this image replacement will not be smooth
-                                .into(iv);
+                        loadHighResPoster(activity, highResUri, lowResPoster, iv);
 
                         // Finally Set cards moving up animation
-                        LinearLayout cards = (LinearLayout) mRootview.findViewById(R.id.movie_info_cards);
-                        Animation anim = AnimationUtils.loadAnimation(activity, R.anim.move_up);
-                        anim.setInterpolator(new AccelerateDecelerateInterpolator());
-                        cards.setAnimation(anim);
+                        animateCardsMoveUp(activity);
                     }
                     @Override public void onTransitionStart(Transition transition) {}
                     @Override public void onTransitionCancel(Transition transition) {}
                     @Override public void onTransitionPause(Transition transition) {}
                     @Override public void onTransitionResume(Transition transition) {}
                 });
+            } else {
+                // For devices without Transition animation (API < 21), just repalce
+                // with high-res whenever it is ready.
+                loadHighResPoster(activity, highResUri, lowResPoster, iv);
+                animateCardsMoveUp(activity);
             }
 
         } catch (FileNotFoundException e) {
@@ -267,7 +264,21 @@ public class DetailActivityFragment extends BaseFragment {
         return mRootview;
     }
 
+    private void loadHighResPoster(Activity activity, String highResUri, Drawable lowResPoster, ImageView iv) {
+        Picasso.with(activity).load(highResUri)
+                // still need placeholder here otherwise will flash of white image
+                .placeholder(lowResPoster).error(lowResPoster)
+                .fit().centerCrop()
+                .noFade() // without this image replacement will not be smooth
+                .into(iv);
+    }
 
+    private void animateCardsMoveUp(Activity activity) {
+        LinearLayout cards = (LinearLayout) mRootview.findViewById(R.id.movie_info_cards);
+        Animation anim = AnimationUtils.loadAnimation(activity, R.anim.move_up);
+        anim.setInterpolator(new AccelerateDecelerateInterpolator());
+        cards.setAnimation(anim);
+    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
