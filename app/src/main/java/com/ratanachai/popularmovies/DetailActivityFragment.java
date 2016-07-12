@@ -16,7 +16,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MenuItemCompat;
@@ -155,36 +154,53 @@ public class DetailActivityFragment extends BaseFragment {
         releaseDateTv.append(" " + mMovieInfo[5]);
         releaseDateTv.setContentDescription(getString(R.string.movie_release_date, mMovieInfo[5]));
 
-        // Set Background Poster in Try-catch in case file cannot be open
+        // In Try-catch in case file cannot be open
+        final ImageView iv = (ImageView) mRootview.findViewById(R.id.movie_poster);
+        final String highResUri = "http://image.tmdb.org/t/p/w780" + mMovieInfo[2];
         try {
             // Get/Prepare "InterimPoster" jpeg file to be placeholder image
-            final ImageView iv = (ImageView) mRootview.findViewById(R.id.movie_poster);
-            final Bitmap bitmap = BitmapFactory.decodeStream(activity.openFileInput("InterimPoster"));
+            Bitmap bitmap = BitmapFactory.decodeStream(activity.openFileInput("InterimPoster"));
             final Drawable lowResPoster = new BitmapDrawable(getResources(), bitmap);
+            // Set Background Poster with low-res image first
             iv.setImageDrawable(lowResPoster);
 
-            // Download higher resolution image with 0.8 sec delay to avoid load complete before
-            // animation finishes (causing some flicker/overflow image problem).
-            Handler handler = new Handler();
-            Runnable runnable = new Runnable() {
-                @Override
-                public void run() {
-                    Picasso.with(activity).load("http://image.tmdb.org/t/p/w780" + mMovieInfo[2])
-                            // still need placeholder here otherwise will flash of white image
-                            .placeholder(lowResPoster)
-                            .error(lowResPoster)
-                            .fit()
-                            .centerCrop()
-                            .noFade() // without this image replacement will not be smooth
-                            .into(iv);
-                }
-            };
-            handler.postDelayed(runnable, 800);
+            // Set High resolution image later after transition ends
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+                Transition tr = activity.getWindow().getSharedElementEnterTransition();
+                tr.addListener(new Transition.TransitionListener() {
+                    @Override
+                    public void onTransitionEnd(Transition transition) {
+                        // Download higher resolution image after transition ends to avoid load complete
+                        // before animation finishes (causing some flicker/overflow image problem).
+                        Picasso.with(activity).load(highResUri)
+                                // still need placeholder here otherwise will flash of white image
+                                .placeholder(lowResPoster).error(lowResPoster)
+                                .fit().centerCrop()
+                                .noFade() // without this image replacement will not be smooth
+                                .into(iv);
+
+                        // Finally Set cards moving up animation
+                        LinearLayout cards = (LinearLayout) mRootview.findViewById(R.id.movie_info_cards);
+                        Animation anim = AnimationUtils.loadAnimation(activity, R.anim.move_up);
+                        anim.setInterpolator(new AccelerateDecelerateInterpolator());
+                        cards.setAnimation(anim);
+                    }
+                    @Override public void onTransitionStart(Transition transition) {}
+                    @Override public void onTransitionCancel(Transition transition) {}
+                    @Override public void onTransitionPause(Transition transition) {}
+                    @Override public void onTransitionResume(Transition transition) {}
+                });
+            }
 
         } catch (FileNotFoundException e) {
+            // If low-res file can't be opened, then just use high res with picasso
+            Picasso.with(activity).load(highResUri)
+                    .error(R.drawable.film)
+                    .fit().centerCrop()
+                    .into(iv);
+
             e.printStackTrace();
         }
-
         // Set Listener: Add/Remove TMDB_MOV_ID on checked/unchecked
         FloatingActionButton favButton = (FloatingActionButton) mRootview.findViewById(R.id.favorite_toggle);
         favButton.setContentDescription(getString(R.string.add_to_fav));
@@ -246,24 +262,6 @@ public class DetailActivityFragment extends BaseFragment {
         if (mAddVideosAndReviews) {
             showTrailers();
             addReviewsTextView(mReviews);
-        }
-
-        // Set cards moving up animation
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-            Transition tr = activity.getWindow().getSharedElementEnterTransition();
-            tr.addListener(new Transition.TransitionListener() {
-                @Override
-                public void onTransitionEnd(Transition transition) {
-                    LinearLayout cards = (LinearLayout) mRootview.findViewById(R.id.movie_info_cards);
-                    Animation anim = AnimationUtils.loadAnimation(activity, R.anim.move_up);
-                    anim.setInterpolator(new AccelerateDecelerateInterpolator());
-                    cards.setAnimation(anim);
-                }
-                @Override public void onTransitionStart(Transition transition) {}
-                @Override public void onTransitionCancel(Transition transition) {}
-                @Override public void onTransitionPause(Transition transition) {}
-                @Override public void onTransitionResume(Transition transition) {}
-            });
         }
 
         return mRootview;
