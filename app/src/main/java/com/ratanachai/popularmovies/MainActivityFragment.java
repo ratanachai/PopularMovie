@@ -1,7 +1,7 @@
 package com.ratanachai.popularmovies;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -80,14 +80,9 @@ public class MainActivityFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.d(LOG_TAG, "== onCreateView()");
-        final Context c = getActivity();
+        final Activity activity = getActivity();
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        /** Set Number of Columns in different devices **
-         - Default Portrait = 2 columns; Default Land = 4 columns;
-         - Small Tablet (Part and Land) = 2 columns; (sw600dp-land = 2)
-         - Large Tablet Port = 2 columns; Large Tab Land = 3 columns (sw800dp-land = 3) */
         GridView gridView = (GridView) rootView.findViewById(R.id.gridview_movies);
-        gridView.setNumColumns(c.getResources().getInteger(R.integer.num_columns));
 
         // Set EmptyView, Adapter, OnItemClickListener
         // TODO: How to deal with Flash of emptyView before poster is loaded.
@@ -108,7 +103,7 @@ public class MainActivityFragment extends BaseFragment {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                ((Callback) c).onItemSelected(mMovies.get(position).getAll(), mSortBy, view); }
+                ((Callback) activity).onItemSelected(mMovies.get(position).getAll(), mSortBy, view); }
         });
 
         return rootView;

@@ -5,17 +5,21 @@
     tools:context=".MainActivityFragment"
     android:background="@android:color/darker_gray"
     >
+    <!-- Set Number of Columns in different devices **
+    - Default Portrait = 2 columns; Default Land = 4 columns;
+    - Small Tablet (Part and Land) = 2 columns; (sw600dp-land = 2)
+    - Large Tablet Port = 2 columns; Large Tab Land = 3 columns (sw800dp-land = 3) -->
+
     <GridView
         android:id="@+id/gridview_movies"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:numColumns="auto_fit"
+        android:numColumns="@integer/num_columns"
         android:verticalSpacing="1dp"
         android:horizontalSpacing="1dp"
         android:scrollingCache="true"
         android:stretchMode="columnWidth"
         android:gravity="center"
-        />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
     <TextView
         android:id="@+id/gridview_movies_empty"
         tools:visibility="visible"
