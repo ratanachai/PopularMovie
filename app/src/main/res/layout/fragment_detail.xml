@@ -160,7 +160,7 @@
     <!-- Toolbar as Actionbar -->
     <android.support.v7.widget.Toolbar
         android:id="@+id/tool_bar"
-        android:theme="@style/ToolBarStyle"
+        android:theme="@style/TransparentToolBarStyle"
         android:paddingRight="8dp"
         android:paddingEnd="8dp"
         android:layout_width="match_parent"

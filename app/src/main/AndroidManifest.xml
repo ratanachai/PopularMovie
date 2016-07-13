@@ -21,8 +21,8 @@
         </activity>
         <activity
             android:name=".DetailActivity"
-            android:theme="@style/DetailActivityTheme"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.DetailActivityTheme" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.ratanachai.popularmovies.MainActivity" />

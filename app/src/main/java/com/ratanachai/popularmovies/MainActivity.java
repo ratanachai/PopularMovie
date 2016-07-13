@@ -14,6 +14,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -53,11 +54,17 @@ public class MainActivity extends AppCompatActivity
             }
         } else {
             mTwoPane = false;
+            // Setup Sliding Tab navigation
             ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
             PagerAdapter pagerAdapter = new AppSectionsPagerAdapter(getSupportFragmentManager(), this);
             viewPager.setAdapter(pagerAdapter);
             TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
             tabLayout.setupWithViewPager(viewPager);
+            // Setup Toolbar
+            Toolbar toolBar = (Toolbar) findViewById(R.id.tool_bar);
+            toolBar.setTitle(getString(R.string.app_name));
+            setSupportActionBar(toolBar);
+
         }
     }
 

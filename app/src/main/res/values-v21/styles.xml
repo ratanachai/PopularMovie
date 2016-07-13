@@ -1,12 +1,14 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-        <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-                <item name="colorPrimary">@color/blue_800</item>
-                <item name="colorPrimaryDark">@color/blue_900</item>
-                <item name="colorAccent">@color/pink_500</item>
-                <!-- Shared element activity transition for poster_zoom -->
-                <item name="android:windowContentTransitions">true</item>
-                <!--<item name="android:windowAllowEnterTransitionOverlap">true</item>-->
-                <!--<item name="android:windowAllowReturnTransitionOverlap">true</item>-->
-        </style>
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/blue_800</item>
+        <item name="colorPrimaryDark">@color/blue_900</item>
+        <item name="colorAccent">@color/pink_500</item>
+        <!-- Shared element activity transition for poster_zoom -->
+        <item name="android:windowContentTransitions">true</item>
+        <!--<item name="android:windowAllowEnterTransitionOverlap">true</item>-->
+        <!--<item name="android:windowAllowReturnTransitionOverlap">true</item>-->
+    </style>
+    <!--<style name="colorPrimaryBackground">-->
+            <!--<item name="android:background">?android:attr/colorPrimary</item>-->
+    <!--</style>-->
 </resources>
