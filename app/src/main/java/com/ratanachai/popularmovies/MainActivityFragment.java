@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -105,6 +106,9 @@ public class MainActivityFragment extends BaseFragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 ((Callback) activity).onItemSelected(mMovies.get(position).getAll(), mSortBy, view); }
         });
+        // To hide Toolbar when scroll (ListView and GridView CoordinatorLayout by default
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            gridView.setNestedScrollingEnabled(true);
 
         return rootView;
     }
