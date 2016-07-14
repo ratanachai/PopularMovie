@@ -2,7 +2,6 @@ package com.ratanachai.popularmovies;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 
@@ -16,12 +15,6 @@ public class BaseFragment extends Fragment {
     // a flag for Detail to tell Main fragment that Star is removed, so Movie list need to be reFetch.
     protected static boolean needReFetch = false;
     protected String mSortBy = "";
-
-    public static boolean isTablet(Context context) {
-        return (context.getResources().getConfiguration().screenLayout
-                & Configuration.SCREENLAYOUT_SIZE_MASK)
-                >= Configuration.SCREENLAYOUT_SIZE_LARGE;
-    }
 
     // Get Sort_by settings from Pref
     protected String getPrefSortBy(Context context){

@@ -44,7 +44,9 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Two pane or One pane
+        // Two pane or One pane: Resource Quantifier will determine the layout (default vs sw600dp)
+
+        // Tablet use Two pane with forced landscape only
         if (findViewById(R.id.movie_detail_container) != null){
             mTwoPane = true;
             if (savedInstanceState == null) {
@@ -52,6 +54,8 @@ public class MainActivity extends AppCompatActivity
                         .replace(R.id.movie_detail_container, new DetailActivityFragment(), DETAILFRAGMENT_TAG)
                         .commit();
             }
+
+        // Phone one pane with Main/Detail Activity
         } else {
             mTwoPane = false;
             // Setup Sliding Tab navigation
