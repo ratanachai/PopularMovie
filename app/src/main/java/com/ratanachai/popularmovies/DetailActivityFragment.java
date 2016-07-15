@@ -5,6 +5,7 @@ import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -75,6 +76,7 @@ public class DetailActivityFragment extends BaseFragment {
     private boolean mTwoPane = false;
     private ShareActionProvider mShareActionProvider;
     private TrailerAdapter mTrailerAdapter;
+    private Activity mActivity;
 
     // All activity that contain this fragment must implement this Callback
     // MainActivity for tablet and DetailActivity for phone
@@ -86,7 +88,7 @@ public class DetailActivityFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         mSortBy = getSortBy();
-        mTwoPane = getActivity().getLocalClassName().equals("MainActivity") ? true : false;
+        mTwoPane = getActivity().getLocalClassName().equals("MainActivity");
 
         // Get data passed from Activity
         Bundle arguments = getArguments();
@@ -691,13 +693,13 @@ public class DetailActivityFragment extends BaseFragment {
         ViewGroup containerView = (ViewGroup) mRootview.findViewById(R.id.movie_reviews_container);
         for (int i=0; i < reviews.size(); i++) {
 
-            View v = getLayoutInflater(null).inflate(R.layout.review_item, null);
+            View v = mActivity.getLayoutInflater().inflate(R.layout.review_item, containerView, false);
             TextView reviewAuthor = (TextView) v.findViewById(R.id.movie_review_author);
             TextView reviewContent = (TextView) v.findViewById(R.id.movie_review_content);
             reviewAuthor.setText(reviews.get(i).getAuthor());
             reviewContent.setText(reviews.get(i).getContent());
-            reviewContent.setContentDescription(getString(R.string.movie_review,
-                    reviewAuthor.getText(), reviewContent.getText()));
+//            reviewContent.setContentDescription(getString(R.string.movie_review,
+//                    reviewAuthor.getText(), reviewContent.getText()));
             containerView.addView(v);
 
             // Add separator line if it is not the last item
@@ -706,6 +708,13 @@ public class DetailActivityFragment extends BaseFragment {
 
         }
     }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mActivity = (Activity)context;
+    }
+
     public class FetchReviewsTask extends AsyncTask<String, Void, ArrayList<Review>> {
 
         private final String LOG_TAG = FetchReviewsTask.class.getSimpleName();

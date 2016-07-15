@@ -33,9 +33,10 @@ public class MainActivity extends AppCompatActivity
     // First 3 methods are callback methods
     @Override
     public void onAddRemoveMovieFromFavorite(boolean needReFetch){
-        MainActivityFragment mainFragment = (MainActivityFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.fragment);
-        mainFragment.updateMoviesGrid();
+        // TODO: Fix grid not update, need to manual refresh
+//        MainActivityFragment mainFragment = (MainActivityFragment) getSupportFragmentManager()
+//                .findFragmentById(R.id.fragment);
+//        mainFragment.updateMoviesGrid();
     }
 
     @Override
@@ -99,18 +100,18 @@ public class MainActivity extends AppCompatActivity
             // Phone case: one pane with Main/Detail Activity
         } else {
             mTwoPane = false;
-            // Setup Sliding Tab navigation
-            ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
-            PagerAdapter pagerAdapter = new AppSectionsPagerAdapter(getSupportFragmentManager(), this);
-            viewPager.setAdapter(pagerAdapter);
-            TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
-            tabLayout.setupWithViewPager(viewPager);
-            // Setup Toolbar
-            Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
-            toolbar.setTitle(getString(R.string.app_name));
-            setSupportActionBar(toolbar);
-
         }
+        // Setup Sliding Tab navigation
+        ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
+        PagerAdapter pagerAdapter = new AppSectionsPagerAdapter(getSupportFragmentManager(), this);
+        viewPager.setAdapter(pagerAdapter);
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        tabLayout.setupWithViewPager(viewPager);
+        // Setup Toolbar
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        toolbar.setTitle(getString(R.string.app_name));
+        setSupportActionBar(toolbar);
+
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
