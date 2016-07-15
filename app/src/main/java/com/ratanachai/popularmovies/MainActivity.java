@@ -29,9 +29,8 @@ public class MainActivity extends AppCompatActivity
 
     public static boolean mTwoPane;
     private static final String DETAILFRAGMENT_TAG = "DFTAG";
-    AppSectionsPagerAdapter mAppSectionsPagerAdapter;
-    ViewPager mViewPager;
 
+    // First 3 methods are callback methods
     @Override
     public void onAddRemoveMovieFromFavorite(boolean needReFetch){
         MainActivityFragment mainFragment = (MainActivityFragment) getSupportFragmentManager()
@@ -40,59 +39,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        // Two pane or One pane: Resource Quantifier will determine the layout (default vs sw600dp)
-
-        // Tablet use Two pane with forced landscape only
-        if (findViewById(R.id.movie_detail_container) != null){
-            mTwoPane = true;
-            if (savedInstanceState == null) {
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.movie_detail_container, new DetailActivityFragment(), DETAILFRAGMENT_TAG)
-                        .commit();
-            }
-
-        // Phone one pane with Main/Detail Activity
-        } else {
-            mTwoPane = false;
-            // Setup Sliding Tab navigation
-            ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
-            PagerAdapter pagerAdapter = new AppSectionsPagerAdapter(getSupportFragmentManager(), this);
-            viewPager.setAdapter(pagerAdapter);
-            TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
-            tabLayout.setupWithViewPager(viewPager);
-            // Setup Toolbar
-            Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
-            toolbar.setTitle(getString(R.string.app_name));
-            setSupportActionBar(toolbar);
-
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            startActivity(new Intent(this, SettingsActivity.class));
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+    public void onMoviesReady(String[] movieInfo, String sortBy) {
+        if (mTwoPane)
+            replaceDetailFragment(movieInfo, sortBy);
     }
 
     @Override
@@ -116,9 +65,75 @@ public class MainActivity extends AppCompatActivity
             }else {
                 startActivity(intent);
             }
+        }
+    }
+    
+    private void replaceDetailFragment(String[] movieInfo, String sortBy) {
+        Bundle args = new Bundle();
+        args.putStringArray(DetailActivityFragment.MOVIE_INFO, movieInfo);
+        args.putString("SortBy", sortBy);
+        DetailActivityFragment fragment = new DetailActivityFragment();
+        fragment.setArguments(args);
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.movie_detail_container, fragment, DETAILFRAGMENT_TAG)
+                .commit();
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // Two pane or One pane: Resource Quantifier will determine the layout (default vs sw600dp)
+        setContentView(R.layout.activity_main);
+
+        // Tablet case: two pane
+        if (findViewById(R.id.movie_detail_container) != null){
+            mTwoPane = true;
+            if (savedInstanceState == null) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.movie_detail_container, new DetailActivityFragment(), DETAILFRAGMENT_TAG)
+                        .commit();
+            }
+
+            // Phone case: one pane with Main/Detail Activity
+        } else {
+            mTwoPane = false;
+            // Setup Sliding Tab navigation
+            ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
+            PagerAdapter pagerAdapter = new AppSectionsPagerAdapter(getSupportFragmentManager(), this);
+            viewPager.setAdapter(pagerAdapter);
+            TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+            tabLayout.setupWithViewPager(viewPager);
+            // Setup Toolbar
+            Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+            toolbar.setTitle(getString(R.string.app_name));
+            setSupportActionBar(toolbar);
 
         }
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     private String createJpgFromImageView(ImageView imageView){
         String filename = "InterimPoster";
         try{
@@ -138,23 +153,6 @@ public class MainActivity extends AppCompatActivity
             filename = null;
         }
         return filename;
-    }
-    @Override
-    public void onMoviesReady(String[] movieInfo, String sortBy) {
-        if (mTwoPane)
-            replaceDetailFragment(movieInfo, sortBy);
-    }
-
-    private void replaceDetailFragment(String[] movieInfo, String sortBy) {
-        Bundle args = new Bundle();
-        args.putStringArray(DetailActivityFragment.MOVIE_INFO, movieInfo);
-        args.putString("SortBy", sortBy);
-        DetailActivityFragment fragment = new DetailActivityFragment();
-        fragment.setArguments(args);
-
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.movie_detail_container, fragment, DETAILFRAGMENT_TAG)
-                .commit();
     }
 
     /**

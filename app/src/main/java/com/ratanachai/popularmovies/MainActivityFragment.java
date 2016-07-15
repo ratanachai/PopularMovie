@@ -45,7 +45,7 @@ public class MainActivityFragment extends BaseFragment {
     private int page = 1; // For Endless Scrolling
 
     /** A callback interface that all activities containing this fragment must implement.
-     *  This mechanism allows activities to be notified of item selections. */
+     *  This allows activities to be notified of item selections, Movie is ready to display*/
     public interface Callback {
         void onItemSelected(String[] movieInfo, String sortBy, View view);
         void onMoviesReady(String[] movieInfo, String sortBy);
@@ -57,7 +57,6 @@ public class MainActivityFragment extends BaseFragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.d(LOG_TAG, "== onCreate()");
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true); //For this fragment to handle menu events.
         mSortBy = getSortBy();
@@ -80,7 +79,6 @@ public class MainActivityFragment extends BaseFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.d(LOG_TAG, "== onCreateView()");
         final Activity activity = getActivity();
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         GridView gridView = (GridView) rootView.findViewById(R.id.gridview_movies);

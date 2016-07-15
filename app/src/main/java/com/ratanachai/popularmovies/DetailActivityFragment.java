@@ -74,10 +74,9 @@ public class DetailActivityFragment extends BaseFragment {
     private ShareActionProvider mShareActionProvider;
     private TrailerAdapter mTrailerAdapter;
 
-
+    // All activity that contain this fragment must implement this Callback
+    // MainActivity for tablet and DetailActivity for phone
     public interface Callback {
-        // All activity that contain this fragment must implement this Callback
-        // (MainActivity for tablet and DetailActivity for phone)
         void onAddRemoveMovieFromFavorite(boolean needReFetch);
     }
 
@@ -120,47 +119,28 @@ public class DetailActivityFragment extends BaseFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.v(LOG_TAG, "=== onCreateView");
-        setHasOptionsMenu(true);
-        final Activity activity = getActivity();
+        // Early Exit if no argument from MainActivity
+        if (getArguments() == null)
+            return mRootview;
 
-        // TODO: Refactor
+        final Activity activity = getActivity();
         mRootview = inflater.inflate(R.layout.fragment_detail, container, false);
+
+        // Setup Share action and up button
+        setHasOptionsMenu(true);
         Toolbar toolBar = (Toolbar) mRootview.findViewById(R.id.tool_bar);
         toolBar.setTitle("");
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolBar);
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        // Early Exit if no argument from MainActivity
-        if (getArguments() == null) return mRootview;
+        // Put data into Overview card
+        setOverviewCardData();
 
-        // Set Movie Title TextView
-        TextView titleTv = (TextView) mRootview.findViewById(R.id.movie_title);
-        titleTv.setText(mMovieInfo[1]);
-        titleTv.setContentDescription(getString(R.string.movie_title, mMovieInfo[1]));
-
-        // Set Movie Overview TextView
-        TextView overviewTv = (TextView) mRootview.findViewById(R.id.movie_overview);
-        overviewTv.setText(mMovieInfo[3]);
-        overviewTv.setContentDescription(getString(R.string.movie_overview, mMovieInfo[3]));
-
-        // Set Movie Rating (User Vote average) TextView and RatingBar
-        TextView ratingTv = (TextView) mRootview.findViewById(R.id.movie_rating);
-        ratingTv.setText(mMovieInfo[4]);
-        ratingTv.setContentDescription(getString(R.string.movie_rating, mMovieInfo[4]));
-
-        RatingBar ratingBar = (RatingBar)mRootview.findViewById(R.id.movie_rating_bar);
-        ratingBar.setRating(Float.parseFloat(mMovieInfo[4]));
-
-        // Set Movie Release date
-        TextView releaseDateTv = (TextView) mRootview.findViewById(R.id.movie_release);
-        releaseDateTv.append(" " + mMovieInfo[5]);
-        releaseDateTv.setContentDescription(getString(R.string.movie_release_date, mMovieInfo[5]));
-
-        // In Try-catch in case file cannot be open
+        // Download High Resolution poster, Move up cards
         final ImageView iv = (ImageView) mRootview.findViewById(R.id.movie_poster);
         final CardView overview_card = (CardView) mRootview.findViewById(R.id.movie_overview_card);
         final String highResUri = "http://image.tmdb.org/t/p/original" + mMovieInfo[2];
+        // In Try-catch in case file cannot be open
         try {
             // Get/Prepare "InterimPoster" jpeg file to be placeholder image
             Bitmap bitmap = BitmapFactory.decodeStream(activity.openFileInput("InterimPoster"));
@@ -199,7 +179,8 @@ public class DetailActivityFragment extends BaseFragment {
 
             e.printStackTrace();
         }
-        // Set Listener: Add/Remove TMDB_MOV_ID on checked/unchecked
+
+        // FAB - Set Listener: Add/Remove TMDB_MOV_ID on checked/unchecked
         FloatingActionButton favButton = (FloatingActionButton) mRootview.findViewById(R.id.favorite_toggle);
         favButton.setContentDescription(getString(R.string.add_to_fav));
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
@@ -263,6 +244,31 @@ public class DetailActivityFragment extends BaseFragment {
         }
 
         return mRootview;
+    }
+
+    private void setOverviewCardData() {
+        // Set Movie Title TextView
+        TextView titleTv = (TextView) mRootview.findViewById(R.id.movie_title);
+        titleTv.setText(mMovieInfo[1]);
+        titleTv.setContentDescription(getString(R.string.movie_title, mMovieInfo[1]));
+
+        // Set Movie Overview TextView
+        TextView overviewTv = (TextView) mRootview.findViewById(R.id.movie_overview);
+        overviewTv.setText(mMovieInfo[3]);
+        overviewTv.setContentDescription(getString(R.string.movie_overview, mMovieInfo[3]));
+
+        // Set Movie Rating (User Vote average) TextView and RatingBar
+        TextView ratingTv = (TextView) mRootview.findViewById(R.id.movie_rating);
+        ratingTv.setText(mMovieInfo[4]);
+        ratingTv.setContentDescription(getString(R.string.movie_rating, mMovieInfo[4]));
+
+        RatingBar ratingBar = (RatingBar)mRootview.findViewById(R.id.movie_rating_bar);
+        ratingBar.setRating(Float.parseFloat(mMovieInfo[4]));
+
+        // Set Movie Release date
+        TextView releaseDateTv = (TextView) mRootview.findViewById(R.id.movie_release);
+        releaseDateTv.append(" " + mMovieInfo[5]);
+        releaseDateTv.setContentDescription(getString(R.string.movie_release_date, mMovieInfo[5]));
     }
 
     private void loadHighResMoveUpCards(CardView overview_card, Activity activity, String highResUri, Drawable lowResPoster, ImageView iv) {

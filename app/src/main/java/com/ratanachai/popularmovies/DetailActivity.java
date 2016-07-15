@@ -8,6 +8,7 @@ import android.view.MenuItem;
 
 public class DetailActivity extends AppCompatActivity implements DetailActivityFragment.Callback {
 
+    // Call back methods
     @Override
     public void onAddRemoveMovieFromFavorite(boolean needReFetch) {
         // For one pane Activity, tell MasterView to refetch Grid on Create
