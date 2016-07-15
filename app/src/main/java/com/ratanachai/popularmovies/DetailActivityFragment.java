@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.ShareActionProvider;
@@ -71,6 +72,7 @@ public class DetailActivityFragment extends BaseFragment {
     private ArrayList<Review> mReviews = new ArrayList<>();
     private View mRootview;
     private boolean mAddVideosAndReviews = false;
+    private boolean mTwoPane = false;
     private ShareActionProvider mShareActionProvider;
     private TrailerAdapter mTrailerAdapter;
 
@@ -84,6 +86,7 @@ public class DetailActivityFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         mSortBy = getSortBy();
+        mTwoPane = getActivity().getLocalClassName().equals("MainActivity") ? true : false;
 
         // Get data passed from Activity
         Bundle arguments = getArguments();
@@ -131,7 +134,9 @@ public class DetailActivityFragment extends BaseFragment {
         Toolbar toolBar = (Toolbar) mRootview.findViewById(R.id.tool_bar);
         toolBar.setTitle("");
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolBar);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        if (actionBar != null && !mTwoPane)
+            actionBar.setDisplayHomeAsUpEnabled(true);
 
         // Put data into Overview card
         setOverviewCardData();
@@ -162,7 +167,8 @@ public class DetailActivityFragment extends BaseFragment {
                     @Override public void onTransitionResume(Transition transition) {}
                 });
                 // In case screen rotated and view is recreated without transition from MainActivity
-                if (savedInstanceState != null)
+                // Or in Tablet (DetailActivity resides in MainActivity)
+                if (savedInstanceState != null || mTwoPane)
                     loadHighResMoveUpCards(overview_card, activity, highResUri, lowResPoster, iv);
 
             // For API<21 (No Transition animation), just repalce with high-res ASAP.
@@ -172,11 +178,7 @@ public class DetailActivityFragment extends BaseFragment {
 
         } catch (FileNotFoundException e) {
             // If low-res file can't be opened, then just use high res with picasso
-            Picasso.with(activity).load(highResUri)
-                    .error(R.drawable.film)
-                    .fit().centerCrop()
-                    .into(iv);
-
+            loadHighResMoveUpCards(overview_card, activity, highResUri, null, iv);
             e.printStackTrace();
         }
 
@@ -274,20 +276,24 @@ public class DetailActivityFragment extends BaseFragment {
     private void loadHighResMoveUpCards(CardView overview_card, Activity activity, String highResUri, Drawable lowResPoster, ImageView iv) {
         // Download higher resolution image after transition ends to avoid load complete
         // before animation finishes (causing some flicker/overflow image problem).
-        loadHighResPoster(activity, highResUri, lowResPoster, iv);
 
+        if (lowResPoster != null) {
+            Picasso.with(activity).load(highResUri)
+                    // still need placeholder here otherwise will flash of white image
+                    .placeholder(lowResPoster).error(lowResPoster)
+                    .fit().centerCrop()
+                    .noFade() // without this image replacement will not be smooth
+                    .into(iv);
+        } else {
+            Picasso.with(activity).load(highResUri)
+                    .error(R.drawable.film)
+                    .fit().centerCrop()
+                    .noFade()
+                    .into(iv);
+        }
         // Finally Set cards moving up animation
         animateCardsMoveUp(activity);
         overview_card.setVisibility(View.VISIBLE);
-    }
-
-    private void loadHighResPoster(Activity activity, String highResUri, Drawable lowResPoster, ImageView iv) {
-        Picasso.with(activity).load(highResUri)
-                // still need placeholder here otherwise will flash of white image
-                .placeholder(lowResPoster).error(lowResPoster)
-                .fit().centerCrop()
-                .noFade() // without this image replacement will not be smooth
-                .into(iv);
     }
 
     private void animateCardsMoveUp(Activity activity) {

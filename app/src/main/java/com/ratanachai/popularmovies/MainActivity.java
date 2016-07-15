@@ -46,16 +46,17 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onItemSelected(String[] movieInfo, String sortBy, View view) {
+        // Save Low-res poster into disk for a placeholder with/without transition animation
+        ImageView imageView = (ImageView) view.findViewById(R.id.grid_item_movie);
+        createJpgFromImageView(imageView);
+
         if (mTwoPane) {
             replaceDetailFragment(movieInfo, sortBy);
+
         } else {
             Intent intent = new Intent(this, DetailActivity.class)
                     .putExtra("strings", movieInfo)
                     .putExtra("SortBy", sortBy);
-
-            // Save Low-res poster into disk for a placeholder with/without transition animation
-            ImageView imageView = (ImageView) view.findViewById(R.id.grid_item_movie);
-            createJpgFromImageView(imageView);
 
             // Add Shared element activity transition for poster
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -67,14 +68,14 @@ public class MainActivity extends AppCompatActivity
             }
         }
     }
-    
+
     private void replaceDetailFragment(String[] movieInfo, String sortBy) {
         Bundle args = new Bundle();
         args.putStringArray(DetailActivityFragment.MOVIE_INFO, movieInfo);
         args.putString("SortBy", sortBy);
+
         DetailActivityFragment fragment = new DetailActivityFragment();
         fragment.setArguments(args);
-
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.movie_detail_container, fragment, DETAILFRAGMENT_TAG)
                 .commit();
