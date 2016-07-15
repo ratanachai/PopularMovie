@@ -3,6 +3,9 @@
         <item name="colorPrimary">@color/blue_800</item>
         <item name="colorPrimaryDark">@color/blue_900</item>
         <item name="colorAccent">@color/pink_500</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:lineSpacingExtra">6dp</item>
+
         <!-- Shared element activity transition for poster_zoom -->
         <item name="android:windowContentTransitions">true</item>
         <!--<item name="android:windowAllowEnterTransitionOverlap">true</item>-->
