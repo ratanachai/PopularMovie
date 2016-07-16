@@ -126,21 +126,14 @@ public class MainActivityFragment extends BaseFragment {
         }
     }
 
-//    @Override
-//    public void onDestroy() {
-//        super.onDestroy();
-//        if(mProgress!= null)
-//            mProgress.dismiss();
-//    }
-//
-//    @Override
-//    public void onPause() {
-//        super.onPause();
-//        if(mProgress!= null) {
-//            mProgress.dismiss();
-//            mProgress = null;
-//        }
-//    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(mProgress!= null) {
+            mProgress.dismiss();
+            mProgress = null;
+        }
+    }
 
     @Override
     public void onSaveInstanceState(Bundle outState){
@@ -214,7 +207,6 @@ public class MainActivityFragment extends BaseFragment {
         mProgress.setMessage(getString(R.string.downloading_from_tmdb));
         mProgress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         mProgress.show();
-        // TODO: Fix "E/WindowManager: android.view.WindowLeaked" when rotatage screen after 1st start
 
         // Determine which language, then Get Movie from the TMDB API
         String lang = Locale.getDefault().getLanguage().equals("th") ? "th" : "en";
