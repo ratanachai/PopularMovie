@@ -20,4 +20,7 @@ public class BaseFragment extends Fragment {
         else
             return "popularity"; // Default
     }
+    public String getmSortBy() {
+        return mSortBy;
+    }
 }

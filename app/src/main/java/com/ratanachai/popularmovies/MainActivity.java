@@ -34,10 +34,10 @@ public class MainActivity extends AppCompatActivity
     // First 3 methods are callback methods
     @Override
     public void onAddRemoveMovieFromFavorite(boolean needReFetch){
-        // TODO: Fix grid not update, need to manual refresh
-//        MainActivityFragment mainFragment = (MainActivityFragment) getSupportFragmentManager()
-//                .findFragmentById(R.id.fragment);
-//        mainFragment.updateMoviesGrid();
+        MainActivityFragment mainFragment = (MainActivityFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.pager);
+        if (mainFragment.getmSortBy().equals(getString(R.string.sort_value_favorite)))
+            mainFragment.updateMoviesGrid();
     }
 
     @Override
@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity
                         .commit();
             }
 
-            // Phone case: one pane with Main/Detail Activity
+        // Phone case: one pane with Main/Detail Activity
         } else {
             mTwoPane = false;
         }

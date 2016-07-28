@@ -55,6 +55,13 @@ public class MainActivityFragment extends BaseFragment {
     }
 
     @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (this.isVisible() && isSortByFavorite(mSortBy))
+            getMoviesFromDb();
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true); //For this fragment to handle menu events.
@@ -112,7 +119,7 @@ public class MainActivityFragment extends BaseFragment {
         Log.d(LOG_TAG, "== onStart()");
 //        getActivity().setTitle(getString(R.string.app_name) + " - " + getCurrentSortByLabel(newSortBy));
         getActivity().setTitle(getString(R.string.app_name));
-        // Force Re-Fetch If needReFetch OR SortBy changed (New differs from fetched)
+        // Force Re-Fetch If needReFetch
         mSortBy = getSortBy();
         if( needReFetch ){
             mMovies.clear();

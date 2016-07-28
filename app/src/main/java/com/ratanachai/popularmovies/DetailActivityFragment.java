@@ -205,23 +205,19 @@ public class DetailActivityFragment extends BaseFragment {
                     // Save the Movie, its Videos and Reviews
                     long movieRowId = saveMovieOffline(mMovieInfo);
 
-                    // In case of Favorite Movie Criteria ..
-                    // MainFragment will need to refetch movies if movie added
+                    // Sort by Fav: MainFragment will need to refetch movies if movie added
                     if ( isSortByFavorite(mSortBy) )
-                        ((Callback) activity).onAddRemoveMovieFromFavorite(false);
+                        ((Callback) activity).onAddRemoveMovieFromFavorite(true);
 
                     saveVideosOffline(movieRowId);
                     saveReviewOffline(movieRowId);
-                    if ( isSortByFavorite(mSortBy) )
-                        needReFetch = false;
                 }
                 else{
                     fav_movie_ids.remove(tmdb_id);
                     // Delete the Movie, its videos will be DELETE CASCADE via Foreign key constrain
                     removeOfflineMovie(tmdb_id);
 
-                    // In case of Favorite Movie Criteria ..
-                    // MainFragment will need to refetch movies if movie removed
+                    // Sort by Fav: MainFragment will need to refetch movies if movie removed
                     if ( isSortByFavorite(mSortBy) )
                         ((Callback) activity).onAddRemoveMovieFromFavorite(true);
                 }
