@@ -186,7 +186,7 @@ public class MainActivityFragment extends BaseFragment {
             Movie movieObj = new Movie(cur.getString(Movie.COL_TMDB_MOVIE_ID),
                     cur.getString(Movie.COL_TITLE), cur.getString(Movie.COL_POSTER_PATH),
                     cur.getString(Movie.COL_OVERVIEW), cur.getString(Movie.COL_RELEASE_DATE),
-                    cur.getString(Movie.COL_USER_RATING)
+                    cur.getString(Movie.COL_VOTE_AVERAGE)
             );
             mMovies.add(movieObj);
         }

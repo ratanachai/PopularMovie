@@ -31,7 +31,7 @@ public class MovieContract {
         public static final String COLUMN_TMDB_MOVIE_ID = "tmdb_movie_id";
         public static final String COLUMN_TITLE = "title";
         public static final String COLUMN_OVERVIEW = "overview";
-        public static final String COLUMN_USER_RATING = "user_rating";
+        public static final String COLUMN_VOTE_AVERAGE = "vote_average";
         public static final String COLUMN_RELEASE_DATE = "release_date";
         public static final String COLUMN_POSTER_PATH = "poster";
 

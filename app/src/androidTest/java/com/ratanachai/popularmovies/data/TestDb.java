@@ -58,7 +58,7 @@ public class TestDb extends AndroidTestCase {
         movieColumnHashSet.add(MovieContract.MovieEntry.COLUMN_TMDB_MOVIE_ID);
         movieColumnHashSet.add(MovieContract.MovieEntry.COLUMN_TITLE);
         movieColumnHashSet.add(MovieContract.MovieEntry.COLUMN_OVERVIEW);
-        movieColumnHashSet.add(MovieContract.MovieEntry.COLUMN_USER_RATING);
+        movieColumnHashSet.add(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE);
         movieColumnHashSet.add(MovieContract.MovieEntry.COLUMN_RELEASE_DATE);
         movieColumnHashSet.add(MovieContract.MovieEntry.COLUMN_POSTER_PATH);
 

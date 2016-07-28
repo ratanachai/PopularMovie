@@ -65,7 +65,7 @@ public class TestUtilities extends AndroidTestCase {
                 "his wife and child in the aftermath of the chaos. And Furiosa, a woman of action and " +
                 "a woman who believes her path to survival may be achieved if she can make it across " +
                 "the desert back to her childhood homeland.");
-        movieValues.put(MovieContract.MovieEntry.COLUMN_USER_RATING, 7.6);
+        movieValues.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, 7.6);
         movieValues.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, "2015-05-15");
         movieValues.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH, "/kqjL17yufvn9OVLyXYpvtyrFfak.jpg");
         return movieValues;
@@ -78,7 +78,7 @@ public class TestUtilities extends AndroidTestCase {
                 "adventures of a group of explorers who make use of a newly discovered wormhole " +
                 "to surpass the limitations on human space travel and conquer the vast distances " +
                 "involved in an interstellar voyage.");
-        movieValues.put(MovieContract.MovieEntry.COLUMN_USER_RATING, 8.3);
+        movieValues.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, 8.3);
         movieValues.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, "2014-11-05");
         movieValues.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH, "/nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg");
         return movieValues;

@@ -350,7 +350,7 @@ public class DetailActivityFragment extends BaseFragment {
             movieValues.put(MovieEntry.COLUMN_POSTER_PATH, movieInfo[2]);
             movieValues.put(MovieEntry.COLUMN_OVERVIEW, movieInfo[3]);
             movieValues.put(MovieEntry.COLUMN_RELEASE_DATE, movieInfo[4]);
-            movieValues.put(MovieEntry.COLUMN_USER_RATING, movieInfo[5]);
+            movieValues.put(MovieEntry.COLUMN_VOTE_AVERAGE, movieInfo[5]);
             Uri movieUri = cr.insert(MovieEntry.CONTENT_URI, movieValues);
             Toast.makeText(getActivity(), getString(R.string.add_to_fav), Toast.LENGTH_SHORT).show();
             rowId = ContentUris.parseId(movieUri);

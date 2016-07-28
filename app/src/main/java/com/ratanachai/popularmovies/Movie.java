@@ -20,7 +20,7 @@ public class Movie implements Parcelable{
             MovieEntry.COLUMN_POSTER_PATH,
             MovieEntry.COLUMN_OVERVIEW,
             MovieEntry.COLUMN_RELEASE_DATE,
-            MovieEntry.COLUMN_USER_RATING
+            MovieEntry.COLUMN_VOTE_AVERAGE
     };
     static final int COL_MOVIE_ROW_ID = 0;
     static final int COL_TMDB_MOVIE_ID = 1;
@@ -28,7 +28,7 @@ public class Movie implements Parcelable{
     static final int COL_POSTER_PATH = 3;
     static final int COL_OVERVIEW = 4;
     static final int COL_RELEASE_DATE = 5;
-    static final int COL_USER_RATING = 6;
+    static final int COL_VOTE_AVERAGE = 6;
 
     //Take Json string and create an instance
     public Movie(String id, String title, String poster, String overview, String releaseDate, String voteAverage) {

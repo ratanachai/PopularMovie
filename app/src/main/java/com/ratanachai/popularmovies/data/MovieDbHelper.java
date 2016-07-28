@@ -15,7 +15,7 @@ import com.ratanachai.popularmovies.data.MovieContract.ReviewEntry;
 public class MovieDbHelper extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 6;
 
     static final String DATABASE_NAME = "movie.db";
 
@@ -32,7 +32,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                 MovieEntry.COLUMN_TMDB_MOVIE_ID + " INTEGER UNIQUE NOT NULL, " +
                 MovieEntry.COLUMN_TITLE + " TEXT NOT NULL, " +
                 MovieEntry.COLUMN_OVERVIEW + " TEXT," +
-                MovieEntry.COLUMN_USER_RATING + " REAL, " +
+                MovieEntry.COLUMN_VOTE_AVERAGE + " REAL, " +
                 MovieEntry.COLUMN_RELEASE_DATE + " TEXT NOT NULL, " + // SQLite has no Date type
                 MovieEntry.COLUMN_POSTER_PATH + " TEXT NOT NULL" +
                 " );";
@@ -79,8 +79,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
     }
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
-        // This database is only a cache for online data, so its upgrade policy is
-        // to simply to discard the data and start over
+        // The upgrade policy is to simply to discard the data and start over.
         // Note that this only fires if you change the version number for your database.
         // It does NOT depend on the version number for your application.
         // If you want to update the schema without wiping data, commenting out the next 3 lines
