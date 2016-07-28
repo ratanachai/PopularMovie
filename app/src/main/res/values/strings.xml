@@ -13,7 +13,12 @@
     <string name="sort_popularity_label">Popularity</string>
     <string name="sort_rating_label">Highest Vote</string>
     <string name="sort_favorite_label">Favorite</string>
-Ω
+
+    <string name="sort_key" translatable="false">sort_by</string>
+    <string name="sort_value_popular" translatable="false">popularity</string>
+    <string name="sort_value_vote" translatable="false">vote_average</string>
+    <string name="sort_value_favorite" translatable="false">favorite</string>
+
     <!-- Movie Label and place holder -->
     <string name="movie_trailers_label">TRAILERS</string>
     <string name="movie_reviews_label">REVIEWS</string>

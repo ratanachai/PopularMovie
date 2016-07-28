@@ -83,7 +83,7 @@ public class MainActivityFragment extends BaseFragment {
         GridView gridView = (GridView) rootView.findViewById(R.id.gridview_movies);
         gridView.setAdapter(mMovieAdapter);
 
-        if( !mSortBy.equals("favorite") ) {
+        if( !isSortByFavorite(mSortBy) ) {
             gridView.setOnScrollListener(new MyScrollListener() {
                 @Override
                 public boolean onLoadMore(int page, int totalItemsCount) {
@@ -302,7 +302,7 @@ public class MainActivityFragment extends BaseFragment {
                         .appendQueryParameter(SORT_PARAM, params[0]+".desc")
                         .appendQueryParameter(API_KEY_PARAM, api_key);
 
-                if (params[0].equals("vote_average"))
+                if (params[0].equals(getString(R.string.sort_value_vote)))
                     ub.appendQueryParameter(VOTE_COUNT_THREASHOLD, "500");
 
                 Uri builtUri = ub.build();

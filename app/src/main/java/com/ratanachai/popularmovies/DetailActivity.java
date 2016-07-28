@@ -23,7 +23,7 @@ public class DetailActivity extends AppCompatActivity implements DetailActivityF
             Bundle args = new Bundle();
             // Pass what been passed on from MainActivity in Intent Extra to Fragment via args
             args.putStringArray(DetailActivityFragment.MOVIE_INFO, getIntent().getStringArrayExtra("strings"));
-            args.putString("SortBy", getIntent().getStringExtra("SortBy"));
+            args.putString(getString(R.string.sort_key), getIntent().getStringExtra(getString(R.string.sort_key)));
             DetailActivityFragment fragment = new DetailActivityFragment();
             fragment.setArguments(args);
 

@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity
         } else {
             Intent intent = new Intent(this, DetailActivity.class)
                     .putExtra("strings", movieInfo)
-                    .putExtra("SortBy", sortBy);
+                    .putExtra(getString(R.string.sort_key), sortBy);
 
             // Add Shared element activity transition for poster
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity
     private void replaceDetailFragment(String[] movieInfo, String sortBy) {
         Bundle args = new Bundle();
         args.putStringArray(DetailActivityFragment.MOVIE_INFO, movieInfo);
-        args.putString("SortBy", sortBy);
+        args.putString(getString(R.string.sort_key), sortBy);
 
         DetailActivityFragment fragment = new DetailActivityFragment();
         fragment.setArguments(args);
@@ -176,21 +176,24 @@ public class MainActivity extends AppCompatActivity
                     Log.v("==================", "f0");
                     Fragment f = new MainActivityFragment();
                     Bundle args = new Bundle();
-                    args.putString("SortBy", "popularity");
+                    args.putString(mContext.getString(R.string.sort_key),
+                            mContext.getString(R.string.sort_value_popular));
                     f.setArguments(args);
                     return f;
                 case 1:
                     Log.v("==================", "f1");
                     Fragment f1 = new MainActivityFragment();
                     Bundle args1 = new Bundle();
-                    args1.putString("SortBy", "vote_average");
+                    args1.putString(mContext.getString(R.string.sort_key),
+                            mContext.getString(R.string.sort_value_vote));
                     f1.setArguments(args1);
                     return f1;
                 default:
                     Log.v("==================", "f2");
                     Fragment f2 = new MainActivityFragment();
                     Bundle args2 = new Bundle();
-                    args2.putString("SortBy", "favorite");
+                    args2.putString(mContext.getString(R.string.sort_key),
+                            mContext.getString(R.string.sort_value_favorite));
                     f2.setArguments(args2);
                 return f2;
             }

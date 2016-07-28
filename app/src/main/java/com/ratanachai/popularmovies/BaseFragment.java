@@ -12,11 +12,11 @@ public class BaseFragment extends Fragment {
     protected String mSortBy = "";
 
     protected boolean isSortByFavorite(String sort_by){
-        return sort_by.equalsIgnoreCase("favorite");
+        return sort_by.equalsIgnoreCase(getString(R.string.sort_value_favorite));
     }
     protected String getSortBy() {
         if (getArguments() != null)
-            return getArguments().getString("SortBy");
+            return getArguments().getString(getString(R.string.sort_key));
         else
             return "popularity"; // Default
     }
