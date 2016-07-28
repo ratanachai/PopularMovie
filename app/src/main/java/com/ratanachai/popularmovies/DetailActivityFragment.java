@@ -68,6 +68,7 @@ public class DetailActivityFragment extends BaseFragment {
 
     public static final String LOG_TAG = DetailActivityFragment.class.getSimpleName();
     static final String MOVIE_INFO = "MOVIE_INFO";
+    // Index 0-5 according to getAll(): id, title, posterPath, overview, releaseDate, voteAverage
     private String[] mMovieInfo;
     private ArrayList<Video> mVideos = new ArrayList<>();
     private ArrayList<Review> mReviews = new ArrayList<>();
@@ -259,16 +260,16 @@ public class DetailActivityFragment extends BaseFragment {
 
         // Set Movie Rating (User Vote average) TextView and RatingBar
         TextView ratingTv = (TextView) mRootview.findViewById(R.id.movie_rating);
-        ratingTv.setText(mMovieInfo[4]);
-        ratingTv.setContentDescription(getString(R.string.movie_rating, mMovieInfo[4]));
+        ratingTv.setText(mMovieInfo[5]);
+        ratingTv.setContentDescription(getString(R.string.movie_rating, mMovieInfo[5]));
 
         RatingBar ratingBar = (RatingBar)mRootview.findViewById(R.id.movie_rating_bar);
-        ratingBar.setRating(Float.parseFloat(mMovieInfo[4]));
+        ratingBar.setRating(Float.parseFloat(mMovieInfo[5]));
 
         // Set Movie Release date
         TextView releaseDateTv = (TextView) mRootview.findViewById(R.id.movie_release);
-        releaseDateTv.append(" " + mMovieInfo[5]);
-        releaseDateTv.setContentDescription(getString(R.string.movie_release_date, mMovieInfo[5]));
+        releaseDateTv.append(" " + mMovieInfo[4]);
+        releaseDateTv.setContentDescription(getString(R.string.movie_release_date, mMovieInfo[4]));
     }
 
     private void loadHighResMoveUpCards(CardView overview_card, Activity activity, String highResUri, Drawable lowResPoster, ImageView iv) {
@@ -348,8 +349,8 @@ public class DetailActivityFragment extends BaseFragment {
             movieValues.put(MovieEntry.COLUMN_TITLE, movieInfo[1]);
             movieValues.put(MovieEntry.COLUMN_POSTER_PATH, movieInfo[2]);
             movieValues.put(MovieEntry.COLUMN_OVERVIEW, movieInfo[3]);
-            movieValues.put(MovieEntry.COLUMN_USER_RATING, movieInfo[4]);
-            movieValues.put(MovieEntry.COLUMN_RELEASE_DATE, movieInfo[5]);
+            movieValues.put(MovieEntry.COLUMN_RELEASE_DATE, movieInfo[4]);
+            movieValues.put(MovieEntry.COLUMN_USER_RATING, movieInfo[5]);
             Uri movieUri = cr.insert(MovieEntry.CONTENT_URI, movieValues);
             Toast.makeText(getActivity(), getString(R.string.add_to_fav), Toast.LENGTH_SHORT).show();
             rowId = ContentUris.parseId(movieUri);

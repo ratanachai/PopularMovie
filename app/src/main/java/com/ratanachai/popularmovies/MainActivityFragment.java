@@ -185,8 +185,9 @@ public class MainActivityFragment extends BaseFragment {
         while(cur.moveToNext()) {
             Movie movieObj = new Movie(cur.getString(Movie.COL_TMDB_MOVIE_ID),
                     cur.getString(Movie.COL_TITLE), cur.getString(Movie.COL_POSTER_PATH),
-                    cur.getString(Movie.COL_OVERVIEW), cur.getString(Movie.COL_USER_RATING),
-                    cur.getString(Movie.COL_RELEASE_DATE));
+                    cur.getString(Movie.COL_OVERVIEW), cur.getString(Movie.COL_RELEASE_DATE),
+                    cur.getString(Movie.COL_USER_RATING)
+            );
             mMovies.add(movieObj);
         }
         cur.close();
@@ -260,7 +261,7 @@ public class MainActivityFragment extends BaseFragment {
             final String TMDB_TITLE = "title";
             final String TMDB_POSTER_PATH = "poster_path";
             final String TMDB_OVERVIEW = "overview";
-            final String TMDB_USER_RATING = "vote_average";
+            final String TMDB_VOTE_AVERAGE = "vote_average";
             final String TMDB_RELEASE = "release_date";
 
             JSONObject moviesJson = new JSONObject(moviesJsonStr);
@@ -274,7 +275,7 @@ public class MainActivityFragment extends BaseFragment {
                 JSONObject aMovie = moviesArray.getJSONObject(i);
                 Movie movieObj = new Movie(aMovie.getString(TMDB_MOVIE_ID), aMovie.getString(TMDB_TITLE),
                         aMovie.getString(TMDB_POSTER_PATH), aMovie.getString(TMDB_OVERVIEW),
-                        aMovie.getString(TMDB_USER_RATING), aMovie.getString(TMDB_RELEASE));
+                        aMovie.getString(TMDB_RELEASE), aMovie.getString(TMDB_VOTE_AVERAGE));
                 movies.add(movieObj);
             }
             mMovies.addAll(movies);
@@ -303,7 +304,7 @@ public class MainActivityFragment extends BaseFragment {
                 final String VOTE_COUNT_THREASHOLD = "vote_count.gte";
                 final String API_KEY_PARAM = "api_key";
 
-
+                // Params0-2 = sortBy, page, language, respectively
                 Uri.Builder ub = Uri.parse(BASE_URL).buildUpon()
                         .appendQueryParameter(LANG, params[2])
                         .appendQueryParameter(PAGE, params[1])

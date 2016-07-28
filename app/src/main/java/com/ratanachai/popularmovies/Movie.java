@@ -9,8 +9,8 @@ public class Movie implements Parcelable{
     private String title;
     private String posterPath;
     private String overview;
-    private String userRating;
     private String releaseDate;
+    private String voteAverage;
 
     // PROJECTION for Content Provider Query
     static final String[] MOVIE_COLUMNS = {
@@ -19,25 +19,25 @@ public class Movie implements Parcelable{
             MovieEntry.COLUMN_TITLE,
             MovieEntry.COLUMN_POSTER_PATH,
             MovieEntry.COLUMN_OVERVIEW,
-            MovieEntry.COLUMN_USER_RATING,
-            MovieEntry.COLUMN_RELEASE_DATE
+            MovieEntry.COLUMN_RELEASE_DATE,
+            MovieEntry.COLUMN_USER_RATING
     };
     static final int COL_MOVIE_ROW_ID = 0;
     static final int COL_TMDB_MOVIE_ID = 1;
     static final int COL_TITLE = 2;
     static final int COL_POSTER_PATH = 3;
     static final int COL_OVERVIEW = 4;
-    static final int COL_USER_RATING = 5;
-    static final int COL_RELEASE_DATE = 6;
+    static final int COL_RELEASE_DATE = 5;
+    static final int COL_USER_RATING = 6;
 
     //Take Json string and create an instance
-    public Movie(String id, String title, String poster, String overview, String userRating, String releaseDate){
+    public Movie(String id, String title, String poster, String overview, String releaseDate, String voteAverage) {
         this.id = id;
         this.title = title;
         this.posterPath = poster;
         this.overview = overview;
-        this.userRating = userRating;
         this.releaseDate = releaseDate;
+        this.voteAverage = voteAverage;
     }
     public String getPosterPath(){
         return posterPath;
@@ -46,7 +46,7 @@ public class Movie implements Parcelable{
         return title;
     }
     public String[] getAll(){
-        String[] all = {id, title, posterPath, overview, userRating, releaseDate};
+        String[] all = {id, title, posterPath, overview, releaseDate, voteAverage};
         return all;
     }
 
@@ -58,8 +58,8 @@ public class Movie implements Parcelable{
         title = in.readString();
         posterPath = in.readString();
         overview = in.readString();
-        userRating = in.readString();
         releaseDate = in.readString();
+        voteAverage = in.readString();
     }
     public int describeContents() {
         return 0;
@@ -69,8 +69,8 @@ public class Movie implements Parcelable{
         out.writeString(title);
         out.writeString(posterPath);
         out.writeString(overview);
-        out.writeString(userRating);
         out.writeString(releaseDate);
+        out.writeString(voteAverage);
     }
     public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>(){
         public Movie createFromParcel(Parcel in){
