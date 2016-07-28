@@ -6,20 +6,14 @@
     <string name="action_settings">Settings</string>
     <string name="action_refresh">Refresh</string>
 
-    <string name="pref_sort_key" translatable="false">sort</string>
-    <string name="pref_sort_label">Sort by</string>
-    <string name="pref_sort_default" translatable="false">popularity</string>
-    <string name="pref_sort_popularity" translatable="false">popularity</string>
-    <string name="pref_sort_popularity_label">Popularity</string>
-    <string name="pref_sort_rating" translatable="false">vote_average</string>
-    <string name="pref_sort_rating_label">Highest Vote</string>
-    <string name="pref_favorite" translatable="false">favorite</string>
-    <string name="pref_favorite_label">Favorite</string>
     <string name="pref_movie_ids_key" translatable="false">fav_movie_ids</string>
     <string name="pref_reset_label">Reset Favorite (Clear Preference/Database)</string>
     <string name="pref_reset" translatable="false">reset</string>
 
-
+    <string name="sort_popularity_label">Popularity</string>
+    <string name="sort_rating_label">Highest Vote</string>
+    <string name="sort_favorite_label">Favorite</string>
+Ω
     <!-- Movie Label and place holder -->
     <string name="movie_trailers_label">TRAILERS</string>
     <string name="movie_reviews_label">REVIEWS</string>

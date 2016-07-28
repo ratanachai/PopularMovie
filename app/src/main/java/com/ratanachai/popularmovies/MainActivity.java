@@ -15,6 +15,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -172,18 +173,21 @@ public class MainActivity extends AppCompatActivity
         public Fragment getItem(int i) {
             switch (i) {
                 case 0:
+                    Log.v("==================", "f0");
                     Fragment f = new MainActivityFragment();
                     Bundle args = new Bundle();
                     args.putString("SortBy", "popularity");
                     f.setArguments(args);
                     return f;
                 case 1:
+                    Log.v("==================", "f1");
                     Fragment f1 = new MainActivityFragment();
                     Bundle args1 = new Bundle();
                     args1.putString("SortBy", "vote_average");
                     f1.setArguments(args1);
                     return f1;
                 default:
+                    Log.v("==================", "f2");
                     Fragment f2 = new MainActivityFragment();
                     Bundle args2 = new Bundle();
                     args2.putString("SortBy", "favorite");
@@ -200,9 +204,9 @@ public class MainActivity extends AppCompatActivity
         @Override
         public CharSequence getPageTitle(int i) {
             switch (i) {
-                case 0: return mContext.getString(R.string.pref_sort_popularity_label);
-                case 1: return mContext.getString(R.string.pref_sort_rating_label);
-                default: return mContext.getString(R.string.pref_favorite_label);
+                case 0: return mContext.getString(R.string.sort_popularity_label);
+                case 1: return mContext.getString(R.string.sort_rating_label);
+                default: return mContext.getString(R.string.sort_favorite_label);
             }
         }
     }

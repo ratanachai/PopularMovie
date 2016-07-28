@@ -40,7 +40,6 @@ public class MainActivityFragment extends BaseFragment {
 
     private MovieAdapter mMovieAdapter; // Adapter for Grid of Poster Image
     private ArrayList<Movie> mMovies = new ArrayList<>(); // of Movie objects
-    private String mFetchedSortBy = ""; // Sort Mode that has been Fetched
     private ProgressDialog mProgress;
     private int page = 1; // For Endless Scrolling
 
@@ -70,7 +69,7 @@ public class MainActivityFragment extends BaseFragment {
         if (savedInstanceState == null || !savedInstanceState.containsKey("movies")) {
             getMovies(page); //Nothing to restore so getMovies
         }else {
-            mFetchedSortBy = savedInstanceState.getString("sort_mode");
+            mSortBy = savedInstanceState.getString("sort_mode");
             mMovies = savedInstanceState.getParcelableArrayList("movies");
             mMovieAdapter = new MovieAdapter(mMovies);
             mMovieAdapter.notifyDataSetChanged();
@@ -82,12 +81,8 @@ public class MainActivityFragment extends BaseFragment {
         final Activity activity = getActivity();
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         GridView gridView = (GridView) rootView.findViewById(R.id.gridview_movies);
-
-        // Set EmptyView, Adapter, OnItemClickListener
-        // TODO: How to deal with Flash of emptyView before poster is loaded.
-//        View emptyView = rootView.findViewById(R.id.gridview_movies_empty);
-//        gridView.setEmptyView(emptyView);
         gridView.setAdapter(mMovieAdapter);
+
         if( !mSortBy.equals("favorite") ) {
             gridView.setOnScrollListener(new MyScrollListener() {
                 @Override
@@ -119,7 +114,7 @@ public class MainActivityFragment extends BaseFragment {
         getActivity().setTitle(getString(R.string.app_name));
         // Force Re-Fetch If needReFetch OR SortBy changed (New differs from fetched)
         mSortBy = getSortBy();
-        if( needReFetch || hasSortByChanged(mSortBy) ){
+        if( needReFetch ){
             mMovies.clear();
             mMovieAdapter.notifyDataSetChanged();
             getMovies(page);
@@ -139,7 +134,7 @@ public class MainActivityFragment extends BaseFragment {
     public void onSaveInstanceState(Bundle outState){
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList("movies", mMovies);
-        outState.putString("sort_mode", mFetchedSortBy);
+        outState.putString("sort_mode", mSortBy);
     }
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -153,10 +148,6 @@ public class MainActivityFragment extends BaseFragment {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private boolean hasSortByChanged(String newSortBy){
-        return !mFetchedSortBy.isEmpty() && newSortBy != null && !newSortBy.equals(mFetchedSortBy);
     }
 
     private void getMovies(int page){
@@ -174,8 +165,6 @@ public class MainActivityFragment extends BaseFragment {
             mMovies.clear();
             mMovieAdapter.notifyDataSetChanged();
         }
-
-        mFetchedSortBy = mSortBy; //Update FetchedSortBy
     }
 
     private void getMoviesFromDb() {
@@ -313,7 +302,7 @@ public class MainActivityFragment extends BaseFragment {
                         .appendQueryParameter(SORT_PARAM, params[0]+".desc")
                         .appendQueryParameter(API_KEY_PARAM, api_key);
 
-                if (params[0].equals(getString(R.string.pref_sort_rating)))
+                if (params[0].equals("vote_average"))
                     ub.appendQueryParameter(VOTE_COUNT_THREASHOLD, "500");
 
                 Uri builtUri = ub.build();
