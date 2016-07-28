@@ -145,7 +145,8 @@ public class MainActivityFragment extends BaseFragment {
     }
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_main_fragment, menu);
+        if (BuildConfig.DEBUG)
+            inflater.inflate(R.menu.menu_main_fragment, menu);
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
