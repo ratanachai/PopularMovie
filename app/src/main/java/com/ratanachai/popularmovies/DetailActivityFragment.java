@@ -314,21 +314,20 @@ public class DetailActivityFragment extends BaseFragment {
 
         // Set Share Intent with/without Video URL depend whether Video fetching onPostExec() has finished
         if (mVideos.isEmpty()) {
-            mShareActionProvider.setShareIntent(createShareVideoLinkIntent(""));
+            mShareActionProvider.setShareIntent(createShareVideoLinkIntent("", mMovieInfo[1]));
             Log.v(LOG_TAG, "=== onCreateOptionsMenu() Set intent with EMPTY STRING");
         }else {
-            mShareActionProvider.setShareIntent(createShareVideoLinkIntent(mVideos.get(0).getYoutubeUrl()));
+            mShareActionProvider.setShareIntent(createShareVideoLinkIntent(mVideos.get(0).getYoutubeUrl(), mMovieInfo[1]));
             Log.v(LOG_TAG, "=== onCreateOptionsMenu() Set intent with " + mVideos.get(0).getYoutubeUrl());
         }
     }
-    private Intent createShareVideoLinkIntent(String url) {
+    private Intent createShareVideoLinkIntent(String url, String movieTitle) {
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
-        String movieTitle = (String)getActivity().getTitle();
 
         String text = "Please select a movie before you share!";
         if (mMovieInfo != null)
-            text = "Have you seen this movie, " + movieTitle + "?\n" + url;
+            text = getString(R.string.share_action_text) + " - " + movieTitle + "\n" + url;
         intent.putExtra(Intent.EXTRA_TEXT, text);
 
         return intent;
@@ -588,7 +587,8 @@ public class DetailActivityFragment extends BaseFragment {
                 // Update ShareIntent IF onCreateOptionsMenu already happened and there's some videos
                 if (mShareActionProvider != null & !mVideos.isEmpty()) {
                     Log.v(LOG_TAG, "=== onPostExec() Updating intent with " + videos.get(0).getYoutubeUrl());
-                    mShareActionProvider.setShareIntent(createShareVideoLinkIntent(videos.get(0).getYoutubeUrl()));
+                    mShareActionProvider.setShareIntent(
+                            createShareVideoLinkIntent(videos.get(0).getYoutubeUrl(), mMovieInfo[2]) );
                 }
             }
         }

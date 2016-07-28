@@ -50,6 +50,7 @@
     <string name="movie_trailer">Movie Trailer <xliff:g id="title">%1$s</xliff:g></string>
     <string name="add_to_fav">Add to Favorite</string>
     <string name="movie_review">Movie Review by <xliff:g id="author">%1$s</xliff:g>: <xliff:g>%2$s</xliff:g></string>
-
+    <!-- Share action -->
+    <string name="share_action_text">This movie seems fun! </string>
 </resources>
 

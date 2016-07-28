@@ -30,5 +30,9 @@
     <string name="movie_review">รีวิวภาพยนต์โดย<xliff:g id="author">%1$s</xliff:g>: <xliff:g>%2$s</xliff:g></string>
     <string name="movie_overview_placeholder">กรุณาเรื่องภาพยนต์เพื่อดูข้อมูลและภาพยนต์ตัวอย่าง (เทรลเลอร์)</string>
     <string name="movie_title_placeholder">กรุณาเลือกภาพยนต์</string>
+    <string name="sort_favorite_label">รายการโปรด</string>
+    <string name="sort_popularity_label">ป๊อปปูล่า</string>
+    <string name="sort_rating_label">คะแนนโหวต</string>
+    <string name="share_action_text">หนังเรื่องนี้น่าดู</string>
 </resources>
 
