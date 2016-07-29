@@ -5,6 +5,7 @@ import android.os.Parcelable;
 import com.ratanachai.popularmovies.data.MovieContract.MovieEntry;
 
 public class Movie implements Parcelable{
+    // First batch of Movie Info from Movies fetch
     private String id;
     private String title;
     private String posterPath;
@@ -12,6 +13,10 @@ public class Movie implements Parcelable{
     private String releaseDate;
     private String voteAverage;
     private String voteCount;
+
+    // Second batch of Movie Info from Movie Detail Fetch
+    //TODO: Add more of a second batch of Movie Info
+    // private String tagline;
 
     // PROJECTION for Content Provider Query
     static final String[] MOVIE_COLUMNS = {
@@ -55,6 +60,8 @@ public class Movie implements Parcelable{
         String[] all = {id, title, posterPath, overview, releaseDate, voteAverage, voteCount};
         return all;
     }
+    public void setOverview(String overview) {this.overview = overview;}
+    ///**/public void setTagline(String tagline) {this.tagline = tagline;}
 
     /** Methods needed for implementing Parcelable
      * http://stackoverflow.com/questions/12503836/how-to-save-custom-arraylist-on-android-screen-rotate */

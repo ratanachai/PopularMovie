@@ -40,11 +40,11 @@ public class MainActivity extends AppCompatActivity
             mainFragment.updateMoviesGrid();
     }
 
-    @Override
-    public void onMoviesReady(String[] movieInfo, String sortBy) {
-        if (mTwoPane)
-            replaceDetailFragment(movieInfo, sortBy);
-    }
+//    @Override
+//    public void onMoviesReady(String[] movieInfo, String sortBy) {
+//        if (mTwoPane)
+//            replaceDetailFragment(movieInfo, sortBy);
+//    }
 
     @Override
     public void onItemSelected(String[] movieInfo, String sortBy, View view) {
@@ -112,8 +112,8 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
         toolbar.setTitle(getString(R.string.app_name));
         setSupportActionBar(toolbar);
-
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // This adds items to the action bar if it is present.

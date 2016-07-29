@@ -47,7 +47,7 @@ public class MainActivityFragment extends BaseFragment {
      *  This allows activities to be notified of item selections, Movie is ready to display*/
     public interface Callback {
         void onItemSelected(String[] movieInfo, String sortBy, View view);
-        void onMoviesReady(String[] movieInfo, String sortBy);
+//        void onMoviesReady(String[] movieInfo, String sortBy);
     }
 
     public void updateMoviesGrid() {
@@ -195,8 +195,8 @@ public class MainActivityFragment extends BaseFragment {
         needReFetch = false; //Reset flag after fetched
 
         // Auto load the first movie into Tablet right pane
-        if(mMovies.size() > 0)
-            ((Callback) getActivity()).onMoviesReady(mMovies.get(0).getAll(), mSortBy);
+//        if(mMovies.size() > 0)
+//            ((Callback) getActivity()).onMoviesReady(mMovies.get(0).getAll(), mSortBy);
 
     }
 
@@ -378,8 +378,8 @@ public class MainActivityFragment extends BaseFragment {
                 mMovieAdapter.notifyDataSetChanged();
                 mProgress.hide();
                 // Auto load the first movie into Tablet right pane
-                if(mMovies.size() > 0)
-                    ((Callback) getActivity()).onMoviesReady(mMovies.get(0).getAll(), mSortBy);
+//                if(mMovies.size() > 0)
+//                    ((Callback) getActivity()).onMoviesReady(mMovies.get(0).getAll(), mSortBy);
             }
         }
     }

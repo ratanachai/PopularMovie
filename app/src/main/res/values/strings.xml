@@ -41,7 +41,7 @@
     <!-- Toast messages -->
     <string name="remove_from_fav_success">Movie is removed from Favorite.</string>
     <string name="remove_from_fav_fail">No movie removed from Favorite.</string>
-    <string name="no_network">No network connection. Please Switch to your Favorite.</string>
+    <string name="no_network">No network connection.</string>
     <string name="downloading_from_tmdb">Downloading from TMDB.</string>
     <!-- a11y -->
     <string name="movie_title">Movie title <xliff:g id="title">%1$s</xliff:g></string>

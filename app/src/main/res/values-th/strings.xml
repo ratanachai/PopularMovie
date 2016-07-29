@@ -17,7 +17,7 @@
     <!-- Toast messages -->
     <string name="remove_from_fav_success">ลบภาพยนต์จากรายการโปรด</string>
     <string name="remove_from_fav_fail">ไม่สามารถลบภาพยนต์จากรายการโปรด</string>
-    <string name="no_network">ไม่มีเน็ตเวิร์ค กรุณาเปลี่ยนไปรายการโปรด</string>
+    <string name="no_network">ไม่มีเน็ตเวิร์ค</string>
     <string name="downloading_from_tmdb">กำลังโหลดข้อมูลจาก TMDB</string>
 
     <!-- a11y -->
