@@ -296,7 +296,7 @@ public class MainActivityFragment extends BaseFragment {
 
             try {
                 // Construct the URL for TMDB query
-                // http://api.themoviedb.org/3/discover/movie?lang=en&sort_by=popularity.desc&api_key=<api_key>
+                //  http://api.themoviedb.org/3/discover/movie?language=th&page=1&sort_by=vote_average.desc&vote_count.gte=500&api_key=4275cdb955fd96533adb7f51ec340f21
                 final String BASE_URL = "http://api.themoviedb.org/3/discover/movie?";
                 final String LANG = "language";
                 final String PAGE = "page";

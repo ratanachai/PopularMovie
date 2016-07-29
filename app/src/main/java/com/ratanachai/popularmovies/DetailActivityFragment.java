@@ -68,8 +68,7 @@ public class DetailActivityFragment extends BaseFragment {
 
     public static final String LOG_TAG = DetailActivityFragment.class.getSimpleName();
     static final String MOVIE_INFO = "MOVIE_INFO";
-    // Index 0-5 according to getAll(): id, title, posterPath, overview, releaseDate, voteAverage
-    private String[] mMovieInfo;
+    private Movie mMovie;
     private ArrayList<Video> mVideos = new ArrayList<>();
     private ArrayList<Review> mReviews = new ArrayList<>();
     private View mRootview;
@@ -94,17 +93,18 @@ public class DetailActivityFragment extends BaseFragment {
         // Get data passed from Activity
         Bundle arguments = getArguments();
         if (arguments != null) {
-            mMovieInfo = arguments.getStringArray(MOVIE_INFO);
+            String[] m = arguments.getStringArray(MOVIE_INFO);
+            mMovie = new Movie(m[0], m[1], m[2], m[3], m[4], m[5], m[6]);
 
             /** Fetch if no savedInstance at all, or for both video and review */
             // http://stackoverflow.com/questions/12503836/how-to-save-custom-arraylist-on-android-screen-rotate
             if (savedInstanceState == null
                     || !savedInstanceState.containsKey("videos")
                     || !savedInstanceState.containsKey("reviews")) {
-                String movie_id = mMovieInfo[0];
+                String tmdb_movie_id = mMovie.getTmdbId();
                 // Fetch from the internet for DB in offline mode
-                getVideosFromInternetOrDb(movie_id);
-                getReviewsFromInternetOrDb(movie_id);
+                getVideosFromInternetOrDb(tmdb_movie_id);
+                getReviewsFromInternetOrDb(tmdb_movie_id);
             } else {
                 // Restore from savedInstanceState
                 mVideos = savedInstanceState.getParcelableArrayList("videos");
@@ -147,7 +147,7 @@ public class DetailActivityFragment extends BaseFragment {
         // Download High Resolution poster, Move up cards
         final ImageView iv = (ImageView) mRootview.findViewById(R.id.movie_poster);
         final CardView overview_card = (CardView) mRootview.findViewById(R.id.movie_overview_card);
-        final String highResUri = "http://image.tmdb.org/t/p/original" + mMovieInfo[2];
+        final String highResUri = "http://image.tmdb.org/t/p/original" + mMovie.getPosterPath();
         // In Try-catch in case file cannot be open
         try {
             // Get/Prepare "InterimPoster" jpeg file to be placeholder image
@@ -190,7 +190,7 @@ public class DetailActivityFragment extends BaseFragment {
         favButton.setContentDescription(getString(R.string.add_to_fav));
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         final String key = getString(R.string.pref_movie_ids_key);
-        final String tmdb_id = mMovieInfo[0];
+        final String tmdb_id = mMovie.getTmdbId();
 
         // Set OnCheckChanged
         favButton.setOnClickListener(new View.OnClickListener() {
@@ -204,7 +204,7 @@ public class DetailActivityFragment extends BaseFragment {
                 if(!alreadyAdded) {
                     fav_movie_ids.add(tmdb_id);
                     // Save the Movie, its Videos and Reviews
-                    long movieRowId = saveMovieOffline(mMovieInfo);
+                    long movieRowId = saveMovieOffline(mMovie.getAll());
 
                     // Sort by Fav: MainFragment will need to refetch movies if movie added
                     if ( isSortByFavorite(mSortBy) )
@@ -250,28 +250,28 @@ public class DetailActivityFragment extends BaseFragment {
     private void setOverviewCardData() {
         // Set Movie Title TextView
         TextView titleTv = (TextView) mRootview.findViewById(R.id.movie_title);
-        titleTv.setText(mMovieInfo[1]);
-        titleTv.setContentDescription(getString(R.string.movie_title, mMovieInfo[1]));
+        titleTv.setText(mMovie.getTitle());
+        titleTv.setContentDescription(getString(R.string.movie_title, mMovie.getTitle()));
 
         // Set Movie Overview TextView
         TextView overviewTv = (TextView) mRootview.findViewById(R.id.movie_overview);
-        overviewTv.setText(mMovieInfo[3]);
-        overviewTv.setContentDescription(getString(R.string.movie_overview, mMovieInfo[3]));
+        overviewTv.setText(mMovie.getOverview());
+        overviewTv.setContentDescription(getString(R.string.movie_overview, mMovie.getOverview()));
 
         // Set Movie Rating (User Vote average) TextView and RatingBar
         TextView voteAvgTv = (TextView) mRootview.findViewById(R.id.movie_rating);
-        voteAvgTv.setText(mMovieInfo[5]);
-        voteAvgTv.setContentDescription(getString(R.string.movie_rating, mMovieInfo[5], mMovieInfo[6]));
+        voteAvgTv.setText(mMovie.getVoteAverage());
+        voteAvgTv.setContentDescription(getString(R.string.movie_rating, mMovie.getVoteAverage(), mMovie.getVoteCount()));
         TextView voteCountTv = (TextView) mRootview.findViewById(R.id.movie_vote_count);
-        voteCountTv.setText("(" + mMovieInfo[6] + " " + getString(R.string.movie_votes) + ")");
+        voteCountTv.setText("(" + mMovie.getVoteCount() + " " + getString(R.string.movie_votes) + ")");
 
         RatingBar ratingBar = (RatingBar)mRootview.findViewById(R.id.movie_rating_bar);
-        ratingBar.setRating(Float.parseFloat(mMovieInfo[5]));
+        ratingBar.setRating(Float.parseFloat(mMovie.getVoteAverage()));
 
         // Set Movie Release date
         TextView releaseDateTv = (TextView) mRootview.findViewById(R.id.movie_release);
-        releaseDateTv.append(" " + mMovieInfo[4]);
-        releaseDateTv.setContentDescription(getString(R.string.movie_release_date, mMovieInfo[4]));
+        releaseDateTv.append(" " + mMovie.getReleaseDate());
+        releaseDateTv.setContentDescription(getString(R.string.movie_release_date, mMovie.getReleaseDate()));
     }
 
     private void loadHighResMoveUpCards(CardView overview_card, Activity activity, String highResUri, Drawable lowResPoster, ImageView iv) {
@@ -317,10 +317,10 @@ public class DetailActivityFragment extends BaseFragment {
 
         // Set Share Intent with/without Video URL depend whether Video fetching onPostExec() has finished
         if (mVideos.isEmpty()) {
-            mShareActionProvider.setShareIntent(createShareVideoLinkIntent("", mMovieInfo[1]));
+            mShareActionProvider.setShareIntent(createShareVideoLinkIntent("", mMovie.getTitle()));
             Log.v(LOG_TAG, "=== onCreateOptionsMenu() Set intent with EMPTY STRING");
         }else {
-            mShareActionProvider.setShareIntent(createShareVideoLinkIntent(mVideos.get(0).getYoutubeUrl(), mMovieInfo[1]));
+            mShareActionProvider.setShareIntent(createShareVideoLinkIntent(mVideos.get(0).getYoutubeUrl(), mMovie.getTitle()));
             Log.v(LOG_TAG, "=== onCreateOptionsMenu() Set intent with " + mVideos.get(0).getYoutubeUrl());
         }
     }
@@ -328,11 +328,8 @@ public class DetailActivityFragment extends BaseFragment {
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
 
-        String text = "Please select a movie before you share!";
-        if (mMovieInfo != null)
-            text = getString(R.string.share_action_text) + " - " + movieTitle + "\n" + url;
+        String text = getString(R.string.share_action_text) + " - " + movieTitle + "\n" + url;
         intent.putExtra(Intent.EXTRA_TEXT, text);
-
         return intent;
     }
     /** SAVE MOVIE into Favorite List */
@@ -591,7 +588,7 @@ public class DetailActivityFragment extends BaseFragment {
                 if (mShareActionProvider != null & !mVideos.isEmpty()) {
                     Log.v(LOG_TAG, "=== onPostExec() Updating intent with " + videos.get(0).getYoutubeUrl());
                     mShareActionProvider.setShareIntent(
-                            createShareVideoLinkIntent(videos.get(0).getYoutubeUrl(), mMovieInfo[2]) );
+                            createShareVideoLinkIntent(videos.get(0).getYoutubeUrl(), mMovie.getTitle()) );
                 }
             }
         }

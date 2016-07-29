@@ -44,12 +44,13 @@ public class Movie implements Parcelable{
         this.voteAverage = voteAverage;
         this.voteCount = voteCount;
     }
-    public String getPosterPath(){
-        return posterPath;
-    }
-    public String getTitle(){
-        return title;
-    }
+    public String getTmdbId() {return id;}
+    public String getTitle() {return title;}
+    public String getPosterPath() {return posterPath;}
+    public String getOverview() {return overview;}
+    public String getReleaseDate() {return releaseDate;}
+    public String getVoteAverage() {return voteAverage;}
+    public String getVoteCount() {return voteCount;}
     public String[] getAll(){
         String[] all = {id, title, posterPath, overview, releaseDate, voteAverage, voteCount};
         return all;
