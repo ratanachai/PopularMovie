@@ -15,7 +15,7 @@ import com.ratanachai.popularmovies.data.MovieContract.ReviewEntry;
 public class MovieDbHelper extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
-    private static final int DATABASE_VERSION = 6;
+    private static final int DATABASE_VERSION = 7;
 
     static final String DATABASE_NAME = "movie.db";
 
@@ -33,6 +33,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                 MovieEntry.COLUMN_TITLE + " TEXT NOT NULL, " +
                 MovieEntry.COLUMN_OVERVIEW + " TEXT," +
                 MovieEntry.COLUMN_VOTE_AVERAGE + " REAL, " +
+                MovieEntry.COLUMN_VOTE_COUNT + " INTEGER, " +
                 MovieEntry.COLUMN_RELEASE_DATE + " TEXT NOT NULL, " + // SQLite has no Date type
                 MovieEntry.COLUMN_POSTER_PATH + " TEXT NOT NULL" +
                 " );";

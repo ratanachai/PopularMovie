@@ -259,9 +259,11 @@ public class DetailActivityFragment extends BaseFragment {
         overviewTv.setContentDescription(getString(R.string.movie_overview, mMovieInfo[3]));
 
         // Set Movie Rating (User Vote average) TextView and RatingBar
-        TextView ratingTv = (TextView) mRootview.findViewById(R.id.movie_rating);
-        ratingTv.setText(mMovieInfo[5]);
-        ratingTv.setContentDescription(getString(R.string.movie_rating, mMovieInfo[5]));
+        TextView voteAvgTv = (TextView) mRootview.findViewById(R.id.movie_rating);
+        voteAvgTv.setText(mMovieInfo[5]);
+        voteAvgTv.setContentDescription(getString(R.string.movie_rating, mMovieInfo[5], mMovieInfo[6]));
+        TextView voteCountTv = (TextView) mRootview.findViewById(R.id.movie_vote_count);
+        voteCountTv.setText("(" + mMovieInfo[6] + " " + getString(R.string.movie_votes) + ")");
 
         RatingBar ratingBar = (RatingBar)mRootview.findViewById(R.id.movie_rating_bar);
         ratingBar.setRating(Float.parseFloat(mMovieInfo[5]));

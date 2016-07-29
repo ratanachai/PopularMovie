@@ -186,7 +186,7 @@ public class MainActivityFragment extends BaseFragment {
             Movie movieObj = new Movie(cur.getString(Movie.COL_TMDB_MOVIE_ID),
                     cur.getString(Movie.COL_TITLE), cur.getString(Movie.COL_POSTER_PATH),
                     cur.getString(Movie.COL_OVERVIEW), cur.getString(Movie.COL_RELEASE_DATE),
-                    cur.getString(Movie.COL_VOTE_AVERAGE)
+                    cur.getString(Movie.COL_VOTE_AVERAGE), cur.getString(Movie.COL_VOTE_COUNT)
             );
             mMovies.add(movieObj);
         }
@@ -256,26 +256,26 @@ public class MainActivityFragment extends BaseFragment {
         private ArrayList<Movie> getMoviesFromJson(String moviesJsonStr) throws JSONException {
 
             // These are the names of the JSON objects that need to be extracted.
-            final String TMDB_MOVIES = "results";
-            final String TMDB_MOVIE_ID = "id";
-            final String TMDB_TITLE = "title";
-            final String TMDB_POSTER_PATH = "poster_path";
-            final String TMDB_OVERVIEW = "overview";
-            final String TMDB_VOTE_AVERAGE = "vote_average";
-            final String TMDB_RELEASE = "release_date";
+            final String MOVIES = "results";
+            final String MOVIE_ID = "id";
+            final String TITLE = "title";
+            final String POSTER_PATH = "poster_path";
+            final String OVERVIEW = "overview";
+            final String RELEASE_DATE = "release_date";
+            final String VOTE_AVERAGE = "vote_average";
+            final String VOTE_COUNT = "vote_count";
 
             JSONObject moviesJson = new JSONObject(moviesJsonStr);
-            JSONArray moviesArray = moviesJson.getJSONArray(TMDB_MOVIES);
+            JSONArray moviesArray = moviesJson.getJSONArray(MOVIES);
 
-            // Populate mMovies from JSON:
-            // Create a Movie object then add to ArrayList of Movies
-//            mMovies.clear(); // Must clear the list before adding new
+            // Populate mMovies from JSON: Create a Movie object then add to ArrayList of Movies
             ArrayList<Movie> movies = new ArrayList<>();
             for(int i = 0; i < moviesArray.length(); i++){
                 JSONObject aMovie = moviesArray.getJSONObject(i);
-                Movie movieObj = new Movie(aMovie.getString(TMDB_MOVIE_ID), aMovie.getString(TMDB_TITLE),
-                        aMovie.getString(TMDB_POSTER_PATH), aMovie.getString(TMDB_OVERVIEW),
-                        aMovie.getString(TMDB_RELEASE), aMovie.getString(TMDB_VOTE_AVERAGE));
+                Movie movieObj = new Movie(aMovie.getString(MOVIE_ID),
+                        aMovie.getString(TITLE), aMovie.getString(POSTER_PATH),
+                        aMovie.getString(OVERVIEW), aMovie.getString(RELEASE_DATE),
+                        aMovie.getString(VOTE_AVERAGE), aMovie.getString(VOTE_COUNT));
                 movies.add(movieObj);
             }
             mMovies.addAll(movies);

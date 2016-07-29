@@ -23,7 +23,7 @@
     <!-- a11y -->
     <string name="movie_title">ชื่อเรื่อง<xliff:g id="title">%1$s</xliff:g></string>
     <string name="movie_overview">เนื้อเรื่องย่อ<xliff:g id="overview">%1$s</xliff:g></string>
-    <string name="movie_rating">ได้คะแนนโหวต<xliff:g id="rating">%1$s</xliff:g> จาก 10</string>
+    <string name="movie_rating">ได้คะแนนโหวต<xliff:g id="rating">%1$s</xliff:g> เต็ม 10 จาก <xliff:g id="vote_count">%2$s</xliff:g> โหวต</string>
     <string name="movie_release_date">วันกำหนดฉาย <xliff:g id="date">%1$s</xliff:g></string>
     <string name="movie_trailer">ตัวอย่างหนัง <xliff:g id="title">%1$s</xliff:g></string>
     <string name="add_to_fav">เพิ่มภาพยนต์เข้ารายการโปรด</string>
@@ -34,5 +34,6 @@
     <string name="sort_popularity_label">ป๊อปปูล่า</string>
     <string name="sort_rating_label">คะแนนโหวต</string>
     <string name="share_action_text">หนังเรื่องนี้น่าดู</string>
+    <string name="movie_votes">โหวต</string>
 </resources>
 

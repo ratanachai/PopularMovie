@@ -25,6 +25,7 @@
     <string name="movie_title_placeholder">Please Select a Movie</string>
     <string name="movie_overview_placeholder">Please Select a Movie to view Movie Detail with Video
     Trailer and User Review</string>
+    <string name="movie_votes">votes</string>
     <string name="movie_trailer_placeholder">Official Trailer #1</string>
     <string name="movie_review_author_placeholder" translatable="false">Author</string>
     <string name="movie_review_content_placeholder" translatable="false">Lorem ipsum dolor sit amet, consectetur adipiscing elit,
@@ -45,7 +46,7 @@
     <!-- a11y -->
     <string name="movie_title">Movie title <xliff:g id="title">%1$s</xliff:g></string>
     <string name="movie_overview">Movie overview <xliff:g id="overview">%1$s</xliff:g></string>
-    <string name="movie_rating">Average User Rating of <xliff:g id="rating">%1$s</xliff:g> from 10</string>
+    <string name="movie_rating">Average User Vote of <xliff:g id="rating">%1$s</xliff:g> out of 10 from <xliff:g id="vote_count">%2$s</xliff:g> votes</string>
     <string name="movie_release_date">Movie release date <xliff:g id="date">%1$s</xliff:g></string>
     <string name="movie_trailer">Movie Trailer <xliff:g id="title">%1$s</xliff:g></string>
     <string name="add_to_fav">Add to Favorite</string>
