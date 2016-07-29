@@ -7,7 +7,6 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -17,7 +16,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
@@ -61,8 +59,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 public class DetailActivityFragment extends BaseFragment {
 
@@ -193,33 +189,30 @@ public class DetailActivityFragment extends BaseFragment {
         // FAB - Set Listener: Add/Remove TMDB_MOV_ID on checked/unchecked
         FloatingActionButton favButton = (FloatingActionButton) mRootview.findViewById(R.id.favorite_toggle);
         favButton.setContentDescription(getString(R.string.add_to_fav));
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-        final String key = getString(R.string.pref_movie_ids_key);
         final String tmdb_id = mMovie.getTmdbId();
 
         // Set OnCheckChanged
         favButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final Set<String> outSet = prefs.getStringSet(key, new HashSet<String>());
-                final Boolean alreadyAdded = outSet.contains(tmdb_id) ? true : false;
-                Set<String> fav_movie_ids = new HashSet<String>(outSet);
 
-                // Add/Remove to SharedPref and Database
-                if(!alreadyAdded) {
-                    fav_movie_ids.add(tmdb_id);
+                ContentResolver cr = getActivity().getContentResolver();
+                Cursor movieCursor = cr.query(MovieEntry.CONTENT_URI,
+                        new String[]{MovieEntry.TABLE_NAME + "." + MovieEntry._ID},
+                        MovieEntry.COLUMN_TMDB_MOVIE_ID + " = ? ", new String[]{tmdb_id}, null);
+
+                // Add/Remove to Database
+                if(movieCursor.getCount() == 0) {
                     // Save the Movie, its Videos and Reviews
                     long movieRowId = saveMovieOffline(mMovie.getAll());
+                    saveVideosOffline(movieRowId);
+                    saveReviewOffline(movieRowId);
 
                     // Sort by Fav: MainFragment will need to refetch movies if movie added
                     if ( isSortByFavorite(mSortBy) )
                         ((Callback) activity).onAddRemoveMovieFromFavorite(true);
-
-                    saveVideosOffline(movieRowId);
-                    saveReviewOffline(movieRowId);
                 }
                 else{
-                    fav_movie_ids.remove(tmdb_id);
                     // Delete the Movie, its videos will be DELETE CASCADE via Foreign key constrain
                     removeOfflineMovie(tmdb_id);
 
@@ -227,14 +220,6 @@ public class DetailActivityFragment extends BaseFragment {
                     if ( isSortByFavorite(mSortBy) )
                         ((Callback) activity).onAddRemoveMovieFromFavorite(true);
                 }
-                // Save new Set into SharedPref
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.putStringSet(key, fav_movie_ids);
-                editor.apply();
-
-                // Pull out from SharedPref again to check
-                Log.d(LOG_TAG + "==After==", prefs.getStringSet(key, new HashSet<String>()).toString());
-
             }
         });
 

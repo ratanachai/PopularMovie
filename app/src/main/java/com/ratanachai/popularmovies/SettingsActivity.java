@@ -16,7 +16,6 @@
 package com.ratanachai.popularmovies;
 
 import android.content.ContentResolver;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.os.Bundle;
@@ -27,8 +26,8 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.ratanachai.popularmovies.data.MovieContract.MovieEntry;
-import com.ratanachai.popularmovies.data.MovieContract.VideoEntry;
 import com.ratanachai.popularmovies.data.MovieContract.ReviewEntry;
+import com.ratanachai.popularmovies.data.MovieContract.VideoEntry;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings.
@@ -57,9 +56,6 @@ public class SettingsActivity extends PreferenceActivity
         prefs.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                // Clear SharedPref
-                SharedPreferences.Editor editor = prefs.getEditor();
-                editor.clear().commit();
                 // Clear Database
                 ContentResolver cr = getApplicationContext().getContentResolver();
                 Cursor movieCursor = cr.query(MovieEntry.CONTENT_URI,
