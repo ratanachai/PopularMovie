@@ -4,12 +4,15 @@
 
 <img style="margin-right:10px;" src="./screenshots/s1.png" height="200"> <img style="margin-right:10px;" src="./screenshots/s2.png" height="200"> <img style="margin-right:10px;" src="./screenshots/s3.png" height="200"> <img style="margin-right:10px;" src="./screenshots/s4.png" height="200">
 
-**[Try it on Play Store](https://play.google.com/store/apps/details?id=com.ratanachai.popularmovies)** :link: 
+**Try it on Play Store:** <a href="https://play.google.com/store/apps/details?id=com.ratanachai.popularmovies"><img height="25px" src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Get_it_on_Google_play.svg/640px-Get_it_on_Google_play.svg.png"/></a>
+
+
 ## P1: Popular Movies, Stage 1
 
-Build from scratch an app to retrive a list of movies from TMDB.org sorted by most popular or highest rated. The movies are displayed with poster image in grid view. Users can then select a movie to view the movie information in another screen.
+Build from scratch an app to retrive a list of movies from TMDB.org sorted by most popular or highest rated. The movies are displayed with poster image in grid view. Users can then select a movie to view the movie information in another screen. See [project description](https://github.com/udacity/Project-Descriptions-for-Review/blob/master/Android/Popular%20Movies%20Stage%201.md) for more detail.
 
 **Skill required:** _GridView and ArrayAdapter, Picasso image library, AsyncTask, JSON Parsing, Activity life cycle and how to save/restore instance state, SettingActivity and SharedPreference_
+
 
 ## P2: Popular Movies, Stage 2
 
@@ -18,6 +21,8 @@ Add onto P1 the following features
 * Ability to mark movies as favorite movies and save movies information for offline
 * Retrieve and display user reviews and movie trailers from TMDB.org
 * Ability to share movie trailer (a link to youtube video) to friends
+* See [project description](https://github.com/udacity/Project-Descriptions-for-Review/blob/master/Android/Popular%20Movies%20Stage%202.md) for more detail.
+
 
 **Skill required:** _Responsive UI, Resource Qualifier, Fragment, SQLite databases, Content Provider, ShareActionProvider_
 
