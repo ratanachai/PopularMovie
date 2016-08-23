@@ -1,15 +1,17 @@
-# Project 1-2: Popular Movies
-This app will help you find popular movies by browsing through the most popular movies right now or highest rated movies according to TMDB.org. For each movie, you will find its rating, overview, user reviews, and also the movie trailers! Moreover, you can save into your Watchlist the movies that interest you.
+# Project 1-2: Popular Movies 
 
-**Try it on Play Store:** [Top Movie Finder (TMDB client)](https://play.google.com/store/apps/details?id=com.ratanachai.popularmovies)
+<img align="left" src="./screenshots/ic_launcher.png" height="50"> This app will help you find popular movies by browsing through the most popular movies right now or highest rated movies according to TMDB.org. For each movie, you will find its rating, overview, user reviews, and also the movie trailers! Moreover, you can save into your Watchlist the movies that interest you. 
 
-##P1: Popular Movies, Stage 1
+<img style="margin-right:10px;" src="./screenshots/s1.png" height="200"> <img style="margin-right:10px;" src="./screenshots/s2.png" height="200"> <img style="margin-right:10px;" src="./screenshots/s3.png" height="200"> <img style="margin-right:10px;" src="./screenshots/s4.png" height="200">
+
+**[Try it on Play Store](https://play.google.com/store/apps/details?id=com.ratanachai.popularmovies)** :link: 
+## P1: Popular Movies, Stage 1
 
 Build from scratch an app to retrive a list of movies from TMDB.org sorted by most popular or highest rated. The movies are displayed with poster image in grid view. Users can then select a movie to view the movie information in another screen.
 
 **Skill required:** _GridView and ArrayAdapter, Picasso image library, AsyncTask, JSON Parsing, Activity life cycle and how to save/restore instance state, SettingActivity and SharedPreference_
 
-##P2: Popular Movies, Stage 2
+## P2: Popular Movies, Stage 2
 
 Add onto P1 the following features
 * Support for 7-inch and 10-inch tablets with Master-Detail layout
@@ -19,7 +21,7 @@ Add onto P1 the following features
 
 **Skill required:** _Responsive UI, Resource Qualifier, Fragment, SQLite databases, Content Provider, ShareActionProvider_
 
-##Extra Miles
+## Extra Miles :sparkles:
 
 The following improvements have been added into the project throughout my learning in modern Android development.
 
